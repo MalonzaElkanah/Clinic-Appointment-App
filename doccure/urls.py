@@ -23,7 +23,7 @@ urlpatterns = [
     path('patients/', include('patients.urls')),
 
     path('', views.index, name='index'),
-    path('login/', views.login, name='login'),
+    path('login/', views.user_login, name='login'),
     path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
     path('term-condition/', views.term_condition, name='term-condition'),
 ]

@@ -6,24 +6,25 @@
 		<meta charset="utf-8">
 		<title>Doccure</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+		{% load static %}
 		
 		<!-- Favicons -->
-		<link href="assets/img/favicon.png" rel="icon">
+		<link href="{% static 'cas/img/favicon.png' %}" rel="icon">
 		
 		<!-- Bootstrap CSS -->
-		<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="{% static 'cas/css/bootstrap.min.css' %}">
 		
 		<!-- Fontawesome CSS -->
-		<link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
-		<link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+		<link rel="stylesheet" href="{% static 'cas/plugins/fontawesome/css/fontawesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'cas/plugins/fontawesome/css/all.min.css' %}">
 		
 		<!-- Main CSS -->
-		<link rel="stylesheet" href="assets/css/style.css">
+		<link rel="stylesheet" href="{% static 'cas/css/style.css' %}">
 		
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
-			<script src="assets/js/html5shiv.min.js"></script>
-			<script src="assets/js/respond.min.js"></script>
+			<script src="{% static 'cas/js/html5shiv.min.js' %}"></script>
+			<script src="{% static 'cas/js/respond.min.js' %}"></script>
 		<![endif]-->
 	
 	</head>
@@ -44,13 +45,13 @@
 							</span>
 						</a>
 						<a href="index-2.html" class="navbar-brand logo">
-							<img src="assets/img/logo.png" class="img-fluid" alt="Logo">
+							<img src="{% static 'cas/img/logo.png' %}" class="img-fluid" alt="Logo">
 						</a>
 					</div>
 					<div class="main-menu-wrapper">
 						<div class="menu-header">
 							<a href="index-2.html" class="menu-logo">
-								<img src="assets/img/logo.png" class="img-fluid" alt="Logo">
+								<img src="{% static 'cas/img/logo.png' %}" class="img-fluid" alt="Logo">
 							</a>
 							<a id="menu_close" class="menu-close" href="javascript:void(0);">
 								<i class="fas fa-times"></i>
@@ -134,13 +135,13 @@
 						<li class="nav-item dropdown has-arrow logged-item">
 							<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 								<span class="user-img">
-									<img class="rounded-circle" src="assets/img/patients/patient.jpg" width="31" alt="Ryan Taylor">
+									<img class="rounded-circle" src="{% static 'cas/img/patients/patient.jpg' %}" width="31" alt="Ryan Taylor">
 								</span>
 							</a>
 							<div class="dropdown-menu dropdown-menu-right">
 								<div class="user-header">
 									<div class="avatar avatar-sm">
-										<img src="assets/img/patients/patient.jpg" alt="User Image" class="avatar-img rounded-circle">
+										<img src="{% static 'cas/img/patients/patient.jpg' %}" alt="User Image" class="avatar-img rounded-circle">
 									</div>
 									<div class="user-text">
 										<h6>Richard Wilson</h6>
@@ -189,7 +190,7 @@
 								<div class="widget-profile pro-widget-content">
 									<div class="profile-info-widget">
 										<a href="#" class="booking-doc-img">
-											<img src="assets/img/patients/patient.jpg" alt="User Image">
+											<img src="{% static 'cas/img/patients/patient.jpg' %}" alt="User Image">
 										</a>
 										<div class="profile-det-info">
 											<h3>Richard Wilson</h3>
@@ -296,7 +297,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-01.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Ruby Perrin <span>Dental</span></a>
 																		</h2>
@@ -321,7 +322,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-02.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-02.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Darren Elder <span>Dental</span></a>
 																		</h2>
@@ -346,7 +347,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-03.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Deborah Angel <span>Cardiology</span></a>
 																		</h2>
@@ -371,7 +372,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-04.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-04.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Sofia Brient <span>Urology</span></a>
 																		</h2>
@@ -396,7 +397,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-05.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-05.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Marvin Campbell <span>Ophthalmology</span></a>
 																		</h2>
@@ -421,7 +422,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-06.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-06.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Katharine Berthold <span>Orthopaedics</span></a>
 																		</h2>
@@ -446,7 +447,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-07.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-07.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Linda Tobin <span>Neurology</span></a>
 																		</h2>
@@ -471,7 +472,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-08.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Paul Richard <span>Dermatology</span></a>
 																		</h2>
@@ -496,7 +497,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-09.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-09.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. John Gibbs <span>Dental</span></a>
 																		</h2>
@@ -521,7 +522,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-10.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-10.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Olga Barlow  <span>Dental</span></a>
 																		</h2>
@@ -571,7 +572,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-01.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Ruby Perrin <span>Dental</span></a>
 																		</h2>
@@ -593,7 +594,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-02.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-02.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Darren Elder <span>Dental</span></a>
 																		</h2>
@@ -615,7 +616,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-03.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Deborah Angel <span>Cardiology</span></a>
 																		</h2>
@@ -637,7 +638,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-04.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-04.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Sofia Brient <span>Urology</span></a>
 																		</h2>
@@ -659,7 +660,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-05.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-05.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Marvin Campbell <span>Dental</span></a>
 																		</h2>
@@ -681,7 +682,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-06.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-06.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Katharine Berthold <span>Orthopaedics</span></a>
 																		</h2>
@@ -703,7 +704,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-07.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-07.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Linda Tobin <span>Neurology</span></a>
 																		</h2>
@@ -725,7 +726,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-08.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Paul Richard <span>Dermatology</span></a>
 																		</h2>
@@ -747,7 +748,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-09.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-09.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. John Gibbs <span>Dental</span></a>
 																		</h2>
@@ -769,7 +770,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-10.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-10.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Olga Barlow <span>Dental</span></a>
 																		</h2>
@@ -818,7 +819,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-01.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Ruby Perrin <span>Dental</span></a>
 																		</h2>
@@ -842,7 +843,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-02.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-02.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Darren Elder <span>Dental</span></a>
 																		</h2>
@@ -866,7 +867,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-03.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Deborah Angel <span>Cardiology</span></a>
 																		</h2>
@@ -890,7 +891,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-04.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-04.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Sofia Brient <span>Urology</span></a>
 																		</h2>
@@ -914,7 +915,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-05.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-05.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Marvin Campbell <span>Ophthalmology</span></a>
 																		</h2>
@@ -938,7 +939,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-06.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-06.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Katharine Berthold <span>Orthopaedics</span></a>
 																		</h2>
@@ -962,7 +963,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-07.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-07.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Linda Tobin <span>Neurology</span></a>
 																		</h2>
@@ -986,7 +987,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-08.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Paul Richard <span>Dermatology</span></a>
 																		</h2>
@@ -1010,7 +1011,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-09.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-09.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. John Gibbs <span>Dental</span></a>
 																		</h2>
@@ -1034,7 +1035,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-10.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-10.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Olga Barlow <span>Dental</span></a>
 																		</h2>
@@ -1081,7 +1082,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-01.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-01.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Ruby Perrin <span>Dental</span></a>
 																		</h2>
@@ -1106,7 +1107,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-02.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-02.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Darren Elder <span>Dental</span></a>
 																		</h2>
@@ -1131,7 +1132,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-03.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-03.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Deborah Angel <span>Cardiology</span></a>
 																		</h2>
@@ -1156,7 +1157,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-04.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-04.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Sofia Brient <span>Urology</span></a>
 																		</h2>
@@ -1181,7 +1182,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-05.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-05.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Marvin Campbell <span>Ophthalmology</span></a>
 																		</h2>
@@ -1206,7 +1207,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-06.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-06.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Katharine Berthold <span>Orthopaedics</span></a>
 																		</h2>
@@ -1231,7 +1232,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-07.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-07.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Linda Tobin <span>Neurology</span></a>
 																		</h2>
@@ -1256,7 +1257,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-08.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-08.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Paul Richard <span>Dermatology</span></a>
 																		</h2>
@@ -1281,7 +1282,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-09.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-09.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. John Gibbs <span>Dental</span></a>
 																		</h2>
@@ -1306,7 +1307,7 @@
 																	<td>
 																		<h2 class="table-avatar">
 																			<a href="doctor-profile.html" class="avatar avatar-sm mr-2">
-																				<img class="avatar-img rounded-circle" src="assets/img/doctors/doctor-thumb-10.jpg" alt="User Image">
+																				<img class="avatar-img rounded-circle" src="{% static 'cas/img/doctors/doctor-thumb-10.jpg' %}" alt="User Image">
 																			</a>
 																			<a href="doctor-profile.html">Dr. Olga Barlow <span>#0010</span></a>
 																		</h2>
@@ -1357,7 +1358,7 @@
 								<!-- Footer Widget -->
 								<div class="footer-widget footer-about">
 									<div class="footer-logo">
-										<img src="assets/img/footer-logo.png" alt="logo">
+										<img src="{% static 'cas/img/footer-logo.png' %}" alt="logo">
 									</div>
 									<div class="footer-about-content">
 										<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
@@ -1488,18 +1489,18 @@
 		<!-- /Main Wrapper -->
 	  
 		<!-- jQuery -->
-		<script src="assets/js/jquery.min.js"></script>
+		<script src="{% static 'cas/js/jquery.min.js' %}"></script>
 		
 		<!-- Bootstrap Core JS -->
-		<script src="assets/js/popper.min.js"></script>
-		<script src="assets/js/bootstrap.min.js"></script>
+		<script src="{% static 'cas/js/popper.min.js' %}"></script>
+		<script src="{% static 'cas/js/bootstrap.min.js' %}"></script>
 		
 		<!-- Sticky Sidebar JS -->
-        <script src="assets/plugins/theia-sticky-sidebar/ResizeSensor.js"></script>
-        <script src="assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js"></script>
+        <script src="{% static 'cas/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
+        <script src="{% static 'cas/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
 		
 		<!-- Custom JS -->
-		<script src="assets/js/script.js"></script>
+		<script src="{% static 'cas/js/script.js' %}"></script>
 		
 	</body>
 
