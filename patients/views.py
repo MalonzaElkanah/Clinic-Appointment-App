@@ -6,11 +6,13 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required
 
 from .models import Patient
+from .forms import PatientForm
 
 
 def register(request):
 	if request.is_ajax():
-		user = User.objects.create_user(request.POST['email'], request.POST['email'], request.POST['password'])
+		user = User.objects.create_user(request.POST['email'], request.POST['email'], 
+			request.POST['password'])
 		if user.is_active:
 			user.first_name = request.POST['first_name']
 			user.save()
@@ -35,15 +37,44 @@ def register(request):
 
 
 def patient_dashboard(request):
-	profile = check_profile(request.user)
-	if profile == None:
-		return HttpResponseRedirect('../patients/profile-settings/')
-	else:
+	try:
+		profile = Patient.objects.get(user=request.user.id)
 		return render(request, 'patients/patient-dashboard.html', {"profile": profile})
+	except Exception:
+		return HttpResponseRedirect('../patients/profile-settings/')
 
 
 def profile_settings(request):
-	return render(request, 'patients/profile-settings.html')
+	#data = {'user': request.user.id, 'first_name': request.user.first_name, 'email': request.user.email}
+	if request.method == 'POST':
+		if int(request.POST['user']) == request.user.id:
+			try:
+				a = Patient.objects.get(user=request.user.id)
+				f = PatientForm(request.POST, request.FILES, instance=a)
+				f.save()
+				return HttpResponseRedirect('../../patients/')
+			except Exception:
+				form = PatientForm(request.POST, request.FILES)
+				if form.is_valid():
+					form.save()
+					user=request.user
+					user.last_name = request.POST['second_name']
+					user.first_name = request.POST['first_name']
+					user.email = request.POST['email']
+					user.save()
+					return HttpResponseRedirect('../../patients/')
+				else:
+					return HttpResponse(form.errors)
+					# return render(request, 'appointments/profile-settings.html', {'form': form})
+		else:
+			return HttpResponse("form.errors")
+	else:
+		profile = None
+		try:
+			profile = Patient.objects.get(user=request.user.id)
+		except Exception:
+			profile = request.user
+		return render(request, 'patients/profile-settings.html', {"profile": profile})
 
 
 def booking(request):

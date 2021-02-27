@@ -4,7 +4,7 @@
 <!-- doccure/patient-dashboard.html  30 Nov 2019 04:12:16 GMT -->
 <head>
 		<meta charset="utf-8">
-		<title>Doccure</title>
+		<title>Doccure | Patients</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
 		{% load static %}
 		
@@ -135,21 +135,21 @@
 						<li class="nav-item dropdown has-arrow logged-item">
 							<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 								<span class="user-img">
-									<img class="rounded-circle" src="{% static 'cas/img/patients/patient.jpg' %}" width="31" alt="Ryan Taylor">
+									<img class="rounded-circle" src="{{profile.image.url}}" width="31" alt="{{user.first_name}} {{user.last_name}}">
 								</span>
 							</a>
 							<div class="dropdown-menu dropdown-menu-right">
 								<div class="user-header">
 									<div class="avatar avatar-sm">
-										<img src="{% static 'cas/img/patients/patient.jpg' %}" alt="User Image" class="avatar-img rounded-circle">
+										<img src="{{profile.image.url}}" alt="User Image" class="avatar-img rounded-circle">
 									</div>
 									<div class="user-text">
-										<h6>Richard Wilson</h6>
+										<h6>{{user.first_name}} {{user.last_name}}</h6>
 										<p class="text-muted mb-0">Patient</p>
 									</div>
 								</div>
-								<a class="dropdown-item" href="patient-dashboard.html">Dashboard</a>
-								<a class="dropdown-item" href="profile-settings.html">Profile Settings</a>
+								<a class="dropdown-item" href="{% url 'patient-dashboard' %}">Dashboard</a>
+								<a class="dropdown-item" href="{% url 'profile-settings' %}">Profile Settings</a>
 								<a class="dropdown-item" href="login.html">Logout</a>
 							</div>
 						</li>
@@ -190,13 +190,13 @@
 								<div class="widget-profile pro-widget-content">
 									<div class="profile-info-widget">
 										<a href="#" class="booking-doc-img">
-											<img src="{% static 'cas/img/patients/patient.jpg' %}" alt="User Image">
+											<img src="{{profile.image.url}}" alt="User Image">
 										</a>
 										<div class="profile-det-info">
-											<h3>Richard Wilson</h3>
+											<h3>{{user.first_name}} {{user.last_name}}</h3>
 											<div class="patient-details">
-												<h5><i class="fas fa-birthday-cake"></i> 24 Jul 1983, 38 years</h5>
-												<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Newyork, USA</h5>
+												<h5><i class="fas fa-birthday-cake"></i> {{profile.d_o_b}}, {{ profile.d_o_b|timesince }}</h5>
+												<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> {{profile.county}}, {{profile.country}}</h5>
 											</div>
 										</div>
 									</div>
@@ -205,7 +205,7 @@
 									<nav class="dashboard-menu">
 										<ul>
 											<li class="active">
-												<a href="patient-dashboard.html">
+												<a href="{% url 'patient-dashboard' %}">
 													<i class="fas fa-columns"></i>
 													<span>Dashboard</span>
 												</a>
@@ -224,7 +224,7 @@
 												</a>
 											</li>
 											<li>
-												<a href="profile-settings.html">
+												<a href="{% url 'profile-settings' %}">
 													<i class="fas fa-user-cog"></i>
 													<span>Profile Settings</span>
 												</a>

@@ -14,4 +14,5 @@ urlpatterns = [
  	path('chat/', views.chat, name='chat'),
  	path('invoice-view/', views.invoice_view, name='invoice-view'),
  	path('favourites/', views.favourites, name='favourites'),
+ 	#path('test/', views.test, name='test'),
 ]
