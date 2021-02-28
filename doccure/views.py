@@ -45,6 +45,12 @@ def user_login(request):
 		return render(request, 'cas/login.html')
 
 
+@login_required(login_url='/login/')
+def user_logout(request):
+	logout(request)
+	return HttpResponseRedirect('../login/')
+
+
 def privacy_policy(request):
 	return render(request, 'cas/privacy-policy.html')
 

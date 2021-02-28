@@ -19,7 +19,6 @@ def register(request):
 			try:
 				pt_group = Group.objects.get(name="patients_group")
 				user.groups.add(pt_group)
-				return HttpResponseRedirect('../login')
 			except Exception:
 				pt_group = Group.objects.create(name='patients_group')
 				perm_pt_add = Permission.objects.get(codename='add_patient')
@@ -27,8 +26,8 @@ def register(request):
 				perm_pt_chg = Permission.objects.get(codename='change_patient')
 				pt_group.permissions.add(perm_pt_add, perm_pt_chg, perm_pt_del)
 				user.groups.add(pt_group)
-				return JsonResponse({"success": "User " + request.POST['first_name'] +" Created.", 
-					"redirect": "../../login/"}, status=200)
+			return JsonResponse({"success": "User " + request.POST['first_name'] +" Created.", 
+				"redirect": "../../login/"}, status=200)
 		else:
 			return JsonResponse({"error": "Error Creating User " + request.POST['first_name'] +"."}, 
 				status=200) 
@@ -36,6 +35,7 @@ def register(request):
 		return render(request, 'patients/register.html')
 
 
+@login_required(login_url='/login/')
 def patient_dashboard(request):
 	try:
 		profile = Patient.objects.get(user=request.user.id)
@@ -44,6 +44,7 @@ def patient_dashboard(request):
 		return HttpResponseRedirect('../patients/profile-settings/')
 
 
+@login_required(login_url='/login/')
 def profile_settings(request):
 	#data = {'user': request.user.id, 'first_name': request.user.first_name, 'email': request.user.email}
 	if request.method == 'POST':

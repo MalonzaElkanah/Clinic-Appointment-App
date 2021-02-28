@@ -1,3 +1,72 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
+
+class Speciality(models.Model):
+	name = models.CharField('Name', max_length=100)
+	image = models.ImageField('Image', upload_to='Image/Speciality', max_length=500)	
+	
+	def __str__(self):
+		return self.name
+
+
+class Doctor(models.Model):
+	"""docstring for Doctor"""
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	image = models.ImageField('Profile Image', upload_to='Image/Doctors', 
+		max_length=500, default='dummy.png')
+	first_name = models.CharField('First Name', max_length=50)
+	second_name =  models.CharField('Second Name', max_length=50)
+	title = models.CharField('Title', max_length=200, default='Dr.')
+	phone_no = models.CharField('Phone Number', max_length=50)
+	email = models.EmailField('Email', max_length=250)
+	gender = models.CharField('Gender', max_length=10)
+	d_o_b = models.DateField('Date of Birth', blank=True)
+	biography = models.CharField('Biography', max_length=1000, blank=True)
+	address_line1 = models.CharField('Address Line 1', max_length=200, blank=True)
+	address_line2 = models.CharField('Address Line 2', max_length=200, blank=True)
+	country = models.CharField('Country', max_length=100, blank=True)
+	county = models.CharField('County', max_length=100, blank=True)
+	town = models.CharField('Town', max_length=100, blank=True)
+	pricing =  models.FloatField('Amount', default=0.00)
+	services = models.CharField('Services', max_length=1000, blank=True)
+	specialization = models.CharField('Specialization', max_length=1000, blank=True)
+	clinic = models.CharField('Clinic', max_length=100, blank=True)
+	clinic_address = models.CharField('Clinic Address', max_length=100, blank=True)
+	speciality = models.OneToOneField(Speciality, on_delete=models.CASCADE)
+	# speciality
+
+
+class Education(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	degree = models.CharField('Degree', max_length=50)
+	institute = models.CharField('College/Institute', max_length=50)
+	y_o_c = models.DateField('Year of Completion')
+
+
+class Experience(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	hospital_name = models.CharField('Hospital Name', max_length=50)
+	start = models.DateTimeField('From')
+	finish = models.DateTimeField('To', blank=True)
+	designation = models.CharField('Designation', max_length=50)
+
+
+class Award(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	award = models.CharField('Award', max_length=50)
+	year  = models.DateTimeField('Year')
+
+
+class Membership(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	membership = models.CharField('Membership', max_length=50)
+
+
+class Registration(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	year = models.DateTimeField('Year')		
+	registration = models.CharField('Registration', max_length=50)
+
+
