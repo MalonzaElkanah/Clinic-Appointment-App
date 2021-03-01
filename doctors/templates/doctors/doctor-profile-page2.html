@@ -1,0 +1,409 @@
+{% extends "doctors/base.html" %}
+
+{% block title %}Profile Settings Page 2{% endblock %}
+
+{% load static %}
+{% block css %}
+	<!-- Datetimepicker CSS -->
+	<link rel="stylesheet" href="{% static 'cas/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block breadcrumb %}Profile Settings Page 2{% endblock %}
+{% block breadcrumb1 %}Profile Settings Page 2{% endblock %}
+
+{% block sidenav %}
+	<ul>
+		<li>
+			<a href="doctor-dashboard.html">
+				<i class="fas fa-columns"></i>
+				<span>Dashboard</span>
+			</a>
+		</li>
+		<li>
+			<a href="appointments.html">
+				<i class="fas fa-calendar-check"></i>
+				<span>Appointments</span>
+			</a>
+		</li>
+		<li>
+			<a href="my-patients.html">
+				<i class="fas fa-user-injured"></i>
+				<span>My Patients</span>
+			</a>
+		</li>
+		<li>
+			<a href="schedule-timings.html">
+				<i class="fas fa-hourglass-start"></i>
+				<span>Schedule Timings</span>
+			</a>
+		</li>
+		<li>
+			<a href="invoices.html">
+				<i class="fas fa-file-invoice"></i>
+				<span>Invoices</span>
+			</a>
+		</li>
+		<li>
+			<a href="reviews.html">
+				<i class="fas fa-star"></i>
+				<span>Reviews</span>
+			</a>
+		</li>
+		<li>
+			<a href="chat-doctor.html">
+				<i class="fas fa-comments"></i>
+				<span>Message</span>
+				<small class="unread-msg">23</small>
+			</a>
+		</li>
+		<li class="active">
+			<a href="doctor-profile-settings.html">
+				<i class="fas fa-user-cog"></i>
+				<span>Profile Settings</span>
+			</a>
+		</li>
+		<li>
+			<a href="social-media.html">
+				<i class="fas fa-share-alt"></i>
+				<span>Social Media</span>
+			</a>
+		</li>
+		<li>
+			<a href="doctor-change-password.html">
+				<i class="fas fa-lock"></i>
+				<span>Change Password</span>
+			</a>
+		</li>
+		<li>
+			<a href="index-2.html">
+				<i class="fas fa-sign-out-alt"></i>
+				<span>Logout</span>
+			</a>
+		</li>
+	</ul>
+
+{% endblock %}
+
+{% block content %}
+	
+<div class="col-md-7 col-lg-8 col-xl-9">
+	<form method="post" action="{% url 'doctor-profile-page2' %}">
+		{% csrf_token %}
+		<!-- Education -->
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Education</h4>
+				<div class="education-info">
+				{% for edu in education %}
+					<div class="row form-row education-cont">
+						<div class="col-12 col-md-10 col-lg-11">
+							<div class="row form-row">
+								<input type="text" name="doctor{{edu.id}}" value="{{edu.doctor.id}}" style="display: none;">
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Degree</label>
+										<input type="text" class="form-control" name="degree{{edu.id}}" value="{{edu.degree}}" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>College/Institute</label>
+										<input type="text" class="form-control" name="institute{{edu.id}}" value="{{edu.institute}}" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Year of Completion</label>
+										<input type="text" class="form-control datetimepicker" name="y_o_c{{edu.id}}" value="{{edu.y_o_c|date:"Y-m-d"}}" required>
+									</div> 
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}	
+					<div class="row form-row education-cont">
+						<div class="col-12 col-md-10 col-lg-11">
+							<div class="row form-row">
+								<input type="text" name="doctor-0" value="{{profile.id}}" style="display: none;">
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Degree</label>
+										<input type="text" class="form-control" name="degree-0" required>
+									</div>
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>College/Institute</label>
+										<input type="text" class="form-control" name="institute-0" required>
+									</div>
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Date of Completion</label>
+										<input type="text" class="form-control datetimepicker" name="y_o_c-0" required>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-md-2 col-lg-1">
+							<label class="d-md-block d-sm-none d-none">&nbsp;</label>
+							<a href="#" class="btn btn-danger trash">
+								<i class="far fa-trash-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<input type="text" id="edu_form-num" name="edu_form-num" value="1" style="display: none;">
+			
+				<div class="add-more">
+					<a href="javascript:void(0);" class="add-education"><i class="fa fa-plus-circle"></i> Add More</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Education -->
+	
+		<!-- Experience -->
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Experience</h4>
+				<div class="experience-info">
+				{% for exp in experience %}
+					<div class="row form-row experience-cont">
+						<div class="col-12 col-md-10 col-lg-11">
+							<div class="row form-row">
+								<input type="text" name="doctor{{exp.id}}" value="{{exp.doctor.id}}" style="display: none;">
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Hospital Name</label>
+										<input type="text" class="form-control" name="hospital_name{{exp.id}}" value="{{exp.hospital_name}}" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>From</label>
+										<input type="text" class="form-control datetimepicker" name="start{{exp.id}}" value="{{exp.start|date:"Y-m-d"}}" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>To</label>
+										<input type="text" class="form-control datetimepicker" name="finish{{exp.id}}" value="{{exp.finish|date:"Y-m-d"}}" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Designation</label>
+										<input type="text" class="form-control" name="designation{{exp.id}}" value="{{exp.designation}}" required>
+									</div> 
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+					<div class="row form-row experience-cont">
+						<div class="col-12 col-md-10 col-lg-11">
+							<div class="row form-row">
+								<input type="text" name="doctor-0" value="{{profile.id}}" style="display: none;">
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Hospital Name</label>
+										<input type="text" class="form-control" name="hospital_name-0" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>From</label>
+										<input type="text" class="form-control datetimepicker" name="start-0" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>To</label>
+										<input type="text" class="form-control datetimepicker" name="finish-0" required>
+									</div> 
+								</div>
+								<div class="col-12 col-md-6 col-lg-4">
+									<div class="form-group">
+										<label>Designation</label>
+										<input type="text" class="form-control" name="designation-0" required>
+									</div> 
+								</div>
+							</div>
+							
+						</div>
+						<div class="col-12 col-md-2 col-lg-1">
+							<label class="d-md-block d-sm-none d-none">&nbsp;</label>
+							<a href="#" class="btn btn-danger trash">
+								<i class="far fa-trash-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<input type="text" id="exp_form-num" name="exp_form-num" value="1" style="display: none;">
+				<div class="add-more">
+					<a href="javascript:void(0);" class="add-experience"><i class="fa fa-plus-circle"></i> Add More</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Experience -->
+		
+		<!-- Awards -->
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Awards</h4>
+				<div class="awards-info">
+				{% for awd in awards %}
+					<div class="row form-row awards-cont">
+						<input type="text" name="doctor{{awd.id}}" value="{{awd.doctor.id}}" style="display: none;">
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Awards</label>
+								<input type="text" class="form-control" name="award{{awd.id}}" value="{{awd.award}}" required>
+							</div> 
+						</div>
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Year</label>
+								<input type="text" class="form-control datetimepicker" name="year{{awd.id}}" value="{{awd.year|date:"Y-m-d"}}" required>
+							</div> 
+						</div>
+					</div>
+				{% endfor %}
+					<div class="row form-row awards-cont">
+						<input type="text" name="doctor" value="{{profile.id}}" style="display: none;">
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Awards</label>
+								<input type="text" class="form-control" name="award-0" required>
+							</div>
+						</div>
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Year</label>
+								<input type="text" class="form-control datetimepicker" name="year-0" required>
+							</div>
+						</div>
+						<div class="col-12 col-md-2">
+							<label class="d-md-block d-sm-none d-none">&nbsp;</label>
+							<a href="#" class="btn btn-danger trash">
+								<i class="far fa-trash-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<input type="text" id="awd_form-num" name="awd_form-num" value="1" style="display: none;">
+				<div class="add-more">
+					<a href="javascript:void(0);" class="add-award"><i class="fa fa-plus-circle"></i> Add More</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Awards -->
+		
+		<!-- Memberships -->
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Memberships</h4>
+				<div class="membership-info">
+				{% for mbr in membership %}
+					<div class="row form-row membership-cont">
+						<div class="col-12 col-md-10 col-lg-5">
+							<input type="text" name="doctor{{mbr.id}}" value="{{mbr.doctor.id}}" style="display: none;">
+							<div class="form-group">
+								<label>Memberships</label>
+								<input type="text" class="form-control" name="membership{{mbr.id}}" value="{{mbr.membership}}" required>
+							</div> 
+						</div>
+					</div>
+				{% endfor %}
+					<div class="row form-row membership-cont">
+						<div class="col-12 col-md-10 col-lg-5">
+							<input type="text" name="doctor-0" value="{{profile.id}}" style="display: none;">
+							<div class="form-group">
+								<label>Memberships</label>
+								<input type="text" class="form-control" name="membership-0" required>
+							</div>
+						</div>
+						<div class="col-12 col-md-2 col-lg-2">
+							<label class="d-md-block d-sm-none d-none">&nbsp;</label>
+							<a href="#" class="btn btn-danger trash">
+								<i class="far fa-trash-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<p id="mbr_count" style="display: none;">1</p>
+				<input type="text" id="mbr_form-num-id" name="mbr_form-num" value="1" style="display: none;">
+				<div class="add-more">
+					<a href="javascript:void(0);" class="add-membership"><i class="fa fa-plus-circle"></i> Add More</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Memberships -->
+		
+		<!-- Registrations -->
+		<div class="card">
+			<div class="card-body">
+				<h4 class="card-title">Registrations</h4>
+				<div class="registrations-info">
+				{% for reg in registration %} 
+					<div class="row form-row reg-cont">
+						<input type="text" name="doctor{{reg.id}}" value="{{reg.doctor.id}}" style="display: none;" required>
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Registrations</label>
+								<input type="text" class="form-control" name="registration{{reg.id}}" value="{{reg.registration}}"> 
+							</div> 
+						</div>
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Year</label>
+								<input type="text" class="form-control datetimepicker" name="year{{reg.id}}" value="{{reg.year|date:"Y-m-d"}}" required>
+							</div> 
+						</div>
+					</div>
+				{% endfor %}
+					<div class="row form-row reg-cont">
+						<input type="text" name="doctor-0" value="{{profile.id}}" style="display: none;">
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Registrations</label>
+								<input type="text" class="form-control" name="registration-0" required>
+							</div>
+						</div>
+						<div class="col-12 col-md-5">
+							<div class="form-group">
+								<label>Year</label>
+								<input type="text" class="form-control datetimepicker" name="year-0" required>
+							</div>
+						</div>
+						<div class="col-12 col-md-2">
+							<label class="d-md-block d-sm-none d-none">&nbsp;</label>
+							<a href="#" class="btn btn-danger trash">
+								<i class="far fa-trash-alt"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+				<input type="text" id="reg_form-num" name="reg_form-num" value="1" style="display: none;">
+				<div class="add-more">
+					<a href="javascript:void(0);" class="add-reg"><i class="fa fa-plus-circle"></i> Add More</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Registrations -->
+		
+		<div class="submit-section submit-btn-bottom">
+			<button type="submit" class="btn btn-primary submit-btn">Save Changes</button>
+		</div>
+	</form>	
+</div>
+{% endblock %}
+
+{% block javascript %}
+<!-- Datetimepicker JS -->
+	<script src="{% static 'cas/js/moment.min.js' %}"></script>
+	<script src="{% static 'cas/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+	<!-- Profile Settings JS -->
+	<script src="{% static 'cas/js/profile-settings.js' %}"></script>
+{% endblock %}
