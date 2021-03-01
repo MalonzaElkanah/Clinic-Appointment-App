@@ -12,7 +12,17 @@ def index(request):
 
 
 def user_login(request):
-	if request.is_ajax():
+	if request.user.is_authenticated:
+		group = user.groups.get()
+		if group.name=='patients_group':
+			return HttpResponseRedirect('../patients/')
+		elif group.name=='doctors_group':
+			return HttpResponseRedirect('../doctors/')
+		elif user.is_superuser():
+			return HttpResponseRedirect('../administrators/')
+		else:
+			return HttpResponseRedirect('../')
+	elif request.is_ajax():
 		user = authenticate(username=request.POST['email'], password=request.POST['password'])
 		if user is not None:
 			login(request, user)

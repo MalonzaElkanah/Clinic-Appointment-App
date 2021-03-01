@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User, Group, Permission
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import Patient
 from .forms import PatientForm
@@ -35,16 +35,26 @@ def register(request):
 		return render(request, 'patients/register.html')
 
 
+def check_patient(user):
+	group = user.groups.get()
+	return group.name == 'patients_group'
+
+
+def check_settings(user):
+	profile = Patient.objects.filter(user=user.id)
+	return profile.count()>=1
+
+
 @login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def patient_dashboard(request):
-	try:
-		profile = Patient.objects.get(user=request.user.id)
-		return render(request, 'patients/patient-dashboard.html', {"profile": profile})
-	except Exception:
-		return HttpResponseRedirect('../patients/profile-settings/')
+	profile = Patient.objects.get(user=request.user.id)
+	return render(request, 'patients/patient-dashboard.html', {"profile": profile})
 
 
 @login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
 def profile_settings(request):
 	#data = {'user': request.user.id, 'first_name': request.user.first_name, 'email': request.user.email}
 	if request.method == 'POST':
@@ -106,20 +116,3 @@ def invoice_view(request):
 
 def favourites(request):
 	return render(request, 'patients/favourites.html')
-
-
-def check_profile(user):
-	profile = None
-	group = user.groups.get()
-	if group.name=='patients_group':
-		try:
-			profile = Patient.objects.get(user=user.id)
-		except Exception:
-			return None
-	elif group.name=='doctors_group':
-		return HttpResponseRedirect('../../doctors/')
-	elif user.is_superuser():
-		return HttpResponseRedirect('../../administrators/')
-	else:
-		profile= None
-

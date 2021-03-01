@@ -35,7 +35,9 @@ class Doctor(models.Model):
 	clinic = models.CharField('Clinic', max_length=100, blank=True)
 	clinic_address = models.CharField('Clinic Address', max_length=100, blank=True)
 	speciality = models.OneToOneField(Speciality, on_delete=models.CASCADE)
-	# speciality
+	''' user, image, first_name, second_name, title, phone_no, email, gender, d_o_b, biography,
+	address_line1, address_line2, country, county, town, pricing, services, specialization, clinic, 
+	clinic_address, speciality'''
 
 
 class Education(models.Model):
@@ -43,30 +45,34 @@ class Education(models.Model):
 	degree = models.CharField('Degree', max_length=50)
 	institute = models.CharField('College/Institute', max_length=50)
 	y_o_c = models.DateField('Year of Completion')
+	# doctor, degree, institute, y_o_c
 
 
 class Experience(models.Model):
 	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 	hospital_name = models.CharField('Hospital Name', max_length=50)
-	start = models.DateTimeField('From')
-	finish = models.DateTimeField('To', blank=True)
+	start = models.DateField('From')
+	finish = models.DateField('To', blank=True)
 	designation = models.CharField('Designation', max_length=50)
+	# doctor, hospital_name, start, finish, designation
 
 
 class Award(models.Model):
 	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 	award = models.CharField('Award', max_length=50)
-	year  = models.DateTimeField('Year')
+	year  = models.DateField('Year')
+	# doctor, award, year
 
 
 class Membership(models.Model):
 	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
 	membership = models.CharField('Membership', max_length=50)
+	# doctor, membership
 
 
 class Registration(models.Model):
 	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-	year = models.DateTimeField('Year')		
+	year = models.DateField('Year')		
 	registration = models.CharField('Registration', max_length=50)
-
+	# doctor, year, registration
 
