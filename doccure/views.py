@@ -6,9 +6,13 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
+from doctors.models import Speciality, Doctor
+
 
 def index(request):
-	return render(request, 'cas/index.html')
+	specialities = Speciality.objects.all()
+	doctors = Doctor.objects.all()
+	return render(request, 'cas/index.html', {"specialities": specialities, "doctors": doctors})
 
 
 def user_login(request):

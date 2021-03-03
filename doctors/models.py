@@ -38,6 +38,16 @@ class Doctor(models.Model):
 	''' user, image, first_name, second_name, title, phone_no, email, gender, d_o_b, biography,
 	address_line1, address_line2, country, county, town, pricing, services, specialization, clinic, 
 	clinic_address, speciality'''
+	def full_name(self):
+		return self.title + " " + self.first_name + " " + self.second_name
+
+	def service_list(self):
+		services = self.services
+		return services.split(',')
+
+	def specialization_list(self):
+		specialization = self.specialization
+		return specialization.split(',')
 
 
 class Education(models.Model):

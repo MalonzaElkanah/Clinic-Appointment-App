@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Patient
 from .forms import PatientForm
 
+from doctors.models import Doctor, Education, Experience, Award, Membership, Registration
+
 
 def register(request):
 	if request.is_ajax():
@@ -88,8 +90,20 @@ def profile_settings(request):
 		return render(request, 'patients/profile-settings.html', {"profile": profile})
 
 
-def booking(request):
-	return render(request, 'patients/booking.html')
+def doctor_profile(request, slug, doctor_id):
+	doctor = Doctor.objects.get(id=doctor_id)
+	edu = Education.objects.filter(doctor=doctor_id) 
+	exp = Experience.objects.filter(doctor=doctor_id)
+	awd = Award.objects.filter(doctor=doctor_id)
+	mbr = Membership.objects.filter(doctor=doctor_id)
+	reg = Registration.objects.filter(doctor=doctor_id)
+	return render(request, 'patients/doctor-profile.html', {"doctor": doctor, "education": edu, 
+		"experience": exp, "award": awd, "membership": mbr, "registration": reg})
+
+
+def booking(request, slug, doctor_id):
+	doctor = Doctor.objects.get(id=doctor_id)
+	return render(request, 'patients/booking.html', {"doctor": doctor})
 
 
 def booking_success(request):
@@ -103,9 +117,6 @@ def checkout(request):
 def change_password(request):
 	return render(request, 'patients/change-password.html')
 
-
-def doctor_profile(request):
-	return render(request, 'patients/doctor-profile.html')
 
 def chat(request):
 	return render(request, 'patients/chat.html')

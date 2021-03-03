@@ -38,19 +38,19 @@ Version      : 1.0
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>Degree</label>' +
-							'<input type="text" class="form-control" name="degree-'+num+'" required>' +
+							'<input type="text" class="form-control" name="degree-'+form_num+'" required>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>College/Institute</label>' +
-							'<input type="text" class="form-control" name="institute-'+num+'" required>' +
+							'<input type="text" class="form-control" name="institute-'+form_num+'" required>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>Year of Completion</label>' +
-							'<input type="text" class="form-control datetimepicker" name="y_o_c-'+num+'">' +
+							'<input type="text" class="form-control datetimepicker" name="y_o_c-'+form_num+'">' +
 						'</div>' +
 					'</div>' +
 				'</div>' +
@@ -80,25 +80,25 @@ Version      : 1.0
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>Hospital Name</label>' +
-							'<input type="text" class="form-control" name="hospital_name-'+num+'" required>' +
+							'<input type="text" class="form-control" name="hospital_name-'+form_num+'" required>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>From</label>' +
-							'<input type="text" class="form-control datetimepicker" name="start-'+num+'" required>' +
+							'<input type="text" class="form-control datetimepicker" name="start-'+form_num+'" required>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>To</label>' +
-							'<input type="text" class="form-control datetimepicker" name="finish-'+num+'" required>' +
+							'<input type="text" class="form-control datetimepicker" name="finish-'+form_num+'" required>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-12 col-md-6 col-lg-4">' +
 						'<div class="form-group">' +
 							'<label>Designation</label>' +
-							'<input type="text" class="form-control" name="designation-'+num+'" required>' +
+							'<input type="text" class="form-control" name="designation-'+form_num+'" required>' +
 						'</div>' +
 					'</div>' +
 				'</div>' +
@@ -126,13 +126,13 @@ Version      : 1.0
 			'<div class="col-12 col-md-5">' +
 				'<div class="form-group">' +
 					'<label>Awards</label>' +
-					'<input type="text" class="form-control" name="award-'+num+'" required>' +
+					'<input type="text" class="form-control" name="award-'+form_num+'" required>' +
 				'</div>' +
 			'</div>' +
 			'<div class="col-12 col-md-5">' +
 				'<div class="form-group">' +
 					'<label>Year</label>' +
-					'<input type="text" class="form-control datetimepicker" name="year-'+num+'" required>' +
+					'<input type="text" class="form-control datetimepicker" name="year-'+form_num+'" required>' +
 				'</div>' +
 			'</div>' +
 			'<div class="col-12 col-md-2">' +
@@ -159,11 +159,7 @@ Version      : 1.0
 		alert(num);
 		$("#mbr_form-num-id").val(''+num+'');*/
 		var input_num = parseInt($("#mbr_count").text());
-    	input_num = input_num + 1;
-    	$("#mbr_count").text(''+input_num+'');
-    	$("#mbr_form-num-id").attr('value', input_num);
-
-        var membershipcontent = '<div class="row form-row membership-cont">' +
+    	var membershipcontent = '<div class="row form-row membership-cont">' +
 			'<div class="col-12 col-md-10 col-lg-5">' +
 				'<div class="form-group">' +
 					'<label>Memberships</label>' +
@@ -175,6 +171,11 @@ Version      : 1.0
 				'<a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>' +
 			'</div>' +
 		'</div>';
+		
+		input_num = input_num + 1;
+    	$("#mbr_count").text(''+input_num+'');
+    	$("#mbr_form-num-id").attr('value', input_num);
+
 		
         $(".membership-info").append(membershipcontent);
         return false;
@@ -196,13 +197,13 @@ Version      : 1.0
 			'<div class="col-12 col-md-5">' +
 				'<div class="form-group">' +
 					'<label>Registrations</label>' +
-					'<input type="text" class="form-control" name="registration-'+num+'" required>' +
+					'<input type="text" class="form-control" name="registration-'+form_num+'" required>' +
 				'</div>' +
 			'</div>' +
 			'<div class="col-12 col-md-5">' +
 				'<div class="form-group">' +
 					'<label>Year</label>' +
-					'<input type="text" class="form-control datetimepicker" name="year-'+num+'" required>' +
+					'<input type="text" class="form-control datetimepicker" name="year-'+form_num+'" required>' +
 				'</div>' +
 			'</div>' +
 			'<div class="col-12 col-md-2">' +
