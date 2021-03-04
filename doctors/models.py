@@ -86,3 +86,37 @@ class Registration(models.Model):
 	registration = models.CharField('Registration', max_length=50)
 	# doctor, year, registration
 
+
+class DoctorSchedule(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	day = models.CharField('Day', max_length=10)
+	interval = models.IntegerField('Interval')
+	# doctor, day, interval
+
+	def all_timeslots(self):
+		schedules = DoctorSchedule.objects.filter(doctor=self.doctor.id)
+		slots = {}
+		for schedule in schedules:
+			day = 'slot_'+str(schedule.day)
+			time_slots = TimeSlot.objects.filter(schedule=schedule.id)
+			if time_slots == []:
+				time_slots = None
+			slots.setdefault(day, time_slots)
+		return slots
+
+	def timeslots(self):
+		schedule = DoctorSchedule.objects.get(id=self.id)
+		time_slots = TimeSlot.objects.filter(schedule=schedule.id)
+		return time_slots
+
+
+class TimeSlot(models.Model):
+	schedule = models.ForeignKey(DoctorSchedule, on_delete=models.CASCADE)
+	start_time = models.TimeField('Start Time') 
+	end_time = models.TimeField('End Time')
+	#schedule, start_time, end_time
+
+	def slot(self):
+		time = str(f"{self.start_time:%I.%M %p}")+" - "+str(f"{self.end_time:%I.%M %p}")
+		return time
+

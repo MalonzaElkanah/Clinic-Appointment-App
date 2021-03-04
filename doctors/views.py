@@ -5,7 +5,8 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .forms import DoctorForm, EducationForm, ExperienceForm, AwardForm, MembershipForm, RegistrationForm
-from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration
+from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration 
+from .models import DoctorSchedule
 
 # Create your views here.
 
@@ -211,6 +212,18 @@ def doctor_profile_page2(request):
 			'experience': exp, 'awards': awd, 'membership': mbr, 'registration': reg})
 
 
+def schedule_timings(request):
+	profile = Doctor.objects.get(user=request.user.id)
+	schedules = DoctorSchedule.objects.filter(doctor=profile.id)
+	if schedules.count() < 7:
+		res = new_schedule(profile.id)
+		if res:
+			schedules = DoctorSchedule.objects.filter(doctor=profile.id)
+		else:
+			return HttpResponse(res)
+	return render(request, 'doctors/schedule-timings.html', {'profile': profile, 'schedules': schedules})
+
+
 def my_patients(request):
 	return render(request, 'doctors/my-patients.html')
 
@@ -247,6 +260,19 @@ def appointments(request):
 def edit_prescription(request):
 	return render(request, 'doctors/edit-prescription.html')
 
-def schedule_timings(request):
-	return render(request, 'doctors/schedule_timings.html')
+def new_schedule(doctor):
+	days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+	err = []
+	for day in days:
+		data = {'doctor': doctor, 'day': day, 'interval': 30}
+		form = ScheduleModelForm(data)
+		if form.is_valid():
+			form.save()
+		else:
+			err = err + formset.errors
+	if err == []:
+		return True
+	else:
+		return err
+
 
