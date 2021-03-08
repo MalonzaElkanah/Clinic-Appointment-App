@@ -1,0 +1,156 @@
+{% extends "doctors/base.html" %}
+
+{% block title %} Social Media{% endblock %}
+
+{% load static %}
+			
+			
+{% block breadcrumb %}Social Media {% endblock %}
+{% block breadcrumb1 %} Social Media{% endblock %}
+
+{% block sidenav %}
+	<ul>
+		<li>
+			<a href="{% url 'doctor-dashboard' %}">
+				<i class="fas fa-columns"></i>
+				<span>Dashboard</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'appointments' %}">
+				<i class="fas fa-calendar-check"></i>
+				<span>Appointments</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'my-patients' %}">
+				<i class="fas fa-user-injured"></i>
+				<span>My Patients</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'schedule-timings' %}">
+				<i class="fas fa-hourglass-start"></i>
+				<span>Schedule Timings</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'invoices' %}">
+				<i class="fas fa-file-invoice"></i>
+				<span>Invoices</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'reviews' %}">
+				<i class="fas fa-star"></i>
+				<span>Reviews</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'chat-doctor' %}">
+				<i class="fas fa-comments"></i>
+				<span>Message</span>
+				<small class="unread-msg">23</small>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'doctor-profile-settings' %}">
+				<i class="fas fa-user-cog"></i>
+				<span>Profile Settings</span>
+			</a>
+		</li>
+		<li class="active">
+			<a href="{% url 'social-media' %}">
+				<i class="fas fa-share-alt"></i>
+				<span>Social Media</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'doctor-change-password' %}">
+				<i class="fas fa-lock"></i>
+				<span>Change Password</span>
+			</a>
+		</li>
+		<li>
+			<a href="{% url 'logout' %}">
+				<i class="fas fa-sign-out-alt"></i>
+				<span>Logout</span>
+			</a>
+		</li>
+	</ul>
+{% endblock %}
+
+{% block content %}
+	
+	<div class="col-md-7 col-lg-8 col-xl-9">
+		<div class="card">
+			<div class="card-body">
+			
+				<!-- Social Form '', '', '', -->
+				<form  class="add-form" method="POST" action="{% url 'social-media' %}">    
+					{% csrf_token %}
+					<input type="text" name="doctor" value="{{profile.id}}" style="display: none;">                                                                                  
+					<div class="row">
+						<div class="col-md-12 col-lg-8">
+							<div class="form-group">
+								<label>Facebook URL</label>
+								<input type="text" class="form-control" name="facebook_url" value="{{social.facebook_url}}">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-lg-8">
+							<div class="form-group">
+								<label>Twitter URL</label>
+								<input type="text" class="form-control" name="twitter_url" value="{{social.twitter_url}}">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-lg-8">
+							<div class="form-group">
+								<label>Instagram URL</label>
+								<input type="text" class="form-control" name="instagram_url" value="{{social.instagram_url}}">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-lg-8">
+							<div class="form-group">
+								<label>Pinterest URL</label>
+								<input type="text" class="form-control" name="pinterest_url" value="{{social.pinterest_url}}">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-lg-8">
+							<div class="form-group">
+								<label>Linkedin URL</label>
+								<input type="text" class="form-control" name="linkedin_url" value="{{social.linkedin_url}}">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-lg-8">
+							<div class="form-group">
+								<label>Youtube URL</label>
+								<input type="text" class="form-control" name="youtube_url" value="{{social.youtube_url}}">
+							</div>
+						</div>
+					</div>
+					<div class="submit-section">
+						<button type="submit" class="btn btn-primary submit-btn">Save Changes</button>
+					</div>
+				</form>
+				<!-- /Social Form -->
+				
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascript %}
+	<!-- Custom JS -->
+	<script src="{% static 'cas/js/ajax.js' %}"></script>
+{% endblock %}
+		
