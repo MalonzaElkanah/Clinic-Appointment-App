@@ -120,3 +120,12 @@ class TimeSlot(models.Model):
 		time = str(f"{self.start_time:%I.%M %p}")+" - "+str(f"{self.end_time:%I.%M %p}")
 		return time
 
+
+class SocialMedia(models.Model):
+	doctor = models.OneToOneField(Doctor, on_delete=models.CASCADE)
+	facebook_url = models.URLField('Facebook URL', max_length=200, blank=True)
+	twitter_url = models.URLField('Twitter URL', max_length=200, blank=True)
+	instagram_url = models.URLField('Instagram URL', max_length=200, blank=True)
+	pinterest_url = models.URLField('Pinterest URL', max_length=200, blank=True)
+	linkedin_url = models.URLField('Linkedin URL', max_length=200, blank=True)
+	youtube_url = models.URLField('Youtube URL', max_length=200, blank=True)

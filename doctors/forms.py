@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from .models import Doctor, Education, Experience, Award, Membership, Registration
+from .models import Doctor, Education, Experience, Award, Membership, Registration, SocialMedia
 
 
 
@@ -37,3 +37,10 @@ class RegistrationForm(ModelForm):
 		model = Registration
 		fields = ('doctor', 'year', 'registration')
 
+
+class SocialMediaForm(ModelForm):
+	
+	class Meta:
+		model = SocialMedia
+		fields = ('doctor', 'facebook_url', 'twitter_url', 'instagram_url', 'pinterest_url', 'linkedin_url', 
+			'youtube_url')

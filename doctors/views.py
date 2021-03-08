@@ -5,9 +5,11 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .forms import DoctorForm, EducationForm, ExperienceForm, AwardForm, MembershipForm, RegistrationForm
-from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration 
-from .models import DoctorSchedule
+from .forms import SocialMediaForm
+from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration, TimeSlot
+from .models import DoctorSchedule, SocialMedia
 
+import datetime as dt
 # Create your views here.
 
 def doctor_register(request):
@@ -216,12 +218,119 @@ def schedule_timings(request):
 	profile = Doctor.objects.get(user=request.user.id)
 	schedules = DoctorSchedule.objects.filter(doctor=profile.id)
 	if schedules.count() < 7:
-		res = new_schedule(profile.id)
+		res = new_schedule(profile)
 		if res:
 			schedules = DoctorSchedule.objects.filter(doctor=profile.id)
 		else:
 			return HttpResponse(res)
-	return render(request, 'doctors/schedule-timings.html', {'profile': profile, 'schedules': schedules})
+
+	hours = {}
+	for i in range(0, 24):
+		time = dt.time(i,00,00)
+		time1 = dt.time(i,30,00)
+		hours.setdefault(f"{time:%H:%M:%S}", f"{time:%I.%M %p}")
+		hours.setdefault(f"{time1:%H:%M:%S}", f"{time1:%I.%M %p}")
+	return render(request, 'doctors/schedule-timings.html', {'profile': profile, 'schedules': schedules, 
+		"hours": hours})
+
+
+def new_timeslot(request):
+	if request.method == 'POST':
+		form_num = int(request.POST['add_form-num'])
+		for x in range(0, form_num):
+			if not request.POST['start_time_'+str(x)] == '' and not request.POST['end_time_'+str(x)] == '':
+				schedule_id = int(request.POST['schedule']) 
+				start =	request.POST['start_time_'+str(x)] 
+				end = request.POST['end_time_'+str(x)]
+				schedule = DoctorSchedule.objects.get(id=schedule_id)
+				time_slot = TimeSlot(schedule=schedule, start_time=start, end_time=end)
+				time_slot.save()
+
+		redirect = '../schedule-timings/'	
+		return JsonResponse({"success": "Time Slots Created.", "redirect": redirect}, status=200)
+	else:
+		return HttpResponseRedirect('../schedule-timings/')
+
+
+def update_timeslot(request):
+	if request.method == 'POST':
+		form_num = int(request.POST['edit_form-num'])
+		schedule_id = int(request.POST['schedule'])
+		schedule = DoctorSchedule.objects.get(id=schedule_id)
+		time_slots = TimeSlot.objects.filter(schedule=schedule.id)
+		for slot in time_slots:
+			s = str(slot.id)
+			if not request.POST['start_time'+s] == '' and not request.POST['end_time'+s] == '':
+				slot.start_time = request.POST['start_time'+s]
+				slot.end_time = request.POST['end_time'+s]
+				slot.save()
+
+		if form_num > 0:
+			for x in range(0, form_num):
+				if not request.POST['start_time_'+str(x)] == '' and not request.POST['end_time_'+str(x)] == '': 
+					start =	request.POST['start_time_'+str(x)] 
+					end = request.POST['end_time_'+str(x)]
+					time_slot = TimeSlot(schedule=schedule, start_time=start, end_time=end)
+					time_slot.save()
+
+		redirect = '../schedule-timings/'	
+		return JsonResponse({"success": "Time Slots Created.", "redirect": redirect}, status=200)
+	else:
+		return HttpResponseRedirect('../../schedule-timings/')
+
+
+def delete_timeslot(request, slug, slot_id):
+	t_slots = TimeSlot.objects.get(id=slot_id)
+	schdl = t_slots.schedule
+	if schdl.doctor.user == request.user:
+		t_slots.delete()
+	return HttpResponseRedirect('../../../../schedule-timings/')
+
+
+def social_media(request):
+	doctor = Doctor.objects.get(user=request.user.id)
+	if request.method == 'POST':
+		try:
+			social = SocialMedia.objects.get(doctor=doctor.id)
+			form = SocialMediaForm(request.POST, instance=social)
+			if form.is_valid():
+				form.save()
+		except Exception:
+			form = SocialMediaForm(request.POST)
+			if form.is_valid():
+				form.save()
+		redirect = '../social-media/'	
+		return JsonResponse({"success": "Social Sites Updated.", "redirect": redirect}, status=200)
+	else:
+		social = None
+		try:
+			social = SocialMedia.objects.get(doctor=doctor.id)
+		except Exception:
+			social = None
+		return render(request, 'doctors/social-media.html', {'profile': doctor, 'social': social})
+
+
+def doctor_change_password(request):
+	doctor = Doctor.objects.get(user=request.user.id)
+	if request.is_ajax():
+		usr = request.user
+		if usr.check_password(request.POST['old_pswd']):
+			if request.POST['new_pswd'] == request.POST['cfm_pswd']:
+				if not request.POST['new_pswd'] == request.POST['old_pswd']:
+					usr.set_password(request.POST['new_pswd'])
+					usr.save()
+					logout(request)
+					redirect = '../../login/'
+					return JsonResponse({"success": "Social Sites Updated.", "redirect": redirect}, status=200)
+				else:
+					return JsonResponse({"error": "The Password Has not Changed"}, status=200)
+			else:
+				return JsonResponse({"error": "Confirm and New Password don't Match"}, status=200)
+		else:
+			return JsonResponse({"error": "Incorrect password"}, status=200)
+	else:
+		return render(request, 'doctors/doctor-change-password.html', {'profile': doctor})
+
 
 
 def my_patients(request):
@@ -242,9 +351,6 @@ def edit_billing(request):
 def add_prescription(request):
 	return render(request, 'doctors/add-prescription.html')
 
-def doctor_change_password(request):
-	return render(request, 'doctors/doctor-change-password.html')
-
 def chat_doctor(request):
 	return render(request, 'doctors/chat-doctor.html')
 
@@ -264,15 +370,8 @@ def new_schedule(doctor):
 	days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 	err = []
 	for day in days:
-		data = {'doctor': doctor, 'day': day, 'interval': 30}
-		form = ScheduleModelForm(data)
-		if form.is_valid():
-			form.save()
-		else:
-			err = err + formset.errors
-	if err == []:
-		return True
-	else:
-		return err
-
-
+		data = DoctorSchedule(doctor = doctor, day = day, interval = 30)
+		data.save()
+		
+	return True
+	

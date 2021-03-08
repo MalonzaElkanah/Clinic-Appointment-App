@@ -156,31 +156,74 @@ Version      : 1.0
     });
 
     $(".add-hours").on('click', function () {
-		
+		var form_num = parseInt($("input[name='add_form-num']").val());
+
+		var options = '<option value="">-</option>' +
+		'<option value="00:00:00">12.00 AM</option>'+
+		'<option value="00:30:00">12.30 AM</option>'+
+		'<option value="01:00:00">01.00 AM</option>'+
+		'<option value="01:30:00">01.30 AM</option>'+
+		'<option value="02:00:00">02.00 AM</option>'+
+		'<option value="02:30:00">02.30 AM</option>'+
+		'<option value="03:00:00">03.00 AM</option>'+
+		'<option value="03:30:00">03.30 AM</option>'+
+		'<option value="04:00:00">04.00 AM</option>'+
+		'<option value="04:30:00">04.30 AM</option>'+
+		'<option value="05:00:00">05.00 AM</option>'+
+		'<option value="05:30:00">05.30 AM</option>'+
+		'<option value="06:00:00">06.00 AM</option>'+
+		'<option value="06:30:00">06.30 AM</option>'+
+		'<option value="07:00:00">07.00 AM</option>'+
+		'<option value="07:30:00">07.30 AM</option>'+
+		'<option value="08:00:00">08.00 AM</option>'+
+		'<option value="08:30:00">08.30 AM</option>'+
+		'<option value="09:00:00">09.00 AM</option>'+
+		'<option value="09:30:00">09.30 AM</option>'+
+		'<option value="10:00:00">10.00 AM</option>'+
+		'<option value="10:30:00">10.30 AM</option>'+
+		'<option value="11:00:00">11.00 AM</option>'+
+		'<option value="11:30:00">11.30 AM</option>'+
+		'<option value="12:00:00">12.00 PM</option>'+
+		'<option value="12:30:00">12.30 PM</option>'+
+		'<option value="13:00:00">01.00 PM</option>'+
+		'<option value="13:30:00">01.30 PM</option>'+
+		'<option value="14:00:00">02.00 PM</option>'+
+		'<option value="14:30:00">02.30 PM</option>'+
+		'<option value="15:00:00">03.00 PM</option>'+
+		'<option value="15:30:00">03.30 PM</option>'+
+		'<option value="16:00:00">04.00 PM</option>'+
+		'<option value="16:30:00">04.30 PM</option>'+
+		'<option value="17:00:00">05.00 PM</option>'+
+		'<option value="17:30:00">05.30 PM</option>'+
+		'<option value="18:00:00">06.00 PM</option>'+
+		'<option value="18:30:00">06.30 PM</option>'+
+		'<option value="19:00:00">07.00 PM</option>'+
+		'<option value="19:30:00">07.30 PM</option>'+
+		'<option value="20:00:00">08.00 PM</option>'+
+		'<option value="20:30:00">08.30 PM</option>'+
+		'<option value="21:00:00">09.00 PM</option>'+
+		'<option value="21:30:00">09.30 PM</option>'+
+		'<option value="22:00:00">10.00 PM</option>'+
+		'<option value="22:30:00">10.30 PM</option>'+
+		'<option value="23:00:00">11.00 PM</option>'+
+		'<option value="23:30:00">11.30 PM</option>';
+
 		var hourscontent = '<div class="row form-row hours-cont">' +
 			'<div class="col-12 col-md-10">' +
 				'<div class="row form-row">' +
 					'<div class="col-12 col-md-6">' +
 						'<div class="form-group">' +
 							'<label>Start Time</label>' +
-							'<select class="form-control">' +
-								'<option>-</option>' +
-								'<option>12.00 am</option>' +
-								'<option>12.30 am</option>' + 
-								'<option>1.00 am</option>' +
-								'<option>1.30 am</option>' +
+							'<select class="form-control" name="start_time_'+form_num+'">' +
+								''+options+''+
 							'</select>' +
 						'</div>' +
 					'</div>' +
 					'<div class="col-12 col-md-6">' +
 						'<div class="form-group">' +
 							'<label>End Time</label>' +
-							'<select class="form-control">' +
-								'<option>-</option>' +
-								'<option>12.00 am</option>' +
-								'<option>12.30 am</option>' +
-								'<option>1.00 am</option>' +
-								'<option>1.30 am</option>' +
+							'<select class="form-control" name="end_time_'+form_num+'">' +
+								''+options+''+
 							'</select>' +
 						'</div>' +
 					'</div>' +
@@ -190,7 +233,90 @@ Version      : 1.0
 		'</div>';
 		
         $(".hours-info").append(hourscontent);
-        return false;
+        var num = form_num + 1;
+		$("input[name='add_form-num']").attr('value', num);
+    });
+
+	$(".edit-hours").on('click', function () {
+		var form_num = parseInt($("input[name='edit_form-num']").val());
+
+		var options = '<option value="">-</option>' +
+		'<option value="00:00:00">12.00 AM</option>'+
+		'<option value="00:30:00">12.30 AM</option>'+
+		'<option value="01:00:00">01.00 AM</option>'+
+		'<option value="01:30:00">01.30 AM</option>'+
+		'<option value="02:00:00">02.00 AM</option>'+
+		'<option value="02:30:00">02.30 AM</option>'+
+		'<option value="03:00:00">03.00 AM</option>'+
+		'<option value="03:30:00">03.30 AM</option>'+
+		'<option value="04:00:00">04.00 AM</option>'+
+		'<option value="04:30:00">04.30 AM</option>'+
+		'<option value="05:00:00">05.00 AM</option>'+
+		'<option value="05:30:00">05.30 AM</option>'+
+		'<option value="06:00:00">06.00 AM</option>'+
+		'<option value="06:30:00">06.30 AM</option>'+
+		'<option value="07:00:00">07.00 AM</option>'+
+		'<option value="07:30:00">07.30 AM</option>'+
+		'<option value="08:00:00">08.00 AM</option>'+
+		'<option value="08:30:00">08.30 AM</option>'+
+		'<option value="09:00:00">09.00 AM</option>'+
+		'<option value="09:30:00">09.30 AM</option>'+
+		'<option value="10:00:00">10.00 AM</option>'+
+		'<option value="10:30:00">10.30 AM</option>'+
+		'<option value="11:00:00">11.00 AM</option>'+
+		'<option value="11:30:00">11.30 AM</option>'+
+		'<option value="12:00:00">12.00 PM</option>'+
+		'<option value="12:30:00">12.30 PM</option>'+
+		'<option value="13:00:00">01.00 PM</option>'+
+		'<option value="13:30:00">01.30 PM</option>'+
+		'<option value="14:00:00">02.00 PM</option>'+
+		'<option value="14:30:00">02.30 PM</option>'+
+		'<option value="15:00:00">03.00 PM</option>'+
+		'<option value="15:30:00">03.30 PM</option>'+
+		'<option value="16:00:00">04.00 PM</option>'+
+		'<option value="16:30:00">04.30 PM</option>'+
+		'<option value="17:00:00">05.00 PM</option>'+
+		'<option value="17:30:00">05.30 PM</option>'+
+		'<option value="18:00:00">06.00 PM</option>'+
+		'<option value="18:30:00">06.30 PM</option>'+
+		'<option value="19:00:00">07.00 PM</option>'+
+		'<option value="19:30:00">07.30 PM</option>'+
+		'<option value="20:00:00">08.00 PM</option>'+
+		'<option value="20:30:00">08.30 PM</option>'+
+		'<option value="21:00:00">09.00 PM</option>'+
+		'<option value="21:30:00">09.30 PM</option>'+
+		'<option value="22:00:00">10.00 PM</option>'+
+		'<option value="22:30:00">10.30 PM</option>'+
+		'<option value="23:00:00">11.00 PM</option>'+
+		'<option value="23:30:00">11.30 PM</option>';
+
+		var hourscontent = '<div class="row form-row hours-cont">' +
+			'<div class="col-12 col-md-10">' +
+				'<div class="row form-row">' +
+					'<div class="col-12 col-md-6">' +
+						'<div class="form-group">' +
+							'<label>Start Time</label>' +
+							'<select class="form-control" name="start_time_'+form_num+'">' +
+								''+options+''+
+							'</select>' +
+						'</div>' +
+					'</div>' +
+					'<div class="col-12 col-md-6">' +
+						'<div class="form-group">' +
+							'<label>End Time</label>' +
+							'<select class="form-control" name="end_time_'+form_num+'">' +
+								''+options+''+
+							'</select>' +
+						'</div>' +
+					'</div>' +
+				'</div>' +
+			'</div>' +
+			'<div class="col-12 col-md-2"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a></div>' +
+		'</div>';
+		
+        $(".edit_hours-info").append(hourscontent);
+        var num = form_num + 1;
+		$("input[name='edit_form-num']").attr('value', num);
     });
 	
 	// Content div min height set
