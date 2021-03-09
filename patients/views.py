@@ -7,9 +7,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import Patient
 from .forms import PatientForm
-
 from doctors.models import Doctor, Education, Experience, Award, Membership, Registration
+from doctors.models import DoctorSchedule, TimeSlot
 
+import datetime as dt
 
 def register(request):
 	if request.is_ajax():
@@ -102,17 +103,62 @@ def doctor_profile(request, slug, doctor_id):
 
 
 def booking(request, slug, doctor_id):
+	#patient = Patient.objects.get(user=request.user.id)
 	doctor = Doctor.objects.get(id=doctor_id)
-	return render(request, 'patients/booking.html', {"doctor": doctor})
+	schedule = DoctorSchedule.objects.filter(doctor=doctor_id)
+	today = dt.date.today()
+	date = today + dt.timedelta(days=2)
+	booking_dates = {}
+	for x in range(1,8):
+		day = str(f"{date:%A}")
+		w_day = day.lower()
+		schedule = DoctorSchedule.objects.get(doctor=doctor_id, day=w_day) # doctor, day, interval
+		time_slots = TimeSlot.objects.filter(schedule=schedule.id) # schedule, start_time, end_time
+		booking_time = []
+		for time in time_slots:
+			start_hour = int(f"{time.start_time:%H}")
+			start_minute = int(f"{time.start_time:%M}")
+			end_hour = int(f"{time.end_time:%H}")
+			end_minute = int(f"{time.end_time:%M}")
+			slot_interval = int(schedule.interval)
+			while end_hour >= start_hour:
+				book_time = dt.time(start_hour, start_minute)
+				booking_time = booking_time +  [book_time] #[f"{book_time:%I.%M %p}"]
+				start_minute = start_minute + slot_interval
+				if start_minute>=60:
+					start_hour = start_hour + 1
+					start_minute = start_minute - 60
 
+		if booking_time == []:
+			booking_time = None
+		booking_dates.setdefault(date, booking_time)
+		date = date + dt.timedelta(days=1)
 
-def booking_success(request):
-	return render(request, 'patients/booking-success.html')
+	return render(request, 'patients/booking.html', {"doctor": doctor, "schedule": schedule, 
+		"booking_dates": booking_dates})
 
 
 def checkout(request):
-	return render(request, 'patients/checkout.html')
+	if request.method == 'POST':
+		doctor_id = int(request.POST['doctor'])
+		doctor = Doctor.objects.get(id = doctor_id)
+		# 12:00:00_17/03/2021
+		time_date = str(request.POST['time_date']).split('_')
+		time = time_date[0].split(':')
+		date = time_date[1].split('/')
+		book_date = dt.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1], 0))
+		profile = ""
+		try:
+			profile = Patient.objects.get(user = request.user.id)
+		except Exception:
+			profile = {}
+		return render(request, 'patients/checkout.html', {'book_date': book_date, 'doctor': doctor, 
+			'profile': profile})
+	else:
+		pass
 
+def booking_success(request):
+	return render(request, 'patients/booking-success.html')
 
 def change_password(request):
 	return render(request, 'patients/change-password.html')

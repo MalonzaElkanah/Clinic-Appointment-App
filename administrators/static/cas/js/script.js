@@ -318,6 +318,17 @@ Version      : 1.0
         var num = form_num + 1;
 		$("input[name='edit_form-num']").attr('value', num);
     });
+
+    // Timing Booking
+    $(".timing").on('click', function (e) {
+    	e.preventDefault();
+    	$(".timing").removeClass('selected');
+    	$(this).addClass('selected');
+    	var time_date = $(this).attr("id");
+    	alert(time_date)
+    	$("input[name='time_date']").attr('value', time_date);
+    });
+
 	
 	// Content div min height set
 	

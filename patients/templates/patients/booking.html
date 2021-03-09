@@ -71,34 +71,12 @@
 													<i class="fa fa-chevron-left"></i>
 												</a>
 											</li>
+											{% for date in booking_dates.keys %}
 											<li>
-												<span>Mon</span>
-												<span class="slot-date">11 Nov <small class="slot-year">2019</small></span>
+												<span>{{date|date:"D"}}</span>
+												<span class="slot-date">{{date|date:"d M"}} <small class="slot-year">{{date|date:"Y"}}</small></span>
 											</li>
-											<li>
-												<span>Tue</span>
-												<span class="slot-date">12 Nov <small class="slot-year">2019</small></span>
-											</li>
-											<li>
-												<span>Wed</span>
-												<span class="slot-date">13 Nov <small class="slot-year">2019</small></span>
-											</li>
-											<li>
-												<span>Thu</span>
-												<span class="slot-date">14 Nov <small class="slot-year">2019</small></span>
-											</li>
-											<li>
-												<span>Fri</span>
-												<span class="slot-date">15 Nov <small class="slot-year">2019</small></span>
-											</li>
-											<li>
-												<span>Sat</span>
-												<span class="slot-date">16 Nov <small class="slot-year">2019</small></span>
-											</li>
-											<li>
-												<span>Sun</span>
-												<span class="slot-date">17 Nov <small class="slot-year">2019</small></span>
-											</li>
+											{% endfor %}
 											<li class="right-arrow">
 												<a href="#">
 													<i class="fa fa-chevron-right"></i>
@@ -121,83 +99,24 @@
 									<!-- Time Slot -->
 									<div class="time-slot">
 										<ul class="clearfix">
+										{% for date, times in booking_dates.items %}
 											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
+											{% if times != None %}
+												{% for time in times %}
+												<a class="timing" href="#" id="{{time|time:"H:i:s"}}_{{date|date:"d/m/Y"}}">
+													<span>{{time|time:"h:i"}}</span> <span>{{time|time:"A"}}</span>
 												</a>
-												<a class="timing" href="#">
+												{% endfor %}
+											{% else %}
+												<a class="timing" href="#" id="none">
+													<span>Unavailable</span>
+												</a>
+											<!-- <a class="timing selected" href="#">
 													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
+												</a> -->
+											{% endif %}
 											</li>
-											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
-											</li>
-											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
-											</li>
-											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
-											</li>
-											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
-												</a>
-												<a class="timing selected" href="#">
-													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
-											</li>
-											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
-											</li>
-											<li>
-												<a class="timing" href="#">
-													<span>9:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>10:00</span> <span>AM</span>
-												</a>
-												<a class="timing" href="#">
-													<span>11:00</span> <span>AM</span>
-												</a>
-											</li>
+										{% endfor %}
 										</ul>
 									</div>
 									<!-- /Time Slot -->
@@ -211,9 +130,15 @@
 					<!-- /Schedule Widget -->
 					
 					<!-- Submit Section -->
-					<div class="submit-section proceed-btn text-right">
-						<a href="checkout.html" class="btn btn-primary submit-btn">Proceed to Pay</a>
-					</div>
+					<form class="add-form" method="POST" action="{% url 'checkout' %}">
+						{% csrf_token %}
+						<input type="text" name="time_date" style="display: none;">
+						<input type="text" name="doctor" style="display: none;" value="{{doctor.id}}">
+
+						<div class="submit-section proceed-btn text-right">
+							<button class="btn btn-primary submit-btn" type="submit">Proceed to Pay</button>
+						</div>
+					</form>
 					<!-- /Submit Section -->
 					
 				</div>
