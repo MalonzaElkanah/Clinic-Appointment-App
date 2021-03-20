@@ -17,7 +17,7 @@ def index(request):
 
 def user_login(request):
 	if request.user.is_authenticated:
-		group = user.groups.get()
+		group = request.user.groups.get()
 		if group.name=='patients_group':
 			return HttpResponseRedirect('../patients/')
 		elif group.name=='doctors_group':

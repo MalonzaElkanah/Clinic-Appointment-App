@@ -325,7 +325,7 @@ Version      : 1.0
     	$(".timing").removeClass('selected');
     	$(this).addClass('selected');
     	var time_date = $(this).attr("id");
-    	alert(time_date)
+    	//alert(time_date)
     	$("input[name='time_date']").attr('value', time_date);
     });
 

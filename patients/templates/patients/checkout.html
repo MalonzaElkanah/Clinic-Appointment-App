@@ -34,7 +34,7 @@
 						<div class="card-body">
 						
 							<!-- Checkout Form -->
-							<form class="add-form" method="POST" action="{% url 'checkout' %}">
+							<form class="add-form" method="POST" action="{% url 'booking-success' %}">
 								{% csrf_token %}
 								{% if user.is_authenticated %}
 								{% else %}
@@ -86,31 +86,31 @@
 											<div class="col-md-6">
 												<div class="form-group card-label">
 													<label for="card_name">Name on Card</label>
-													<input class="form-control" id="card_name" type="text" name="card_name">
+													<input class="form-control" id="card_name" type="text" name="card_name" required>
 												</div>
 											</div>
 											<div class="col-md-6">
 												<div class="form-group card-label">
 													<label for="card_number">Card Number</label>
-													<input class="form-control" id="card_number" placeholder="1234  5678  9876  5432" type="text" name="card_number">
+													<input class="form-control" id="card_number" placeholder="1234  5678  9876  5432" type="text" name="card_number" required>
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group card-label">
 													<label for="expiry_month">Expiry Month</label>
-													<input class="form-control" id="expiry_month" placeholder="MM" type="text" name="expiry_month">
+													<input class="form-control" id="expiry_month" placeholder="MM" type="text" name="expiry_month" required>
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group card-label">
 													<label for="expiry_year">Expiry Year</label>
-													<input class="form-control" id="expiry_year" placeholder="YY" type="text" name="expiry_year">
+													<input class="form-control" id="expiry_year" placeholder="YY" type="text" name="expiry_year" required>
 												</div>
 											</div>
 											<div class="col-md-4">
 												<div class="form-group card-label">
 													<label for="cvv">CVV</label>
-													<input class="form-control" id="cvv" type="text" name="cvv">
+													<input class="form-control" id="cvv" type="text" name="cvv" required>
 												</div>
 											</div>
 										</div>
@@ -137,6 +137,8 @@
 									<!-- /Terms Accept -->
 									
 									<!-- Submit Section -->
+									<input type="text" name="doctor" value="{{doctor.id}}" style="display: none;">
+									<input type="text" name="date" value="{{book_date|date:"Y-m-d H:i:s"}}" style="display: none;">
 									<div class="submit-section mt-4">
 										<button type="submit" class="btn btn-primary submit-btn">Confirm and Pay</button>
 									</div>
@@ -186,18 +188,18 @@
 								<div class="booking-item-wrap">
 									<ul class="booking-date">
 										<li>Date <span>{{book_date|date:"d m Y"}}</span></li>
-										<li>Time <span>{{book_date|date:"h:i A"}}10:00 AM</span></li>
+										<li>Time <span>{{book_date|date:"h:i A"}}</span></li>
 									</ul>
 									<ul class="booking-fee">
 										<li>Consulting Fee <span>kSh {{doctor.pricing}}</span></li>
-										<li>Booking Fee <span>kSh 200</span></li>
-										<li>Video Call <span>kSh 50</span></li>
+										<li>Booking Fee <span>kSh {{booking_fee}}</span></li>
+										<li>Video Call <span>kSh {{video_call}}</span></li>
 									</ul>
 									<div class="booking-total">
 										<ul class="booking-total-list">
 											<li>
 												<span>Total</span>
-												<span class="total-cost">ksh 270</span>
+												<span class="total-cost">ksh {{total_fee}}</span>
 											</li>
 										</ul>
 									</div>

@@ -13,7 +13,7 @@
 				<div class="col-md-12 col-12">
 					<nav aria-label="breadcrumb" class="page-breadcrumb">
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index-2.html">Home</a></li>
+							<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
 							<li class="breadcrumb-item active" aria-current="page">Invoice View</li>
 						</ol>
 					</nav>
@@ -40,8 +40,8 @@
 								</div>
 								<div class="col-md-6">
 									<p class="invoice-details">
-										<strong>Order:</strong> #00124 <br>
-										<strong>Issued:</strong> 20/07/2019
+										<strong>Order:</strong> #00{{invoice.id}} <br>
+										<strong>Issued:</strong> {{invoice.date_paid}}
 									</p>
 								</div>
 							</div>
@@ -54,9 +54,9 @@
 									<div class="invoice-info">
 										<strong class="customer-text">Invoice From</strong>
 										<p class="invoice-details invoice-details-two">
-											Dr. Darren Elder <br>
-											806  Twin Willow Lane, Old Forge,<br>
-											Newyork, USA <br>
+											{{invoice.doctor.full_name}} <br>
+											{{invoice.doctor.clinic_address}},<br>
+											{{invoice.doctor.county}}, {{invoice.doctor.country}} <br>
 										</p>
 									</div>
 								</div>
@@ -64,9 +64,9 @@
 									<div class="invoice-info invoice-info2">
 										<strong class="customer-text">Invoice To</strong>
 										<p class="invoice-details">
-											Walter Roberson <br>
-											299 Star Trek Drive, Panama City, <br>
-											Florida, 32405, USA <br>
+											{{invoice.patient.first_name}} {{invoice.patient.second_name}} <br>
+											{{invoice.patient.street_lane}}, {{invoice.patient.town}}, <br>
+											{{invoice.patient.county}}, {{invoice.patient.country}} <br>
 										</p>
 									</div>
 								</div>
@@ -106,18 +106,14 @@
 												</tr>
 											</thead>
 											<tbody>
+											{% for bill in bills %}
 												<tr>
-													<td>General Consultation</td>
-													<td class="text-center">1</td>
-													<td class="text-center">$0</td>
-													<td class="text-right">$100</td>
+													<td>{{bill.description}}</td>
+													<td class="text-center">{{bill.quantity}}</td>
+													<td class="text-center">kSh {{bill.vat}}</td>
+													<td class="text-right">kSh {{bill.amount}}</td>
 												</tr>
-												<tr>
-													<td>Video Call Booking</td>
-													<td class="text-center">1</td>
-													<td class="text-center">$0</td>
-													<td class="text-right">$250</td>
-												</tr>
+											{% endfor %}
 											</tbody>
 										</table>
 									</div>
@@ -128,15 +124,15 @@
 											<tbody>
 											<tr>
 												<th>Subtotal:</th>
-												<td><span>$350</span></td>
+												<td><span>kSh {{invoice.total_amount}} </span></td>
 											</tr>
 											<tr>
 												<th>Discount:</th>
-												<td><span>-10%</span></td>
+												<td><span>0%</span></td>
 											</tr>
 											<tr>
 												<th>Total Amount:</th>
-												<td><span>$315</span></td>
+												<td><span>kSh {{invoice.total_amount}}</span></td>
 											</tr>
 											</tbody>
 										</table>
@@ -149,7 +145,7 @@
 						<!-- Invoice Information -->
 						<div class="other-info">
 							<h4>Other information</h4>
-							<p class="text-muted mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus sed dictum ligula, cursus blandit risus. Maecenas eget metus non tellus dignissim aliquam ut a ex. Maecenas sed vehicula dui, ac suscipit lacus. Sed finibus leo vitae lorem interdum, eu scelerisque tellus fermentum. Curabitur sit amet lacinia lorem. Nullam finibus pellentesque libero.</p>
+							<p class="text-muted mb-0">{{invoice.doctor.description}}</p>
 						</div>
 						<!-- /Invoice Information -->
 						

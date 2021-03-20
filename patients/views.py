@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-from .models import Patient
+from .models import Patient, Appointment, Prescription, MedicalRecord, Invoice, Bill
 from .forms import PatientForm
 from doctors.models import Doctor, Education, Experience, Award, Membership, Registration
 from doctors.models import DoctorSchedule, TimeSlot
@@ -53,7 +53,12 @@ def check_settings(user):
 @user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def patient_dashboard(request):
 	profile = Patient.objects.get(user=request.user.id)
-	return render(request, 'patients/patient-dashboard.html', {"profile": profile})
+	appointments = Appointment.objects.filter(patient=profile.id)
+	prescriptions = Prescription.objects.filter(patient=profile.id) 
+	medical_records = MedicalRecord.objects.filter(patient=profile.id)
+	invoices = Invoice.objects.filter(patient=profile.id)
+	return render(request, 'patients/patient-dashboard.html', {"profile": profile, "appointments": appointments, 
+		'prescriptions': prescriptions, 'medical_records': medical_records, 'invoices': invoices})
 
 
 @login_required(login_url='/login/')
@@ -146,19 +151,68 @@ def checkout(request):
 		time_date = str(request.POST['time_date']).split('_')
 		time = time_date[0].split(':')
 		date = time_date[1].split('/')
-		book_date = dt.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1], 0))
+		book_date = dt.datetime(int(date[2]), int(date[1]), int(date[0]), int(time[0]), int(time[1], 0))
 		profile = ""
 		try:
 			profile = Patient.objects.get(user = request.user.id)
 		except Exception:
 			profile = {}
+
+		booking_fee = 100.0
+		video_call = 50.0
+		consultation_fee = doctor.pricing
+		total_fee = booking_fee + video_call + consultation_fee
+
 		return render(request, 'patients/checkout.html', {'book_date': book_date, 'doctor': doctor, 
-			'profile': profile})
+			'profile': profile, 'booking_fee': booking_fee, 'video_call': video_call, 'total_fee': total_fee})
 	else:
 		pass
 
 def booking_success(request):
-	return render(request, 'patients/booking-success.html')
+	if request.method == 'POST':
+		doctor_id = int(request.POST['doctor'])
+		doctor = Doctor.objects.get(id = doctor_id)
+		profile = ""
+		try:
+			profile = Patient.objects.get(user = request.user.id)
+		except Exception:
+			profile = {}
+
+		booking_fee = 100.0
+		video_call = 50.0
+		consultation_fee = doctor.pricing
+		total_fee = booking_fee + video_call + consultation_fee
+		# Save the new Appointment to DB
+		appointment = Appointment(doctor=doctor, patient=profile, purpose='General', category='General', 
+			amount=total_fee, status='WAIT', booking_date=request.POST['date'])
+		appointment.save()
+		#Create Invoice
+		invoice = Invoice(patient=profile, doctor=doctor, total_amount=total_fee)
+		invoice.save()
+		# Create Bills
+		booking = Bill(invoice=invoice, appointment=appointment, description="Booking Fee", quantity=1.0, 
+			vat=0.0, amount=booking_fee, paid=True)
+		booking.save()
+		video = Bill(invoice=invoice, appointment=appointment, description="Video Call Fee", quantity=1.0, 
+			vat=0.0, amount=video_call, paid=True)
+		video.save()
+		consultation = Bill(invoice=invoice, appointment=appointment, description="Consultation Fee", 
+			quantity=1.0, vat=0.0, amount=consultation_fee, paid=True)
+		consultation.save()
+		return render(request, 'patients/booking-success.html', {'appointment': appointment, 'invoice': invoice, 
+			'profile': profile})
+	else:
+		pass
+
+
+def invoice_view(request, slug, invoice_id):
+	inv_id = int(invoice_id)
+	invoice = Invoice.objects.get(id=inv_id)
+	bills = Bill.objects.filter(invoice=invoice.id)
+	profile = Patient.objects.get(user = request.user.id)
+	return render(request, 'patients/invoice-view.html', {'invoice': invoice, 'bills': bills, 
+		'profile': profile})
+
 
 def change_password(request):
 	return render(request, 'patients/change-password.html')
@@ -166,10 +220,6 @@ def change_password(request):
 
 def chat(request):
 	return render(request, 'patients/chat.html')
-
-def invoice_view(request):
-	return render(request, 'patients/invoice-view.html')
-
 
 def favourites(request):
 	return render(request, 'patients/favourites.html')
