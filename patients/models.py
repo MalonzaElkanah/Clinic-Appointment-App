@@ -81,4 +81,10 @@ class Bill(models.Model):
 	paid = models.BooleanField('Paid', default=False)
 	# invoice, appointment, description, quantity, vat, amount, paid 
 
+
+class Favourite(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+	fav_date = models.DateTimeField('Date Added', auto_now_add=True)
+
 	

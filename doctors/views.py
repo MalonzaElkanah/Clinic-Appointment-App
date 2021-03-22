@@ -8,6 +8,7 @@ from .forms import DoctorForm, EducationForm, ExperienceForm, AwardForm, Members
 from .forms import SocialMediaForm
 from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration, TimeSlot
 from .models import DoctorSchedule, SocialMedia
+from patients.models import Appointment
 
 import datetime as dt
 # Create your views here.
@@ -46,14 +47,6 @@ def check_doctor(user):
 def check_settings(user):
 	profile = Doctor.objects.filter(user=user.id)
 	return profile.count()>=1
-
-
-@login_required(login_url='/login/')
-@user_passes_test(check_doctor, login_url='/login/')
-@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
-def doctor_dashboard(request):
-	profile = Doctor.objects.get(user=request.user.id)
-	return render(request, 'doctors/doctor-dashboard.html', {"profile": profile})
 
 
 @login_required(login_url='/login/')
@@ -212,6 +205,19 @@ def doctor_profile_page2(request):
 	else:
 		return render(request, 'doctors/doctor-profile-page2.html', {'profile': profile, 'education': edu, 
 			'experience': exp, 'awards': awd, 'membership': mbr, 'registration': reg})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def doctor_dashboard(request):
+	profile = Doctor.objects.get(user=request.user.id)
+	appointments = Appointment.objects.filter(doctor=profile.id)
+	upcoming_appointments = appointments.filter(status='WAIT')
+	today = dt.date.today()
+	today_appointments = appointments.filter(status='ACCEPTTED', booking_date__date=today)
+	return render(request, 'doctors/doctor-dashboard.html', {"profile": profile, "appointments": appointments,
+		"upcoming_appointments": upcoming_appointments, "today_appointments": today_appointments})
 
 
 def schedule_timings(request):

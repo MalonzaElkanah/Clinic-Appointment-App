@@ -72,7 +72,7 @@
 								</ul>
 							</div>
 							<div class="doctor-action">
-								<a href="javascript:void(0)" class="btn btn-white fav-btn">
+								<a href="{% url 'favourite-doctor' doctor.full_name|slugify doctor.id %}" class="btn btn-white fav-btn">
 									<i class="far fa-bookmark"></i>
 								</a>
 								<a href="chat.html" class="btn btn-white msg-btn">
@@ -605,5 +605,6 @@
 		
 	<!-- Fancybox JS -->
 	<script src="{% static 'cas/plugins/fancybox/jquery.fancybox.min.js' %}"></script>
-		
+
+	<script src="{% static 'cas/js/ajax.js' %}"></script>		
 {% endblock %}

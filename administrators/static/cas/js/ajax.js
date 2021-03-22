@@ -28,4 +28,27 @@
        	});
 
 	});
+
+	$('.fav-btn').click(function(event){
+		event.preventDefault();
+		var p_data = {
+			href: 1,
+		};
+		var serializedData = $(this).serialize();
+
+		$.ajax({
+            type: 'GET',
+            url: $(this).attr('href'),
+            data: serializedData,
+            success: function (response) {
+		        alert(response["responseJSON"]);	
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response);
+            }
+        })
+	});
+
+
 })(jQuery);

@@ -90,10 +90,10 @@
 						<!-- Doctor Widget -->
 						<div class="profile-widget">
 							<div class="doc-img">
-								<a href="doctor-profile.html">
+								<a href="{% url 'doctor-profile' doctor.full_name|slugify doctor.id %}">
 									<img class="img-fluid" alt="User Image" src="{{doctor.image.url}}">
 								</a>
-								<a href="javascript:void(0)" class="fav-btn">
+								<a href="{% url 'favourite-doctor' doctor.full_name|slugify doctor.id %}" class="fav-btn">
 									<i class="far fa-bookmark"></i>
 								</a>
 							</div>
@@ -209,5 +209,7 @@
 {% block javascript %}
 	<!-- Slick JS -->
 	<script src="{% static 'cas/js/slick.js' %}"></script>
+	
+	<script src="{% static 'cas/js/ajax.js' %}"></script>
 {% endblock %}		
 		

@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-from .models import Patient, Appointment, Prescription, MedicalRecord, Invoice, Bill
+from .models import Patient, Appointment, Prescription, MedicalRecord, Invoice, Bill, Favourite
 from .forms import PatientForm
 from doctors.models import Doctor, Education, Experience, Award, Membership, Registration
 from doctors.models import DoctorSchedule, TimeSlot
@@ -214,12 +214,59 @@ def invoice_view(request, slug, invoice_id):
 		'profile': profile})
 
 
+def favourites(request):
+	profile = Patient.objects.get(user = request.user.id)
+	favourites = Favourite.objects.filter(patient = profile.id)
+	return render(request, 'patients/favourites.html', {'profile': profile, 'favourites': favourites})
+
+
+def favourite_doctor(request, slug, doctor_id):
+	patient = Patient.objects.get(user=request.user.id)
+	favourites = Favourite.objects.filter(doctor=doctor_id, patient=patient.id)
+	
+	if request.is_ajax():
+		if not favourites.count()==0:
+			favourite = favourites[0]
+			favourite.delete()
+			return JsonResponse({"responseJSON": "Removed from Favourite"}, status=200)
+		else:
+			doctor = Doctor.objects.get(id=doctor_id)
+			favourite = Favourite(doctor=doctor, patient=patient)
+			favourite.save()
+			return JsonResponse({"responseJSON": "Added to Favourite"}, status=200)
+	else:		
+		if not count==0:
+			favourite = favourites[0]
+			favourite.delete()
+		else:
+			doctor = Doctor.objects.get(id=doctor_id)
+			favourite = Favourite(doctor=doctor, patient=patient)
+			favourite.save()
+		return HttpResponseRedirect('../../favourites/')
+
+
 def change_password(request):
-	return render(request, 'patients/change-password.html')
+	patient = Patient.objects.get(user=request.user.id)
+	if request.is_ajax():
+		usr = request.user
+		if usr.check_password(request.POST['old_password']):
+			if request.POST['new_password'] == request.POST['confirm_password']:
+				if not request.POST['new_password'] == request.POST['old_password']:
+					usr.set_password(request.POST['new_password'])
+					usr.save()
+					logout(request)
+					redirect = '../../login/'
+					return JsonResponse({"success": "Password Updated.", "redirect": redirect}, status=200)
+				else:
+					return JsonResponse({"error": "The Password Has not Changed"}, status=200)
+			else:
+				return JsonResponse({"error": "Confirm and New Password don't Match"}, status=200)
+		else:
+			return JsonResponse({"error": "Incorrect password"}, status=200)
+	else:
+		return render(request, 'patients/change-password.html', {'profile': patient})
 
 
 def chat(request):
 	return render(request, 'patients/chat.html')
 
-def favourites(request):
-	return render(request, 'patients/favourites.html')
