@@ -52,6 +52,7 @@ class Prescription(models.Model):
 	afternoon = models.BooleanField('Afternoon', default=False)
 	evening = models.BooleanField('Evening', default=False)
 	night = models.BooleanField('Night', default=False)
+	# patient, doctor, name, quantity, days, morning, afternoon, evening, night
 
 
 class MedicalRecord(models.Model):
@@ -87,4 +88,79 @@ class Favourite(models.Model):
 	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 	fav_date = models.DateTimeField('Date Added', auto_now_add=True)
 
-	
+
+class Review(models.Model):
+	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+	date = models.DateTimeField('Review Date', auto_now_add=True)
+	rate = models.IntegerField('Rate')
+	title = models.CharField('Review Title', max_length=50, blank=True)
+	text = models.CharField('Review Title', max_length=150, blank=True)
+	# doctor, patient, review_date, rate, review_title, review_text
+
+	def review_rate(self):
+		count = {}
+		rate_val = self.rate + 1
+		for x in range(1,rate_val):
+			count.setdefault(x, 'filled')
+		for x in range(rate_val,6):
+			count.setdefault(x, ' ')
+		return count
+
+	def total_reviews(self):
+		query = Review.objects.filter(doctor=self.doctor)
+		return len(query)
+
+	def replies(self):
+		replies = Reply.objects.filter(review=self.id)
+		return replies
+
+	def patient_liked(self):
+		liked = LikedReview.objects.filter(user=self.patient.user.id)
+		if liked.count()>0:
+			return liked[0].recommend
+		else:
+			return None
+
+	def doctor_liked(self):
+		liked = LikedReview.objects.filter(user=self.doctor.user.id)
+		if liked.count()>0:
+			return liked[0].recommend
+		else:
+			return None
+
+
+class Reply(models.Model):
+	review = models.ForeignKey(Review, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	date = models.DateTimeField('Review Date', auto_now_add=True)
+	text = models.CharField('Review Title', max_length=150)
+
+	def get_user(self):
+		usr = self.user
+		group = usr.groups.get()
+		if group.name=='patients_group':
+			patient = Patient.objects.get(user=usr.id)
+			return patient
+		elif group.name=='doctors_group':
+			doctor = Doctor.objects.get(user=usr.id)
+			return doctor
+		else:
+			return user
+
+	def get_group(self):
+		usr = self.user
+		group = usr.groups.get()
+		return group.name
+
+
+class LikedReview(models.Model):
+	review = models.ForeignKey(Review, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	recommend = models.BooleanField('Recommend', default=False)
+
+
+class LikedReply(models.Model):
+	reply = models.ForeignKey(Reply, on_delete=models.CASCADE)
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	recommend = models.BooleanField('Recommend', default=False)

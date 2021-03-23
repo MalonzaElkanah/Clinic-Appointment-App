@@ -5,10 +5,10 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .forms import DoctorForm, EducationForm, ExperienceForm, AwardForm, MembershipForm, RegistrationForm
-from .forms import SocialMediaForm
+from .forms import SocialMediaForm, PrescriptionForm
 from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration, TimeSlot
 from .models import DoctorSchedule, SocialMedia
-from patients.models import Appointment
+from patients.models import Patient, Appointment, Invoice, Bill, Review, Prescription, MedicalRecord
 
 import datetime as dt
 # Create your views here.
@@ -220,6 +220,18 @@ def doctor_dashboard(request):
 		"upcoming_appointments": upcoming_appointments, "today_appointments": today_appointments})
 
 
+def appointments(request):
+	profile = Doctor.objects.get(user=request.user.id)
+	appointments = Appointment.objects.filter(doctor=profile.id)
+	return render(request, 'doctors/appointments.html', {'profile' :profile, 'appointments': appointments})
+
+
+def my_patients(request):
+	profile = Doctor.objects.get(user=request.user.id)
+	appointments = Appointment.objects.filter(doctor=profile.id)
+	return render(request, 'doctors/my-patients.html', {'profile' :profile, 'appointments': appointments})
+
+
 def schedule_timings(request):
 	profile = Doctor.objects.get(user=request.user.id)
 	schedules = DoctorSchedule.objects.filter(doctor=profile.id)
@@ -293,6 +305,18 @@ def delete_timeslot(request, slug, slot_id):
 	return HttpResponseRedirect('../../../../schedule-timings/')
 
 
+def invoices(request):
+	doctor = Doctor.objects.get(user=request.user.id)
+	invoices = Invoice.objects.filter(doctor=doctor.id)
+	return render(request, 'doctors/invoices.html', {'profile': doctor, 'invoices': invoices})
+
+
+def reviews(request):
+	doctor = Doctor.objects.get(user=request.user.id)
+	reviews = Review.objects.filter(doctor=doctor.id)
+	return render(request, 'doctors/reviews.html', {'profile': doctor, 'reviews': reviews})
+
+
 def social_media(request):
 	doctor = Doctor.objects.get(user=request.user.id)
 	if request.method == 'POST':
@@ -338,15 +362,90 @@ def doctor_change_password(request):
 		return render(request, 'doctors/doctor-change-password.html', {'profile': doctor})
 
 
+def patient_profile(request, slug, patient_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	patient = Patient.objects.get(id=patient_id)
+	appointments = Appointment.objects.filter(patient=patient_id, doctor=doctor.id)
+	prescriptions = Prescription.objects.filter(patient=patient_id) 
+	records = MedicalRecord.objects.filter(patient=patient_id) 
+	invoices = Invoice.objects.filter(patient=patient_id, doctor=doctor.id)
+	return render(request, 'doctors/patient-profile.html', {'profile': doctor, 'patient': patient, 
+		'last_appointments': appointments, 'prescriptions': prescriptions, 'records': records, 
+		'invoices': invoices})
 
-def my_patients(request):
-	return render(request, 'doctors/my-patients.html')
 
-def add_billing(request):
-	return render(request, 'doctors/add-billing.html')
+def add_prescription(request, slug, patient_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	patient = Patient.objects.get(id=patient_id)
+	if request.method == 'POST':
+		form_num = int(request.POST['form-num'])
+		for x in range(0,form_num):
+			x = str(x)
+			#try:
+			morning = None 
+			afternoon = None 
+			evening = None 
+			night = None
+			try:
+				if request.POST['morning_'+x] == 'on':
+					morning = True
+			except Exception:
+				morning = False
 
-def reviews(request):
-	return render(request, 'doctors/reviews.html')
+			try:
+				if request.POST['afternoon_'+x] == 'on':
+					afternoon = True
+			except Exception:
+				afternoon = False
+
+			try:
+				if request.POST['evening_'+x] == 'on':
+					evening = True
+			except Exception:
+				evening = False
+
+			try:
+				if request.POST['night_'+x] == 'on':
+					night = True
+			except Exception:
+				night = False
+			#patient, doctor, name, quantity, days, 
+
+			data = {"patient": patient_id, "doctor": doctor.id, "name": request.POST['name_'+x], 
+			"quantity": request.POST['quantity_'+x], "days": request.POST['days_'+x], 
+			"morning": morning, "afternoon": afternoon, "evening": evening, "night": night}
+			form = PrescriptionForm(data)
+			if form.is_valid():
+				form.save()
+			#except Exception:
+			#	pass
+		return HttpResponseRedirect('../../../patient_profile/'+slug+'/'+str(patient_id)+'/')
+	else:
+		return render(request, 'doctors/add-prescription.html', {'profile': doctor, 'patient': patient})
+
+
+def add_billing(request, slug, patient_id, appointment_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	patient = Patient.objects.get(id=patient_id)
+	appointment = Appointment.objects.get(id=appointment_id, patient=patient_id, doctor=doctor.id)
+	if request.method == 'POST':
+		form_num = int(request.POST['form-num'])
+		total_amount = 0
+		for x in range(0,form_num):
+			x = str(x)
+			total_amount += float(request.POST['amount_'+x])
+		#Create Invoice
+		invoice = Invoice(patient=patient, doctor=doctor, total_amount=total_amount)
+		invoice.save()
+		# Create Bills
+		for x in range(0,form_num):
+			x = str(x)
+			bill = Bill(invoice=invoice, appointment=appointment, description=request.POST['title_'+x], 
+				quantity=1.0, vat=0.0, amount=float(request.POST['amount_'+x]), paid=True)
+			bill.save()
+		return HttpResponseRedirect('../../../../patient_profile/'+slug+'/'+str(patient_id)+'/')
+	else:
+		return render(request, 'doctors/add-billing.html', {'profile': doctor, 'patient': patient})
 
 def doctor_profile(request):
 	return render(request, 'doctors/doctor-profile.html')
@@ -354,20 +453,9 @@ def doctor_profile(request):
 def edit_billing(request):
 	return render(request, 'doctors/edit-billing.html')
 
-def add_prescription(request):
-	return render(request, 'doctors/add-prescription.html')
-
 def chat_doctor(request):
 	return render(request, 'doctors/chat-doctor.html')
 
-def patient_profile(request):
-	return render(request, 'doctors/patient-profile.html')
-
-def invoices(request):
-	return render(request, 'doctors/invoices.html')
-
-def appointments(request):
-	return render(request, 'doctors/appointments.html')
 
 def edit_prescription(request):
 	return render(request, 'doctors/edit-prescription.html')

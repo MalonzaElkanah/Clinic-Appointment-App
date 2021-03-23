@@ -176,8 +176,8 @@
 											<tr>
 												<td>
 													<h2 class="table-avatar">
-														<a href="{% url 'patient-profile' %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
-														<a href="patient-profile.html">{{appointment.patient.first_name}} {{appointment.patient.second_name}} <span>#PT000{{appointment.patient.id}}</span></a>
+														<a href="{% url 'patient-profile' appointment.patient|slugify appointment.patient.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
+														<a href="{% url 'patient-profile' appointment.patient|slugify appointment.patient.id %}">{{appointment.patient.first_name}} {{appointment.patient.second_name}} <span>#PT000{{appointment.patient.id}}</span></a>
 													</h2>
 												</td>
 												<td>{{appointment.booking_date.date}} <span class="d-block text-info">{{appointment.booking_date.time}}</span></td>
@@ -229,8 +229,8 @@
 											<tr>
 												<td>
 													<h2 class="table-avatar">
-														<a href="{% url 'patient-profile' %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
-														<a href="{% url 'patient-profile' %}">{{appointment.patient.first_name}} {{appointment.patient.second_name}} <span>#PT000{{appointment.patient.id}}</span></a>
+														<a href="{% url 'patient-profile' appointment.patient|slugify appointment.patient.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
+														<a href="{% url 'patient-profile' appointment.patient|slugify appointment.patient.id %}">{{appointment.patient.first_name}} {{appointment.patient.second_name}} <span>#PT000{{appointment.patient.id}}</span></a>
 													</h2>
 												</td>
 												<td>{{appointment.booking_date.time}} <span class="d-block text-info">{{appointment.booking_date.time}}</span></td>
