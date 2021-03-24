@@ -1,6 +1,6 @@
 {% extends "doctors/base.html" %}
 
-{% block title %}Doctors{% endblock %}
+{% block title %}Invoices{% endblock %}
 
 {% load static %}
 
@@ -101,21 +101,21 @@
 						{% for invoice in invoices %}
 							<tr>
 								<td>
-									<a href="invoice-view.html">#INV-000{{invoice.id}}</a>
+									<a href="{% url 'invoice' invoice.patient|slugify invoice.id %}">#INV-000{{invoice.id}}</a>
 								</td>
 								<td>
 									<h2 class="table-avatar">
-										<a href="{% url 'patient-profile' %}" class="avatar avatar-sm mr-2">
+										<a href="{% url 'patient-profile' invoice.patient|slugify invoice.patient.id %}" class="avatar avatar-sm mr-2">
 											<img class="avatar-img rounded-circle" src="{{invoice.patient.image.url}}" alt="User Image">
 										</a>
-										<a href="{% url 'patient-profile' %}">{{invoice.patient.first_name}} {{invoice.patient.second_name}} <span>#PT000{{invoice.id}}</span></a>
+										<a href="{% url 'patient-profile' invoice.patient|slugify invoice.patient.id %}">{{invoice.patient.first_name}} {{invoice.patient.second_name}} <span>#PT000{{invoice.id}}</span></a>
 									</h2>
 								</td>
 								<td>kSh {{invoice.total_amount}}</td>
 								<td>{{invoice.date_paid}}</td>
 								<td class="text-right">
 									<div class="table-action">
-										<a href="invoice-view.html" class="btn btn-sm bg-info-light">
+										<a href="{% url 'invoice' invoice.patient|slugify invoice.id %}" class="btn btn-sm bg-info-light">
 											<i class="far fa-eye"></i> View
 										</a>
 										<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">

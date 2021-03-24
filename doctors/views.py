@@ -213,25 +213,83 @@ def doctor_profile_page2(request):
 def doctor_dashboard(request):
 	profile = Doctor.objects.get(user=request.user.id)
 	appointments = Appointment.objects.filter(doctor=profile.id)
-	upcoming_appointments = appointments.filter(status='WAIT')
-	today = dt.date.today()
-	today_appointments = appointments.filter(status='ACCEPTTED', booking_date__date=today)
+	upcoming_appointments = appointments.filter(booking_date__gte=dt.date.today())
+	today_appointments = appointments.filter(status='ACCEPTTED', booking_date__date=dt.date.today())
 	return render(request, 'doctors/doctor-dashboard.html', {"profile": profile, "appointments": appointments,
 		"upcoming_appointments": upcoming_appointments, "today_appointments": today_appointments})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def appointments(request):
 	profile = Doctor.objects.get(user=request.user.id)
 	appointments = Appointment.objects.filter(doctor=profile.id)
 	return render(request, 'doctors/appointments.html', {'profile' :profile, 'appointments': appointments})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def appointment_accept(request, slug, appointment_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	appointment = Appointment.objects.get(id=appointment_id)
+	if appointment.doctor.id == doctor.id:
+		appointment.status = 'ACCEPTTED'
+		appointment.save()
+		return JsonResponse({"success": "Appointment ACCEPTTED.", "redirect": "../../../../doctors/"}, 
+			status=200)
+	else:
+		return JsonResponse({"error": "Error Updating Appointment"}, status=200) 
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def appointment_cancel(request, slug, appointment_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	appointment = Appointment.objects.get(id=appointment_id)
+	if appointment.doctor.id == doctor.id:
+		appointment.status = 'CANCELLED'
+		appointment.save()
+		return JsonResponse({"success": "Appointment CANCELLED.", "redirect": "../../../../doctors/"}, 
+			status=200)
+	else:
+		return JsonResponse({"error": "Error Updating Appointment"}, status=200) 
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def appointment_complete(request, slug, appointment_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	appointment = Appointment.objects.get(id=appointment_id)
+	if appointment.doctor.id == doctor.id:
+		appointment.status = 'COMPLETED'
+		appointment.save()
+		return JsonResponse({"success": "Appointment COMPLETED.", "redirect": "../../../../doctors/"}, 
+			status=200)
+	else:
+		return JsonResponse({"error": "Error Updating Appointment"}, status=200) 
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def my_patients(request):
 	profile = Doctor.objects.get(user=request.user.id)
-	appointments = Appointment.objects.filter(doctor=profile.id)
-	return render(request, 'doctors/my-patients.html', {'profile' :profile, 'appointments': appointments})
+	appointments = Appointment.objects.filter(doctor=profile.id).exclude(status='CANCELLED')
+	patients = []
+	for appointment in appointments:
+		if appointment.patient not in patients:
+			patients += [appointment.patient]
+
+	return render(request, 'doctors/my-patients.html', {'profile' :profile, 'patients': patients})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def schedule_timings(request):
 	profile = Doctor.objects.get(user=request.user.id)
 	schedules = DoctorSchedule.objects.filter(doctor=profile.id)
@@ -252,6 +310,9 @@ def schedule_timings(request):
 		"hours": hours})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def new_timeslot(request):
 	if request.method == 'POST':
 		form_num = int(request.POST['add_form-num'])
@@ -270,6 +331,9 @@ def new_timeslot(request):
 		return HttpResponseRedirect('../schedule-timings/')
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def update_timeslot(request):
 	if request.method == 'POST':
 		form_num = int(request.POST['edit_form-num'])
@@ -297,6 +361,9 @@ def update_timeslot(request):
 		return HttpResponseRedirect('../../schedule-timings/')
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def delete_timeslot(request, slug, slot_id):
 	t_slots = TimeSlot.objects.get(id=slot_id)
 	schdl = t_slots.schedule
@@ -305,18 +372,39 @@ def delete_timeslot(request, slug, slot_id):
 	return HttpResponseRedirect('../../../../schedule-timings/')
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def invoices(request):
 	doctor = Doctor.objects.get(user=request.user.id)
 	invoices = Invoice.objects.filter(doctor=doctor.id)
 	return render(request, 'doctors/invoices.html', {'profile': doctor, 'invoices': invoices})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def invoice(request, slug, invoice_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	inv_id = int(invoice_id)
+	invoice = Invoice.objects.get(id=inv_id)
+	bills = Bill.objects.filter(invoice=invoice.id)
+	return render(request, 'patients/invoice-view.html', {'invoice': invoice, 'bills': bills, 
+		'profile': doctor})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def reviews(request):
 	doctor = Doctor.objects.get(user=request.user.id)
 	reviews = Review.objects.filter(doctor=doctor.id)
 	return render(request, 'doctors/reviews.html', {'profile': doctor, 'reviews': reviews})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def social_media(request):
 	doctor = Doctor.objects.get(user=request.user.id)
 	if request.method == 'POST':
@@ -340,6 +428,9 @@ def social_media(request):
 		return render(request, 'doctors/social-media.html', {'profile': doctor, 'social': social})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def doctor_change_password(request):
 	doctor = Doctor.objects.get(user=request.user.id)
 	if request.is_ajax():
@@ -362,6 +453,9 @@ def doctor_change_password(request):
 		return render(request, 'doctors/doctor-change-password.html', {'profile': doctor})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def patient_profile(request, slug, patient_id):
 	doctor = Doctor.objects.get(user=request.user.id)
 	patient = Patient.objects.get(id=patient_id)
@@ -374,6 +468,9 @@ def patient_profile(request, slug, patient_id):
 		'invoices': invoices})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def add_prescription(request, slug, patient_id):
 	doctor = Doctor.objects.get(user=request.user.id)
 	patient = Patient.objects.get(id=patient_id)
@@ -424,6 +521,28 @@ def add_prescription(request, slug, patient_id):
 		return render(request, 'doctors/add-prescription.html', {'profile': doctor, 'patient': patient})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def edit_prescription(request, patient_id, slug, prescription_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	patient = Patient.objects.get(id=patient_id)
+	prescription = Prescription.objects.get(id=prescription_id)
+	if patient_id == prescription.patient.id:
+		if request.method == 'POST':
+			form = PrescriptionForm(request.POST, instance=prescription)
+			if form.is_valid():
+				form.save()
+			else:
+				return HttpResponse(form.errors)
+			prescription = Prescription.objects.get(id=prescription_id)
+	return render(request, 'doctors/edit-prescription.html', {'profile': doctor, 'patient': patient,
+		'prescription': prescription})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def add_billing(request, slug, patient_id, appointment_id):
 	doctor = Doctor.objects.get(user=request.user.id)
 	patient = Patient.objects.get(id=patient_id)
@@ -456,9 +575,6 @@ def edit_billing(request):
 def chat_doctor(request):
 	return render(request, 'doctors/chat-doctor.html')
 
-
-def edit_prescription(request):
-	return render(request, 'doctors/edit-prescription.html')
 
 def new_schedule(doctor):
 	days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']

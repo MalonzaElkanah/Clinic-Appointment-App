@@ -1,6 +1,6 @@
 {% extends "doctors/base.html" %}
 
-{% block title %}Doctors{% endblock %}
+{% block title %}Appointments{% endblock %}
 
 {% load static %}
 
@@ -87,11 +87,11 @@
 				<!-- Appointment List -->
 				<div class="appointment-list">
 					<div class="profile-info-widget">
-						<a href="{% url 'patient-profile' %}" class="booking-doc-img">
+						<a href="{% url 'patient-profile' appointment.patient|slugify appointment.patient.id %}" class="booking-doc-img">
 							<img src="{{appointment.patient.image.url}}" alt="User Image">
 						</a>
 						<div class="profile-det-info">
-							<h3><a href="{% url 'patient-profile' %}">{{appointment.patient.first_name}} {{appointment.patient.second_name}}</a></h3>
+							<h3><a href="{% url 'patient-profile' appointment.patient|slugify appointment.patient.id %}">{{appointment.patient.first_name}} {{appointment.patient.second_name}}</a></h3>
 							<div class="patient-details">
 								<h5><i class="far fa-clock"></i> {{appointment.booking_date}}</h5>
 								<h5><i class="fas fa-map-marker-alt"></i> {{appointment.patient.county}}, {{appointment.patient.country}}</h5>
@@ -104,12 +104,14 @@
 						<a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt{{appointment.id}}_details">
 							<i class="far fa-eye"></i> View
 						</a>
-						<a href="javascript:void(0);" class="btn btn-sm bg-success-light">
+					{% if appointment.status == 'WAIT' %}
+						<a href="{% url 'appointment-accept' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-success-light ajax-link">
 							<i class="fas fa-check"></i> Accept
 						</a>
-						<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+						<a href="{% url 'appointment-cancel' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-danger-light ajax-link">
 							<i class="fas fa-times"></i> Cancel
 						</a>
+					{% endif %}
 					</div>
 				</div>
 				<!-- /Appointment List -->
@@ -169,3 +171,8 @@
 	{% endfor %}
 
 {% endblock %}	  
+
+{% block javascript %}
+	<!-- Custom JS -->
+	<script src="{% static 'cas/js/ajax.js' %}"></script>
+{% endblock %}

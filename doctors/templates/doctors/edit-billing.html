@@ -13,7 +13,7 @@
 				<div class="col-md-12 col-12">
 					<nav aria-label="breadcrumb" class="page-breadcrumb">
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index-2.html">Home</a></li>
+							<li class="breadcrumb-item"><a href="{% url 'doctor-dashboard' %}">Home</a></li>
 							<li class="breadcrumb-item active" aria-current="page">Edit Billing</li>
 						</ol>
 					</nav>
@@ -70,15 +70,15 @@
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="biller-info">
-										<h4 class="d-block">Dr. Darren Elder</h4>
-										<span class="d-block text-sm text-muted">Dentist</span>
-										<span class="d-block text-sm text-muted">Newyork, United States</span>
+										<h4 class="d-block">{{profile.full_name}}</h4>
+										<span class="d-block text-sm text-muted">{{profile.speciality.name}}</span>
+										<span class="d-block text-sm text-muted">{{profile.county}}, {{profile.country}}</span>
 									</div>
 								</div>
 								<div class="col-sm-6 text-sm-right">
 									<div class="billing-info">
-										<h4 class="d-block">1 November 2019</h4>
-										<span class="d-block text-muted">#INV0001</span>
+										<h4 class="d-block">{% now "DATE_FORMAT" %}</h4>
+										<span class="d-block text-muted">#NEW</span>
 									</div>
 								</div>
 							</div>

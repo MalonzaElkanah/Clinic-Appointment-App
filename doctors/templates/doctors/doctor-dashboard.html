@@ -181,21 +181,22 @@
 													</h2>
 												</td>
 												<td>{{appointment.booking_date.date}} <span class="d-block text-info">{{appointment.booking_date.time}}</span></td>
-												<td>{{appointment.booking_date.purpose}}</td>
-												<td>New Patient</td>
+												<td>{{appointment.purpose}}</td>
+												<td>{{appointment.new_patient}}</td>
 												<td class="text-center">kSh {{appointment.amount}}</td>
 												<td class="text-right">
 													<div class="table-action">
-														<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+														<a href="javascript:void(0);" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt{{appointment.id}}_details">
 															<i class="far fa-eye"></i> View
 														</a>
-														
-														<a href="javascript:void(0);" class="btn btn-sm bg-success-light">
+													{% if appointment.status == 'WAIT' %}
+														<a href="{% url 'appointment-accept' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-success-light ajax-link">
 															<i class="fas fa-check"></i> Accept
 														</a>
-														<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+														<a href="{% url 'appointment-cancel' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-danger-light ajax-link">
 															<i class="fas fa-times"></i> Cancel
 														</a>
+													{% endif %}
 													</div>
 												</td>
 											</tr>
@@ -234,21 +235,22 @@
 													</h2>
 												</td>
 												<td>{{appointment.booking_date.time}} <span class="d-block text-info">{{appointment.booking_date.time}}</span></td>
-												<td>Fever</td>
-												<td>Old Patient</td>
+												<td>{{appointment.purpose}}</td>
+												<td>{{appointment.new_patient}}</td>
 												<td class="text-center">kSh {{appointment.amount}}</td>
 												<td class="text-right">
 													<div class="table-action">
-														<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+														<a href="javascript:void(0);" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt{{appointment.id}}_details">
 															<i class="far fa-eye"></i> View
 														</a>
-														
-														<a href="javascript:void(0);" class="btn btn-sm bg-success-light">
+													{% if appointment.status == 'WAIT' %}
+														<a href="{% url 'appointment-accept' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-success-light ajax-link">
 															<i class="fas fa-check"></i> Accept
 														</a>
-														<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+														<a href="{% url 'appointment-cancel' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-danger-light ajax-link">
 															<i class="fas fa-times"></i> Cancel
 														</a>
+													{% endif %}
 													</div>
 												</td>
 											</tr>
@@ -269,9 +271,127 @@
 </div>
 {% endblock %}
 
+{% block modal %}
+	{% for appointment in upcoming_appointments %}
+	<!-- Appointment Details Modal -->
+	<div class="modal fade custom-modal" id="appt{{appointment.id}}_details">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Appointment Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="info-details">
+						<li>
+							<div class="details-header">
+								<div class="row">
+									<div class="col-md-6">
+										<span class="title">#APT000{{appointment.id}}</span>
+										<span class="text">{{appointment.booking_date}}</span>
+									</div>
+									<div class="col-md-6">
+										<div class="text-right">
+										{% if appointment.status == 'ACCEPTTED' %}
+											<button type="button" class="btn bg-info-light btn-sm" id="topup_status">Acceptted</button>
+										{% elif appointment.status == 'WAIT' %}
+											<button type="button" class="btn bg-warning-light btn-sm" id="topup_status">pending</button>
+										{% elif appointment.status == 'CANCELLED' %}
+											<button type="button" class="btn bg-danger-light btn-sm" id="topup_status">Cancelled</button>
+										{% elif appointment.status == 'COMPLETED' %}
+											<button type="button" class="btn bg-success-light btn-sm" id="topup_status">Completed</button>
+										{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<span class="title">Status:</span>
+							<span class="text">{{appointment.status}}</span>
+						</li>
+						<li>
+							<span class="title">Confirm Date:</span>
+							<span class="text">{{appointment.date.date}}</span>
+						</li>
+						<li>
+							<span class="title">Paid Amount</span>
+							<span class="text">kSh {{appointment.amount}}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Appointment Details Modal -->
+	{% endfor %}
+
+	{% for appointment in today_appointments %}
+	<!-- Appointment Details Modal -->
+	<div class="modal fade custom-modal" id="appt{{appointment.id}}_details">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Appointment Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="info-details">
+						<li>
+							<div class="details-header">
+								<div class="row">
+									<div class="col-md-6">
+										<span class="title">#APT000{{appointment.id}}</span>
+										<span class="text">{{appointment.booking_date}}</span>
+									</div>
+									<div class="col-md-6">
+										<div class="text-right">
+										{% if appointment.status == 'ACCEPTTED' %}
+											<button type="button" class="btn bg-info-light btn-sm" id="topup_status">Acceptted</button>
+										{% elif appointment.status == 'WAIT' %}
+											<button type="button" class="btn bg-warning-light btn-sm" id="topup_status">pending</button>
+										{% elif appointment.status == 'CANCELLED' %}
+											<button type="button" class="btn bg-danger-light btn-sm" id="topup_status">Cancelled</button>
+										{% elif appointment.status == 'COMPLETED' %}
+											<button type="button" class="btn bg-success-light btn-sm" id="topup_status">Completed</button>
+										{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<span class="title">Status:</span>
+							<span class="text">{{appointment.status}}</span>
+						</li>
+						<li>
+							<span class="title">Confirm Date:</span>
+							<span class="text">{{appointment.date.date}}</span>
+						</li>
+						<li>
+							<span class="title">Paid Amount</span>
+							<span class="text">kSh {{appointment.amount}}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Appointment Details Modal -->
+	{% endfor %}
+
+{% endblock %}	 
+
 {% block javascript %}
 	<!-- Circle Progress JS -->
 	<script src="{% static 'cas/js/circle-progress.min.js' %}"></script>
+
+	<!-- Custom JS -->
+	<script src="{% static 'cas/js/ajax.js' %}"></script>
 {% endblock %}
 	  
 		

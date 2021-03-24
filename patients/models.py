@@ -40,6 +40,13 @@ class Appointment(models.Model):
 	def __str__(self):
 		return self.apt_purpose
 
+	def new_patient(self):
+		appointments = Appointment.objects.filter(doctor=self.doctor.id, patient=self.patient.id)
+		if appointments.count()>1:
+			return "Old Patient"
+		else:
+			return "New Patient"
+
 
 class Prescription(models.Model):
 	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)

@@ -13,7 +13,7 @@
 				<div class="col-md-12 col-12">
 					<nav aria-label="breadcrumb" class="page-breadcrumb">
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index-2.html">Home</a></li>
+							<li class="breadcrumb-item"><a href="{% url 'doctor-dashboard' %}">Home</a></li>
 							<li class="breadcrumb-item active" aria-current="page">Edit Prescription</li>
 						</ol>
 					</nav>
@@ -37,22 +37,23 @@
 							<div class="pro-widget-content">
 								<div class="profile-info-widget">
 									<a href="#" class="booking-doc-img">
-										<img src="assets/img/patients/patient.jpg" alt="User Image">
+										<img src="{{patient.image.url}}" alt="User Image">
 									</a>
 									<div class="profile-det-info">
-										<h3><a href="patient-profile.html">Richard Wilson</a></h3>
+										<h3>{{patient}}</h3>
+										
 										<div class="patient-details">
-											<h5><b>Patient ID :</b> PT0016</h5>
-											<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Newyork, USA</h5>
+											<h5><b>Patient ID :</b> PT000{{patient.id}}</h5>
+											<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> {{patient.county}}, {{patient.country}}</h5>
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="patient-info">
 								<ul>
-									<li>Phone <span>+1 952 001 8563</span></li>
-									<li>Age <span>38 Years, Male</span></li>
-									<li>Blood Group <span>AB+</span></li>
+									<li>Phone <span>{{patient.phone_no}}</span></li>
+									<li>Age <span>{{patient.d_o_b|timesince}}, {{patient.gender}}</span></li>
+									<li>Blood Group <span>{{patient.blood_group}}</span></li>
 								</ul>
 							</div>
 						</div>
@@ -70,146 +71,108 @@
 							<div class="row">
 								<div class="col-sm-6">
 									<div class="biller-info">
-										<h4 class="d-block">Dr. Darren Elder</h4>
-										<span class="d-block text-sm text-muted">Dentist</span>
-										<span class="d-block text-sm text-muted">Newyork, United States</span>
+										<h4 class="d-block">{{profile.full_name}}</h4>
+										<span class="d-block text-sm text-muted">{{profile.speciality.name}}</span>
+										<span class="d-block text-sm text-muted">{{profile.county}}, {{profile.country}}</span>
 									</div>
 								</div>
 								<div class="col-sm-6 text-sm-right">
 									<div class="billing-info">
-										<h4 class="d-block">1 November 2019</h4>
-										<span class="d-block text-muted">#INV0001</span>
+										<h4 class="d-block">{% now "DATE_FORMAT" %}</h4>
+										<span class="d-block text-muted">#NEW</span>
 									</div>
 								</div>
 							</div>
 							
-							<!-- Add Item -->
-							<div class="add-more-item text-right">
-								<a href="#"><i class="fa fa-plus-circle"></i> Add More</a>
-							</div>
-							<!-- /Add Item -->
-							
-							<!-- Prescription Item -->
-							<div class="card card-table">
-								<div class="card-body">
-									<div class="table-responsive">
-										<table class="table table-hover table-center">
-										<thead>
-											<tr>
-												<th style="width: 200px">Name</th>
-												<th style="width: 100px">Quantity</th>
-												<th style="width: 100px">Days</th>
-												<th style="width: 100px;">Time</th>
-												<th style="width: 80px;"></th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>
-													<input class="form-control" value="Amoxapine" type="text">
-												</td>
-												<td>
-													<input class="form-control" type="text" value="2">
-												</td>
-												<td>
-													<input class="form-control" value="2 Days" type="text">
-												</td>
-												<td>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Morning
-														</label>
-													</div>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Afternoon
-														</label>
-													</div>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Evening
-														</label>
-													</div>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Night
-														</label>
-													</div>
-												</td>
-												<td>
-													<a href="#" class="btn bg-danger-light trash"><i class="far fa-trash-alt"></i></a>
-												</td>
-											</tr>
-											<tr>
-												<td>
-													<input class="form-control" type="text" value="Benazepril">
-												</td>
-												<td>
-													<input class="form-control" type="text" value="2">
-												</td>
-												<td>
-													<input class="form-control" value="1 Days" type="text">
-												</td>
-												<td>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Morning
-														</label>
-													</div>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Afternoon
-														</label>
-													</div>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Evening
-														</label>
-													</div>
-													<div class="form-check form-check-inline">
-														<label class="form-check-label">
-															<input class="form-check-input" type="checkbox"> Night
-														</label>
-													</div>
-												</td>
-												<td>
-													<a href="#" class="btn bg-danger-light trash"><i class="far fa-trash-alt"></i></a>
-												</td>
-											</tr>
-										</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
-							<!-- /Prescription Item -->
-							
-							<!-- Signature -->
-							<div class="row">
-								<div class="col-md-12 text-right">
-									<div class="signature-wrap">
-										<div class="signature">
-											Click here to sign
-										</div>
-										<div class="sign-name">
-											<p class="mb-0">( Dr. Darren Elder )</p>
-											<span class="text-muted">Signature</span>
+							<form method="post" action="{% url 'edit-prescription' patient.id prescription.name|slugify prescription.id %}">
+								{% csrf_token %}
+								<!-- Prescription Item -->
+								<div class="card card-table">
+									<div class="card-body">
+										<div class="table-responsive">
+											<table class="table table-hover table-center">
+											<thead>
+												<tr>
+													<th style="width: 200px">Name</th>
+													<th style="width: 100px">Quantity</th>
+													<th style="width: 100px">Days</th>
+													<th style="width: 100px;">Time</th>
+													<th style="width: 80px;"></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<input name="doctor" value="{{prescription.doctor.id}}" type="text" style="display: none;">
+													<input name="patient" value="{{prescription.patient.id}}" type="text" style="display: none;">
+													<td>
+														<input class="form-control" name="name" value="{{prescription.name}}" type="text">
+													</td>
+													<td>
+														<input class="form-control" name="quantity" type="text" value="{{prescription.quantity}}">
+													</td>
+													<td>
+														<input class="form-control" name="days" value="{{prescription.days}}" type="text">
+													</td>
+													<td>
+														<div class="form-check form-check-inline">
+															<label class="form-check-label">
+																<input class="form-check-input" name="morning" type="checkbox" {% if prescription.morning %} checked {% endif %}> Morning
+															</label>
+														</div>
+														<div class="form-check form-check-inline">
+															<label class="form-check-label">
+																<input class="form-check-input" name="afternoon" type="checkbox" {% if prescription.afternoon %} checked {% endif %}> Afternoon
+															</label>
+														</div>
+														<div class="form-check form-check-inline">
+															<label class="form-check-label">
+																<input class="form-check-input" name="evening" type="checkbox" {% if prescription.evening %} checked {% endif %}> Evening
+															</label>
+														</div>
+														<div class="form-check form-check-inline">
+															<label class="form-check-label">
+																<input class="form-check-input" name="night" type="checkbox" {% if prescription.night %} checked {% endif %}> Night
+															</label>
+														</div>
+													</td>
+													<td>
+														<a href="#" class="btn bg-danger-light trash"><i class="far fa-trash-alt"></i></a>
+													</td>
+												</tr>
+											</tbody>
+											</table>
 										</div>
 									</div>
 								</div>
-							</div>
-							<!-- /Signature -->
+								<!-- /Prescription Item -->
 							
-							<!-- Submit Section -->
-							<div class="row">
-								<div class="col-md-12">
-									<div class="submit-section">
-										<button type="submit" class="btn btn-primary submit-btn">Save</button>
-										<button type="reset" class="btn btn-secondary submit-btn">Clear</button>
+								<!-- Signature -->
+								<div class="row">
+									<div class="col-md-12 text-right">
+										<div class="signature-wrap">
+											<div class="signature">
+												Click here to sign
+											</div>
+											<div class="sign-name">
+												<p class="mb-0">( Dr. Darren Elder )</p>
+												<span class="text-muted">Signature</span>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-							<!-- /Submit Section -->
-							
+								<!-- /Signature -->
+								
+								<!-- Submit Section -->
+								<div class="row">
+									<div class="col-md-12">
+										<div class="submit-section">
+											<button type="submit" class="btn btn-primary submit-btn">Save</button>
+											<button type="reset" class="btn btn-secondary submit-btn">Clear</button>
+										</div>
+									</div>
+								</div>
+								<!-- /Submit Section -->
+							</form>
 						</div>
 					</div>
 				</div>

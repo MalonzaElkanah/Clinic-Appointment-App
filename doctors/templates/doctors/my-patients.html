@@ -1,6 +1,6 @@
 {% extends "doctors/base.html" %}
 
-{% block title %}Doctors{% endblock %}
+{% block title %}My Patients{% endblock %}
 
 {% load static %}
 
@@ -83,30 +83,30 @@
 	<div class="col-md-7 col-lg-8 col-xl-9">
 	
 		<div class="row row-grid">
-		{% for appointment in appointments %}
+		{% for patient in patients %}
 			<div class="col-md-6 col-lg-4 col-xl-3">
 				<div class="card widget-profile pat-widget-profile">
 					<div class="card-body">
 						<div class="pro-widget-content">
 							<div class="profile-info-widget">
-								<a href="{% url 'patient-profile' %}" class="booking-doc-img">
-									<img src="{{appointment.patient.image.url}}" alt="User Image">
+								<a href="{% url 'patient-profile' patient|slugify patient.id %}" class="booking-doc-img">
+									<img src="{{patient.image.url}}" alt="User Image">
 								</a>
 								<div class="profile-det-info">
-									<h3><a href="{% url 'patient-profile' %}">{{appointment.patient.first_name}} {{appointment.patient.second_name}}</a></h3>
+									<h3><a href="{% url 'patient-profile' patient|slugify patient.id %}">{{patient.first_name}} {{patient.second_name}}</a></h3>
 									
 									<div class="patient-details">
-										<h5><b>Patient ID :</b> P000{{appointment.patient.id}}</h5>
-										<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i>{{appointment.patient.county}}, {{appointment.patient.country}}</h5>
+										<h5><b>Patient ID :</b> P000{{patient.id}}</h5>
+										<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i>{{patient.county}}, {{patient.country}}</h5>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="patient-info">
 							<ul>
-								<li>Phone <span>{{appointment.patient.phone_no}}</span></li>
-								<li>Age <span>{{ appointment.patient.d_o_b|timesince }}, {{appointment.patient.gender}}</span></li>
-								<li>Blood Group <span>{{appointment.patient.blood_group}}</span></li>
+								<li>Phone <span>{{patient.phone_no}}</span></li>
+								<li>Age <span>{{patient.d_o_b|timesince }}, {{patient.gender}}</span></li>
+								<li>Blood Group <span>{{patient.blood_group}}</span></li>
 							</ul>
 						</div>
 					</div>
