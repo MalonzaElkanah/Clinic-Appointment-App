@@ -29,7 +29,6 @@ urlpatterns = [
 	path('add-prescription/<slug:slug>/<int:patient_id>/', views.add_prescription, name='add-prescription'),
 	path('edit-prescription/<int:patient_id>/<slug:slug>/<int:prescription_id>/', views.edit_prescription, 
 		name='edit-prescription'),
-
 	path('add-billing/<slug:slug>/<int:patient_id>/<int:appointment_id>/', views.add_billing,  
 		name='add-billing'),
 	path('edit-billing/<slug:slug>/<int:patient_id>/', views.edit_billing, name='edit-billing'),
