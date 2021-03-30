@@ -65,6 +65,7 @@
 {% block content %}
 	<div class="row">
 		<div class="col-md-12">	
+		{% if profile != None %}
 			<div class="profile-header">
 				<div class="row align-items-center">
 					<div class="col-auto profile-image">
@@ -86,6 +87,7 @@
 					</div>
 				</div>
 			</div>
+		{% endif %}
 			<div class="profile-menu">
 				<ul class="nav nav-tabs nav-tabs-solid">
 					<li class="nav-item">
@@ -120,7 +122,7 @@
 									</div>
 									<div class="row">
 										<p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Email ID</p>
-										<p class="col-sm-10">{{profile.email}}</p>
+										<p class="col-sm-10">{{user.email}}</p>
 									</div>
 									<div class="row">
 										<p class="col-sm-2 text-muted text-sm-right mb-0 mb-sm-3">Mobile</p>
@@ -147,9 +149,20 @@
 											</button>
 										</div>
 										<div class="modal-body">
-											<form enctype="multipart/form-data" method="post" action="{% url 'doctor-profile-settings' %}>
+											<form enctype="multipart/form-data" method="post" action="{% url 'profile' %}">
 												{% csrf_token %}
+												<input type="text" name="user" value="{{user.id}}" style="display: none;">
 												<div class="row form-row">
+													{% for field in form %}
+														{% if field.name == 'image' %}
+															<div class="col-12">
+																<div class="form-group">
+																	<label>{{field.label}}</label>
+																	{{field}}
+																</div>
+															</div>
+														{% endif %}
+													{% endfor %}
 													<div class="col-12 col-sm-6">
 														<div class="form-group">
 															<label>First Name</label>
@@ -194,7 +207,7 @@
 													<div class="col-12 col-sm-6">
 														<div class="form-group">
 															<label>Town</label>
-															<input type="text" class="form-control" name="town" value="{{profile.name}}">
+															<input type="text" class="form-control" name="town" value="{{profile.town}}">
 														</div>
 													</div>
 													<div class="col-12 col-sm-6">

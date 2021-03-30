@@ -88,7 +88,7 @@ Version      : 1.0
 	
 	if($('.datetimepicker').length > 0 ){
 		$('.datetimepicker').datetimepicker({
-			format: 'DD/MM/YYYY',
+			format: 'YYYY-MM-DD',
 			icons: {
 				up: "fa fa-angle-up",
 				down: "fa fa-angle-down",

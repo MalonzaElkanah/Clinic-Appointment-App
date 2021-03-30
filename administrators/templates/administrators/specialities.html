@@ -47,9 +47,7 @@
 	<li class="submenu">
 		<a href="#"><i class="fe fe-document"></i> <span> Authentication </span> <span class="menu-arrow"></span></a>
 		<ul style="display: none;">
-			<li><a href="{% url 'login' %}"> Login </a></li>
-			<li><a href="{% url 'register' %}"> Register </a></li>
-			<li><a href="{% url 'forgot-password' %}"> Forgot Password </a></li>
+			<li><a href="{% url 'logout' %}"> Logout </a></li>
 			<li><a href="{% url 'lock-screen' %}"> Lock Screen </a></li>
 		</ul>
 	</li>
@@ -64,6 +62,11 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="card">
+				<div class="card-header">
+                    <div class="card-header-action">
+                        <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#Add_Specialities_details">Add Speciality</a>
+                    </div>
+                </div>
 				<div class="card-body">
 					<div class="table-responsive">
 						<table class="datatable table table-hover table-center mb-0">
@@ -75,121 +78,31 @@
 								</tr>
 							</thead>
 							<tbody>
+							{% for speciality in specialities %}
 								<tr>
-									<td>#SP001</td>
+									<td>#SP00{{speciality.id}}</td>
 									
 									<td>
 										<h2 class="table-avatar">
 											<a href="profile.html" class="avatar avatar-sm mr-2">
-												<img class="avatar-img" src="{% static 'administrators/img/specialities/specialities-01.png" alt="Speciality">
+												<img class="avatar-img" src="{{speciality.image.url}}" alt="Speciality">
 											</a>
-											<a href="profile.html">Urology</a>
+											<a href="profile.html">{{speciality.name}}</a>
 										</h2>
 									</td>
 								
 									<td class="text-right">
 										<div class="actions">
-											<a class="btn btn-sm bg-success-light" data-toggle="modal" href="#edit_specialities_details">
+											<a class="btn btn-sm bg-success-light" data-toggle="modal" href="#edit_specialities_details{{speciality.id}}">
 												<i class="fe fe-pencil"></i> Edit
 											</a>
-											<a  data-toggle="modal" href="#delete_modal" class="btn btn-sm bg-danger-light">
+											<a  data-toggle="modal" href="#delete_modal{{speciality.id}}" class="btn btn-sm bg-danger-light">
 												<i class="fe fe-trash"></i> Delete
 											</a>
 										</div>
 									</td>
 								</tr>
-								<tr>
-									<td>#SP002</td>
-									
-									<td>
-										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2">
-												<img class="avatar-img" src="{% static 'administrators/img/specialities/specialities-02.png" alt="Speciality">
-											</a>
-											<a href="profile.html">Neurology</a>
-										</h2>
-									</td>
-								
-									<td class="text-right">
-										<div class="actions">
-											<a class="btn btn-sm bg-success-light" data-toggle="modal" href="#edit_specialities_details">
-												<i class="fe fe-pencil"></i> Edit
-											</a>
-											<a  data-toggle="modal" href="#delete_modal" class="btn btn-sm bg-danger-light">
-												<i class="fe fe-trash"></i> Delete
-											</a>
-										</div>
-									</td>
-								</tr>	
-								<tr>
-									<td>#SP003</td>
-									
-									<td>
-										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2">
-												<img class="avatar-img" src="{% static 'administrators/img/specialities/specialities-03.png" alt="Speciality">
-											</a>
-											<a href="profile.html">Orthopedic</a>
-										</h2>
-									</td>
-								
-									<td class="text-right">
-										<div class="actions">
-											<a class="btn btn-sm bg-success-light" data-toggle="modal" href="#edit_specialities_details">
-												<i class="fe fe-pencil"></i> Edit
-											</a>
-											<a  data-toggle="modal" href="#delete_modal" class="btn btn-sm bg-danger-light">
-												<i class="fe fe-trash"></i> Delete
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>#SP004</td>
-									
-									<td>
-										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2">
-												<img class="avatar-img" src="{% static 'administrators/img/specialities/specialities-04.png" alt="Speciality">
-											</a>
-											<a href="profile.html">Cardiologist</a>
-										</h2>
-									</td>
-								
-									<td class="text-right">
-										<div class="actions">
-											<a class="btn btn-sm bg-success-light" data-toggle="modal" href="#edit_specialities_details">
-												<i class="fe fe-pencil"></i> Edit
-											</a>
-											<a  data-toggle="modal" href="#delete_modal" class="btn btn-sm bg-danger-light">
-												<i class="fe fe-trash"></i> Delete
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>#SP005</td>
-									
-									<td>
-										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2">
-												<img class="avatar-img" src="{% static 'administrators/img/specialities/specialities-05.png" alt="Speciality">
-											</a>
-											<a href="profile.html">Dentist</a>
-										</h2>
-									</td>
-								
-									<td class="text-right">
-										<div class="actions">
-											<a class="btn btn-sm bg-success-light" data-toggle="modal" href="#edit_specialities_details">
-												<i class="fe fe-pencil"></i> Edit
-											</a>
-											<a class="btn btn-sm bg-danger-light" data-toggle="modal" href="#delete_modal">
-												<i class="fe fe-trash"></i> Delete
-											</a>
-										</div>
-									</td>
-								</tr>
+							{% endfor %}
 							</tbody>
 						</table>
 					</div>
@@ -211,18 +124,19 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form>
+					<form enctype="multipart/form-data" method="post" action="{% url 'specialities' %}">
+						{% csrf_token %}
 						<div class="row form-row">
 							<div class="col-12 col-sm-6">
 								<div class="form-group">
 									<label>Specialities</label>
-									<input type="text" class="form-control">
+									<input type="text" class="form-control" name="name">
 								</div>
 							</div>
 							<div class="col-12 col-sm-6">
 								<div class="form-group">
 									<label>Image</label>
-									<input type="file"  class="form-control">
+									<input type="file"  class="form-control" name="image">
 								</div>
 							</div>
 							
@@ -234,9 +148,10 @@
 		</div>
 	</div>
 	<!-- /ADD Modal -->
-	
-	<!-- Edit Details Modal -->
-	<div class="modal fade" id="edit_specialities_details" aria-hidden="true" role="dialog">
+
+	{% for speciality, form in forms.items %}
+	<!-- Edit Details Modal{{speciality.id}} -->
+	<div class="modal fade" id="edit_specialities_details{{speciality.id}}" aria-hidden="true" role="dialog">
 		<div class="modal-dialog modal-dialog-centered" role="document" >
 			<div class="modal-content">
 				<div class="modal-header">
@@ -246,18 +161,24 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form>
+					<form enctype="multipart/form-data" method="post" action="{% url 'edit-speciality' %}">
+						{% csrf_token %}
+						<input type="text" name="speciality" value="{{speciality.id}}" style="display: none;">
 						<div class="row form-row">
 							<div class="col-12 col-sm-6">
 								<div class="form-group">
 									<label>Specialities</label>
-									<input type="text" class="form-control" value="Cardiology">
+									<input type="text" class="form-control" name="name" value="{{speciality.name}}">
 								</div>
 							</div>
 							<div class="col-12 col-sm-6">
 								<div class="form-group">
-									<label>Image</label>
-									<input type="file"  class="form-control">
+								{% for field in form %}
+									{% if field.name == 'image' %}
+									<label>{{field.label}}</label>
+									{{field}}
+									{% endif %}
+								{% endfor %}
 								</div>
 							</div>
 							
@@ -271,7 +192,7 @@
 	<!-- /Edit Details Modal -->
 	
 	<!-- Delete Modal -->
-	<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+	<div class="modal fade" id="delete_modal{{speciality.id}}" aria-hidden="true" role="dialog">
 		<div class="modal-dialog modal-dialog-centered" role="document" >
 			<div class="modal-content">
 			<!--	<div class="modal-header">
@@ -281,16 +202,21 @@
 					</button>
 				</div>-->
 				<div class="modal-body">
-					<div class="form-content p-2">
-						<h4 class="modal-title">Delete</h4>
-						<p class="mb-4">Are you sure want to delete?</p>
-						<button type="button" class="btn btn-primary">Save </button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
+					<form method="post" action="{% url 'delete-speciality' %}">
+						<input type="text" name="speciality" value="{{speciality.id}}" style="display: none;">
+						{% csrf_token %}
+						<div class="form-content p-2">
+							<h4 class="modal-title">Delete</h4>
+							<p class="mb-4">Are you sure want to delete?</p>
+							<button type="submit" class="btn btn-primary">Save </button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
+	{% endfor %}
 {% endblock %}
 
 {% block javascript %}

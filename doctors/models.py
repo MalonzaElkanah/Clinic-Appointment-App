@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+#from patients.models import Invoice
+
 # Create your models here.
 
 class Speciality(models.Model):
@@ -41,6 +43,13 @@ class Doctor(models.Model):
 	def full_name(self):
 		return self.title + " " + self.first_name + " " + self.second_name
 
+	def total_revenue(self):
+		invoices = Invoice.objects.filter(doctor=self.id)
+		revenue = 0.0
+		for inv in invoices:
+			revenue = revenue + inv.total_amount 
+		return revenue
+	
 	def service_list(self):
 		services = self.services
 		return services.split(',')

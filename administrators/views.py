@@ -5,6 +5,10 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import AppSetting, Admin
+from .forms import AdminForm, SpecialityForm
+
+from doctors.models import Doctor, Speciality
+from patients.models import Patient, Appointment, Invoice, Review
 
 # Create your views here.
 
@@ -21,51 +25,151 @@ def check_settings(user):
 @login_required(login_url='/login/')
 @user_passes_test(check_admin, login_url='/login/')
 def profile(request):
-	if request.method == 'POST':
-		if int(request.POST['user']) == request.user.id:
-			pass
-	else:
-		profile = None
-		try:
-			profile = Admin.objects.get(user=request.user.id)
-		except Exception:
-			pass
-	return render(request, 'administrators/profile.html', {'profile': profile})
+	profile = None
+	form = None
+	try:
+		profile = Admin.objects.get(user=request.user.id)
+		if request.method == 'POST':
+			if int(request.POST['user']) == request.user.id:
+				form = AdminForm(request.POST, request.FILES, instance=profile)
+				if form.is_valid():
+					form.save()
+				else:
+					return HttpResponse(formset.errors)
+		form = AdminForm(instance=profile)
+
+	except Exception:
+		if request.method == 'POST':
+			if int(request.POST['user']) == request.user.id:
+				form = AdminForm(request.POST, request.FILES)
+				if form.is_valid():
+					form.save()
+					user=request.user
+					user.last_name = request.POST['second_name']
+					user.first_name = request.POST['first_name']
+					user.email = request.POST['email']
+					user.save()
+					return HttpResponseRedirect('../../administrators/profile/')
+				else:
+					return HttpResponse(formset.errors)
+		else:
+			form = AdminForm()
+	return render(request, 'administrators/profile.html', {'profile': profile, 'form': form})
 
 
 @login_required(login_url='/login/')
 @user_passes_test(check_admin, login_url='/login/')
 @user_passes_test(check_settings, login_url='/administrators/profile/')
 def admin_dashboard(request):
-	return render(request, 'administrators/index.html')
+	profile = Admin.objects.get(user=request.user.id)
+	doctors = Doctor.objects.all()
+	patients = Patient.objects.all()
+	appointments = Appointment.objects.all()
+	invoices = Invoice.objects.all()
+	revenue = 0.0
+	for inv in invoices:
+		revenue = revenue + inv.total_amount 
+	return render(request, 'administrators/index.html', {'profile': profile, 'doctors': doctors, 
+		'patients': patients, 'appointments': appointments, 'invoices': invoices, 'total_revenue': revenue})
 
 
-def transactions_list(request):
-	return render(request, 'administrators/transactions-list.html')
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def appointment_list(request):
+	profile = Admin.objects.get(user=request.user.id)
+	appointments = Appointment.objects.all()
+	return render(request, 'administrators/appointment-list.html', {'profile': profile, 
+		'appointments': appointments})
 
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def specialities(request):
+	if request.method == 'POST':
+		form = SpecialityForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+		return HttpResponseRedirect('../../administrators/specialities/')
+	else:
+		profile = Admin.objects.get(user=request.user.id)
+		specialities = Speciality.objects.all()
+		forms = {}
+		for speciality in specialities:
+			forms.setdefault(speciality, SpecialityForm(instance=speciality))
+		return render(request, 'administrators/specialities.html', {'profile': profile, 'forms': forms,
+			'specialities': specialities} )
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def delete_speciality(request):
+	speciality = Speciality.objects.get(id=int(request.POST['speciality']))
+	if request.method == 'POST':
+		speciality.delete()
+	return HttpResponseRedirect('../../administrators/specialities/')
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def edit_speciality(request):
+	speciality = Speciality.objects.get(id=int(request.POST['speciality']))
+	if request.method == 'POST':
+		form = SpecialityForm(request.POST, request.FILES, instance=speciality)
+		if form.is_valid():
+			form.save()
+		else:
+			return HttpResponse(formset.errors)
+	return HttpResponseRedirect('../../administrators/specialities/')
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def doctor_list(request):
+	profile = Admin.objects.get(user=request.user.id)
+	doctors = Doctor.objects.all()
+	return render(request, 'administrators/doctor-list.html', {'profile': profile, 'doctors': doctors})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
 def patient_list(request):
-	return render(request, 'administrators/patient-list.html')
+	profile = Admin.objects.get(user=request.user.id)
+	patients = Patient.objects.all()
+	return render(request, 'administrators/patient-list.html', {'profile': profile, 'patients': patients})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def reviews(request):
+	profile = Admin.objects.get(user=request.user.id)
+	reviews = Review.objects.all()
+	return render(request, 'administrators/reviews.html', {'profile': profile, 'reviews': reviews})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def transactions_list(request):
+	profile = Admin.objects.get(user=request.user.id)
+	invoices = Invoice.objects.all()
+	return render(request, 'administrators/transactions-list.html', {'profile': profile, 'invoices': invoices})
 
 def lock_screen(request):
 	return render(request, 'administrators/lock-screen.html')
 
-def appointment_list(request):
-	return render(request, 'administrators/appointment-list.html')
-
-def reviews(request):
-	return render(request, 'administrators/reviews.html')
-
-def specialities(request):
-	return render(request, 'administrators/specialities.html')
 
 def forgot_password(request):
 	return render(request, 'administrators/forgot-password.html')
 
 def settings(request):
 	return render(request, 'administrators/settings.html')
-
-def doctor_list(request):
-	return render(request, 'administrators/doctor-list.html')
 
 def invoice_report(request):
 	return render(request, 'administrators/invoice-report.html')

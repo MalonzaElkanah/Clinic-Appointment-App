@@ -20,8 +20,9 @@ class Admin(models.Model):
 	address_line = models.CharField('Address Line', max_length=200, blank=True)
 	country = models.CharField('Country', max_length=100, blank=True)
 	county = models.CharField('County', max_length=100, blank=True)
-	town = models.CharField('Town', max_length=100, blank=True)
+	town = models.CharField('Town', max_length=100, blank=True)\
+	# user, image, first_name, second_name, d_o_b, phone_no, email, address_line, country, county, town
 
 	def __str__(self):
-		return self.f_name+" "+self.s_name
+		return self.first_name+" "+self.second_name
 
