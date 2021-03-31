@@ -16,3 +16,9 @@ class SpecialityForm(ModelForm):
 	class Meta:
 		model = Speciality
 		fields = ('name', 'image')
+
+
+class AppSettingForm(ModelForm):
+	class Meta:
+		model = AppSetting
+		fields = ('logo', 'name', 'icon')

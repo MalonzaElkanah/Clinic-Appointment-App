@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 from .models import AppSetting, Admin
-from .forms import AdminForm, SpecialityForm
+from .forms import AdminForm, SpecialityForm, AppSettingForm
 
 from doctors.models import Doctor, Speciality
 from patients.models import Patient, Appointment, Invoice, Review
@@ -161,18 +161,85 @@ def transactions_list(request):
 	invoices = Invoice.objects.all()
 	return render(request, 'administrators/transactions-list.html', {'profile': profile, 'invoices': invoices})
 
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def settings(request):
+	profile = Admin.objects.get(user=request.user.id)
+	form = None
+	app = None
+	try:
+		apps = AppSetting.objects.all()
+		app = apps[0]
+		if request.method == 'POST':
+			if int(request.POST['user']) == request.user.id:
+				form = AppSettingForm(request.POST, request.FILES, instance=app)
+				if form.is_valid():
+					form.save()
+				else:
+					return HttpResponse(form.errors)
+		form = AppSettingForm(instance=app)
+
+	except Exception:
+		if request.method == 'POST':
+			form = AppSettingForm(request.POST, request.FILES)
+			if form.is_valid():
+				form.save()
+				return HttpResponseRedirect('../../administrators/settings/')
+			else:
+				return HttpResponse(form.errors)
+		else:
+			form = AppSettingForm()
+	
+	return render(request, 'administrators/settings.html', {'profile': profile, 'form': form, 'app': app})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def invoice_report(request):
+	profile = Admin.objects.get(user=request.user.id)
+	invoices = Invoice.objects.all()
+	return render(request, 'administrators/invoice-report.html', {'profile': profile, 'invoices': invoices})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def change_password(request):
+	profile = Admin.objects.get(user=request.user.id)
+	if request.is_ajax():
+		usr = request.user
+		if usr.check_password(request.POST['old_password']):
+			if request.POST['new_password'] == request.POST['confirm_password']:
+				if not request.POST['new_password'] == request.POST['old_password']:
+					usr.set_password(request.POST['new_password'])
+					usr.save()
+					logout(request)
+					redirect = '../../login/'
+					return JsonResponse({"success": "Password Updated.", "redirect": redirect}, status=200)
+				else:
+					return JsonResponse({"error": "The Password Has not Changed"}, status=200)
+			else:
+				return JsonResponse({"error": "Confirm and New Password don't Match"}, status=200)
+		else:
+			return JsonResponse({"error": "Incorrect password"}, status=200)
+	else:
+		return HttpResponseRedirect('../../administrators/profile/')
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
 def lock_screen(request):
-	return render(request, 'administrators/lock-screen.html')
+	profile = Admin.objects.get(user=request.user.id)
+	return render(request, 'administrators/lock-screen.html', {'profile': profile})
 
 
 def forgot_password(request):
 	return render(request, 'administrators/forgot-password.html')
 
-def settings(request):
-	return render(request, 'administrators/settings.html')
-
-def invoice_report(request):
-	return render(request, 'administrators/invoice-report.html')
 
 def invoice(request):
 	return render(request, 'administrators/invoice.html')

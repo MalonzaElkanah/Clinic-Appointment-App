@@ -68,24 +68,30 @@
 						<h4 class="card-title">General</h4>
 					</div>
 					<div class="card-body">
-						<form action="#">
-					
+						<form enctype="multipart/form-data" method="post" action="{% url 'settings' %}">
+							{% csrf_token %}
 							<div class="form-group">
 								<label>Website Name</label>
-								<input type="text" class="form-control">
+								<input type="text" class="form-control" name="name" value="{{app.name}}">
 							</div>
+						{% for field in form %}
+							{% if field.name == 'logo' %}
 							<div class="form-group">
-								<label>Website Logo</label>
-								<input type="file" class="form-control">
+								<label>{{field.label}}</label>
+								{{field}}
 								<small class="text-secondary">Recommended image size is <b>150px x 150px</b></small>
 							</div>
+							{% elif field.name == 'icon' %}
 							<div class="form-group mb-0">
-								<label>Favicon</label>
-								<input type="file" class="form-control">
+								<label>{{field.label}}</label>
+								{{field}}
 								<small class="text-secondary">Recommended image size is <b>16px x 16px</b> or <b>32px x 32px</b></small><br>
 								<small class="text-secondary">Accepted formats : only png and ico</small>
 							</div>
-							
+							{% endif %}
+						{% endfor %}
+
+							<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
 						</form>
 					</div>
 				</div>

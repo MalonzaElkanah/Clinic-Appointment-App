@@ -6,6 +6,7 @@ class AppSetting(models.Model):
 	logo = models.ImageField('Website Logo', upload_to='Image/Setting', max_length=500, blank=True)
 	name = models.CharField('Website Name', max_length=50)
 	icon =  models.ImageField('Favicon', upload_to='Image/Setting', max_length=500, blank=True)
+	# logo, name, icon
 
 
 class Admin(models.Model):

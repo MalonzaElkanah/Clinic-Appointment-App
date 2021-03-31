@@ -15,6 +15,7 @@ urlpatterns = [
 	path('settings/', views.settings, name='settings'),
 	path('invoice-report/', views.invoice_report, name='invoice-report'),
 	path('profile/', views.profile, name='profile'),
+	path('new-password/', views.change_password, name='admin-change-password'),
 	path('lock-screen/', views.lock_screen, name='lock-screen'),
 
 	path('invoice/', views.invoice, name='invoice'),

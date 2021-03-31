@@ -81,7 +81,7 @@
 							{% for invoice in invoices %}
 								<tr>
 									<td><a href="invoice.html">#IN000{{invoice.id}}</td>
-									<td>#PT001</td>
+									<td>#PT00{{invoice.patient.id}}</td>
 									<td>
 										<h2 class="table-avatar">
 											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{invoice.patient.image.url}}" alt="User Image"></a>
