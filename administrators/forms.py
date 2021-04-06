@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from .models import Admin, AppSetting
-from doctors.models import Speciality
+from appointments.models import Speciality
 
 
 class AdminForm(ModelForm):

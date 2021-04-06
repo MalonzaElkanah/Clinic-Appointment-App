@@ -96,7 +96,11 @@
 									<td>{{appointment.booking_date.date}} <span class="text-primary d-block">{{appointment.booking_date.time}}</span></td>
 									<td>
 										<div class="status-toggle">
+										{% if appointment.status == 'COMPLETED' or  appointment.status == 'ACCEPTTED' %}
 											<input type="checkbox" id="status_1" class="check" checked>
+										{% else %}
+											<input type="checkbox" id="status_1" class="check">
+										{% endif %}
 											<label for="status_1" class="checktoggle">checkbox</label>
 										</div>
 									</td>

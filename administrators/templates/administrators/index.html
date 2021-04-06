@@ -204,13 +204,15 @@
 										</h2>
 									</td>
 									<td>{{doctor.speciality.name}}</td>
-									<td>$3200.00</td>
+									<td>Ksh {{doctor.total_revenue}}</td>
 									<td>
+									{% for rate in doctor.review %}
+										{% if rate == 'filled' %}
 										<i class="fe fe-star text-warning"></i>
-										<i class="fe fe-star text-warning"></i>
-										<i class="fe fe-star text-warning"></i>
-										<i class="fe fe-star text-warning"></i>
+										{% else %}
 										<i class="fe fe-star-o text-secondary"></i>
+										{% endif %}
+									{% endfor %}
 									</td>
 								</tr>
 							{% endfor %}
@@ -250,8 +252,13 @@
 										</h2>
 									</td>
 									<td>{{patient.phone_no}}</td>
+								{% if patient.last_appointment != None %}
 									<td>20 Oct 2019</td>
 									<td class="text-right">$100.00</td>
+								{% else %}
+									<td>None</td>
+									<td class="text-right">None</td>
+								{% endif %}
 								</tr>
 							{% endfor %}
 							</tbody>
@@ -303,8 +310,14 @@
 									<td>{{appointment.booking_date.date}} <span class="text-primary d-block">{{appointment.booking_date.time}}</span></td>
 									<td>
 										<div class="status-toggle">
+										{% if appointment.status == 'COMPLETED' or  appointment.status == 'ACCEPTTED' %}
 											<input type="checkbox" id="status_1" class="check" checked>
+										{% else %}
+											<input type="checkbox" id="status_1" class="check">
+										{% endif %}
 											<label for="status_1" class="checktoggle">checkbox</label>
+										
+										
 										</div>
 									</td>
 									<td class="text-right">
@@ -325,6 +338,62 @@
 
 {% block javascript %}		
 	<script src="{% static 'administrators/plugins/raphael/raphael.min.js' %}"></script>    
-	<script src="{% static 'administrators/plugins/morris/morris.min.js' %}"></script>  
-	<script src="{% static 'administrators/js/chart.morris.js' %}"></script>
+	<script src="{% static 'administrators/plugins/morris/morris.min.js' %}"></script> 
+	<script type="text/javascript">
+		$(function(){
+	
+			/* Morris Area Chart */
+			
+			window.mA = Morris.Area({
+			    element: 'morrisArea',
+			    data: [
+			    {% for month, revenue in months_revenue.items %}
+			        { y: '{{month}}', a: {{revenue}}},
+			    {% endfor %}
+			    ],
+			    xkey: 'y',
+			    ykeys: ['a'],
+			    labels: ['Revenue'],
+			    lineColors: ['#1b5a90'],
+			    lineWidth: 2,
+				
+		     	fillOpacity: 0.5,
+			    gridTextSize: 10,
+			    hideHover: 'auto',
+			    resize: true,
+				redraw: true
+			});
+			
+			/* Morris Line Chart */
+			
+			window.mL = Morris.Line({
+			    element: 'morrisLine',
+			    data: [
+		{% for month, users in new_users.items %}
+			{% for user in users %}
+				{% if forloop.counter == 1 %}
+					{ y: '{{month}}', a: {{user}},
+				{% else %} 
+					b: {{user}}},
+		        {% endif %}
+	        {% endfor %}
+	    {% endfor %}
+			    ],
+			    xkey: 'y',
+			    ykeys: ['a', 'b'],
+			    labels: ['Doctors', 'Patients'],
+			    lineColors: ['#1b5a90','#ff9d00'],
+			    lineWidth: 1,
+			    gridTextSize: 10,
+			    hideHover: 'auto',
+			    resize: true,
+				redraw: true
+			});
+			$(window).on("resize", function(){
+				mA.redraw();
+				mL.redraw();
+			});
+
+		});
+	</script>
 {% endblock %}

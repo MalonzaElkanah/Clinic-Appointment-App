@@ -95,7 +95,11 @@
 									
 									<td>
 										<div class="status-toggle">
+										{% if doctor.user.is_active %}
 											<input type="checkbox" id="status_1" class="check" checked>
+										{% else %}
+											<input type="checkbox" id="status_1" class="check">
+										{% endif %}
 											<label for="status_1" class="checktoggle">checkbox</label>
 										</div>
 									</td>

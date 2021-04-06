@@ -1,7 +1,8 @@
 <!DOCTYPE html> 
 <html lang="en">
 	
-	<head>
+<!-- doccure/profile-settings.html  30 Nov 2019 04:12:18 GMT -->
+<head>
 		<meta charset="utf-8">
 		<title>Doccure | {% block title %} {% endblock %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
@@ -27,6 +28,7 @@
 
 		<!-- Main Wrapper -->
 		<div class="main-wrapper">
+
 			<!-- Header -->
 			<header class="header">
 				<nav class="navbar navbar-expand-lg header-nav">
@@ -52,25 +54,10 @@
 							</a>
 						</div>
 						<ul class="main-nav">
-							<li class="active">
+							<li>
 								<a href="{% url 'index' %}">Home</a>
 							</li>
-						{% if user.groups.get.name == 'doctors_group' %}
-							<li class="has-submenu">
-								<a href="#">Doctors <i class="fas fa-chevron-down"></i></a>
-								<ul class="submenu">
-									<li class="active"><a href="{% url 'doctor-dashboard' %}">Doctor Dashboard</a></li>
-									<li><a href="{% url 'appointments' %}">Appointments</a></li>
-									<li><a href="{% url 'schedule-timings' %}">Schedule Timing</a></li>
-									<li><a href="{% url 'my-patients' %}">Patients List</a></li>
-									<li><a href="{% url 'chat-doctor' %}">Chat</a></li>
-									<li><a href="{% url 'invoices' %}">Invoices</a></li>
-									<li><a href="{% url 'doctor-profile-settings' %}">Profile Settings</a></li>
-									<li><a href="{% url 'reviews' %}">Reviews</a></li>
-								</ul>
-							</li>	
-						{% elif user.groups.get.name == 'patients_group' %}
-							<li class="has-submenu">
+							<li class="has-submenu active">
 								<a href="#">Patients <i class="fas fa-chevron-down"></i></a>
 								<ul class="submenu">
 									<li><a href="{% url 'patient-dashboard' %}">Patient Dashboard</a></li>
@@ -79,29 +66,16 @@
 									<li><a href="{% url 'profile-settings' %}">Profile Settings</a></li>
 									<li><a href="{% url 'change-password' %}">Change Password</a></li>
 								</ul>
-							</li>
-						{% elif user.is_superuser %}
-							<li>
-								<a href="{% url 'admin-dashboard' %}" target="_blank">Admin</a>
 							</li>	
-						{% endif %}
-
 							<li class="has-submenu">
 								<a href="#">Pages <i class="fas fa-chevron-down"></i></a>
 								<ul class="submenu">
-								{% if user.is_authenticated %}
 									<li><a href="{% url 'logout' %}">Logout</a></li>
-								{% else %}
-									<li><a href="{% url 'login' %}">Login</a></li>
-									<li><a href="{% url 'register' %}">Patient Register</a></li>
-									<li><a href="{% url 'doctor-register' %}">Doctor Register</a></li>
-								{% endif %}
 								</ul>
 							</li>
-						</ul>		 
+						</ul>
 					</div>		 
 					<ul class="nav header-navbar-rht">
-					{% if user.is_authenticated %}
 						<!-- User Menu -->
 						<li class="nav-item dropdown has-arrow logged-item">
 							<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
@@ -116,44 +90,89 @@
 									</div>
 									<div class="user-text">
 										<h6>{{user.first_name}} {{user.last_name}}</h6>
-									{% if user.groups.get.name == 'patients_group' %}
 										<p class="text-muted mb-0">Patient</p>
-									{% elif user.groups.get.name == 'doctors_group' %}
-										<p class="text-muted mb-0">Doctor</p>
-									{% elif user.is_superuser %}
-										<p class="text-muted mb-0">Administrator</p>
-									{% else %}
-										<p class="text-muted mb-0">{{user.groups.get}}</p>
-									{% endif %}
 									</div>
 								</div>
-							{% if user.groups.get.name == 'patients_group' %}
 								<a class="dropdown-item" href="{% url 'patient-dashboard' %}">Dashboard</a>
 								<a class="dropdown-item" href="{% url 'profile-settings' %}">Profile Settings</a>
-							{% elif user.groups.get.name == 'doctors_group' %}
-								<a class="dropdown-item" href="{% url 'doctor-dashboard' %}">Dashboard</a>
-								<a class="dropdown-item" href="{% url 'doctor-profile-settings' %}">Profile Settings</a>
-							{% elif user.is_superuser %}
-								<a class="dropdown-item" href="{% url 'profile' %}">My Profile</a>
-								<a class="dropdown-item" href="{% url 'settings' %}">Settings</a>
-							{% endif %}
 								<a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 							</div>
 						</li>
 						<!-- /User Menu -->
-					{% else %}
-						<li class="nav-item">
-							<a class="nav-link header-login" href="{% url 'login' %}">login / Signup </a>
-						</li>
-					{% endif %}
+						
 					</ul>
 				</nav>
 			</header>
 			<!-- /Header -->
 
-			{% block content %}
-			{% endblock %}
+		
+			<!-- Breadcrumb -->
+			<div class="breadcrumb-bar">
+				<div class="container-fluid">
+					<div class="row align-items-center">
+						<div class="col-md-12 col-12">
+							<nav aria-label="breadcrumb" class="page-breadcrumb">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item"><a href="{% url 'patient-dashboard' %}">Home</a></li>
+									<li class="breadcrumb-item active" aria-current="page">
+										{% block breadcrumb1 %} {% endblock %}
+									</li>
+								</ol>
+							</nav>
+							<h2 class="breadcrumb-title">
+								{% block breadcrumb %} {% endblock %}
+							</h2>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /Breadcrumb -->
+			
+			<!-- Page Content -->
+			<div class="content">
+				<div class="container-fluid">
+					<div class="row">
+					
+						<!-- Profile Sidebar -->
+						<div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+							<div class="profile-sidebar">
+								<div class="widget-profile pro-widget-content">
+									<div class="profile-info-widget">
+										<a href="{% url 'patient-dashboard' %}" class="booking-doc-img">
+											<img src="{{profile.image.url}}" alt="User Image">
+										</a>
+										<div class="profile-det-info">
+											<h3>{{user.first_name}} {{user.last_name}}</h3>
+											{% if profile != None %}
+											<div class="patient-details">
+												<h5><i class="fas fa-birthday-cake"></i> {{profile.d_o_b}}, {{ profile.d_o_b|timesince }}</h5>
+												<h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> {{profile.county}}, {{profile.country}}</h5>
+											</div>
+											{% endif %}
+										</div>
+									</div>
+								</div>
+								<div class="dashboard-widget">
+									<nav class="dashboard-menu">
+									{% block sidenav %}
+										
+									{% endblock %}	
+									</nav>
+								</div>
 
+							</div>
+						</div>
+						<!-- /Profile Sidebar -->
+						{% block content %}
+						
+						{% endblock %}
+
+					</div>
+				</div>
+
+			</div>		
+			<!-- /Page Content -->
+   
 			<!-- Footer -->
 			<footer class="footer">
 				
@@ -194,9 +213,9 @@
 								<!-- /Footer Widget -->
 								
 							</div>
-							{% if user.groups.get.name == 'patients_group' %}
+							
 							<div class="col-lg-3 col-md-6">
-
+							
 								<!-- Footer Widget -->
 								<div class="footer-widget footer-menu">
 									<h2 class="footer-title">For Patients</h2>
@@ -209,42 +228,21 @@
 								<!-- /Footer Widget -->
 								
 							</div>
-							{% elif user.groups.get.name == 'doctors_group' %}
+							
 							<div class="col-lg-3 col-md-6">
 							
 								<!-- Footer Widget -->
 								<div class="footer-widget footer-menu">
-									<h2 class="footer-title">For Doctors</h2>
+									<h2 class="footer-title">Others</h2>
 									<ul>
-										<li><a href="{% url 'appointments' %}"><i class="fas fa-angle-double-right"></i> Appointments</a></li>
-										<li><a href="{% url 'doctor-profile-settings' %}"><i class="fas fa-angle-double-right"></i>Profile Settings</a></li>
-										<li><a href="{% url 'my-patients' %}"><i class="fas fa-angle-double-right"></i> My Patients</a></li>
-										<li><a href="{% url 'schedule-timings' %}"><i class="fas fa-angle-double-right"></i> Schedule Timings</a></li>
-										<li><a href="{% url 'doctor-dashboard' %}"><i class="fas fa-angle-double-right"></i> Doctor Dashboard</a></li>
-									</ul>
-								</div>
-								<!-- /Footer Widget -->
-								
-							</div>
-							{% endif %}
-							<div class="col-lg-3 col-md-6">
-							
-								<!-- Footer Widget -->
-								<div class="footer-widget footer-menu">
-									<h2 class="footer-title">Pages</h2>
-									<ul>
-									{% if user.is_authenticated %}
+										<li><a href="{% url 'chat' %}"><i class="fas fa-angle-double-right"></i> Messages</a></li>
 										<li><a href="{% url 'logout' %}"><i class="fas fa-angle-double-right"></i> Logout</a></li>
-									{% else %}
-										<li><a href="{% url 'login' %}"><i class="fas fa-angle-double-right"></i> Login</a></li>
-										<li><a href="{% url 'register' %}"><i class="fas fa-angle-double-right"></i> Patient Register</a></li>
-										<li><a href="{% url 'doctor-register' %}"><i class="fas fa-angle-double-right"></i>Doctor Register</a></li>
-									{% endif %}
 									</ul>
 								</div>
 								<!-- /Footer Widget -->
 								
 							</div>
+							
 							<div class="col-lg-3 col-md-6">
 							
 								<!-- Footer Widget -->
@@ -309,12 +307,10 @@
 			</footer>
 			<!-- /Footer -->
 		   
-	   </div>
-	   <!-- /Main Wrapper -->
-		{% block modal %}
-		{% endblock %}
-
-	   <!-- jQuery -->
+		</div>
+		<!-- /Main Wrapper -->
+	  
+		<!-- jQuery -->
 		<script src="{% static 'cas/js/jquery.min.js' %}"></script>
 		
 		<!-- Bootstrap Core JS -->
@@ -322,6 +318,10 @@
 		<script src="{% static 'cas/js/bootstrap.min.js' %}"></script>
 		
 		{% block javascript %} {% endblock %}
+		
+		<!-- Sticky Sidebar JS -->
+        <script src="{% static 'cas/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
+        <script src="{% static 'cas/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
 		
 		<!-- Custom JS -->
 		<script src="{% static 'cas/js/script.js' %}"></script>

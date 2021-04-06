@@ -6,13 +6,36 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from doctors.models import Speciality, Doctor
+from appointments.models import Speciality, Doctor, Patient
+from administrators.models import Admin
+
+
+def get_profile(user):
+	if user.is_authenticated:
+		group = user.groups.get()
+		try:
+			profile = None
+			if group.name=='patients_group':
+				profile = Patient.objects.get(user=user.id)
+			elif group.name=='doctors_group':
+				profile = Doctor.objects.get(user=user.id)
+			elif user.is_superuser():
+				profile = Admin.objects.get(user=user.id)
+			else:
+				return profile
+			return profile
+		except Exception:
+			return None
+	else:
+		return None
 
 
 def index(request):
 	specialities = Speciality.objects.all()
 	doctors = Doctor.objects.all()
-	return render(request, 'cas/index.html', {"specialities": specialities, "doctors": doctors})
+	profile = get_profile(request.user)
+	return render(request, 'cas/index.html', {"specialities": specialities, "doctors": doctors, 
+		"profile": profile})
 
 
 def user_login(request):

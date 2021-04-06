@@ -3,13 +3,13 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils import timezone
 
 from .models import AppSetting, Admin
 from .forms import AdminForm, SpecialityForm, AppSettingForm
+from appointments.models import Doctor,  Patient, Speciality, Appointment, Invoice, Review
 
-from doctors.models import Doctor, Speciality
-from patients.models import Patient, Appointment, Invoice, Review
-
+import datetime as dt
 # Create your views here.
 
 
@@ -69,8 +69,11 @@ def admin_dashboard(request):
 	revenue = 0.0
 	for inv in invoices:
 		revenue = revenue + inv.total_amount 
+	months_revenue = half_year_revenue()
+	new_users = half_year_users()
 	return render(request, 'administrators/index.html', {'profile': profile, 'doctors': doctors, 
-		'patients': patients, 'appointments': appointments, 'invoices': invoices, 'total_revenue': revenue})
+		'patients': patients, 'appointments': appointments, 'invoices': invoices, 'total_revenue': revenue, 
+		'months_revenue': months_revenue, 'new_users': new_users})
 
 
 @login_required(login_url='/login/')
@@ -243,3 +246,109 @@ def forgot_password(request):
 
 def invoice(request):
 	return render(request, 'administrators/invoice.html')
+
+
+# Functions
+def half_year_revenue():
+	dic = {}
+	months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+	today = timezone.now()
+	six_months = dt.timedelta(days=183)
+	date = today - six_months
+	index1 = date.month - 1
+	#Months in the Same Year
+	if today.month > date.month:
+		data_months = months[index1:today.month]
+		for mnt in data_months:
+			dic.setdefault(str(mnt), 0)
+	else: 
+		#Months in different Year
+		data_months = months[index1:] + months[:today.month]
+		for mnt in data_months:
+			dic.setdefault(str(mnt), 0)
+
+	invoices = Invoice.objects.filter(date_paid__gt=timezone.datetime(date.year, date.month, 1, 0, 0 ,0, 
+		tzinfo=timezone.get_current_timezone())).order_by('date_paid')
+	month_buffer = None
+	total_amount = 0
+	for inv in invoices:
+		date = inv.date_paid
+		dic.setdefault(str(f"{date:%b}"), total_amount)
+		if month_buffer == None:
+			month_buffer = str(f"{date:%b}")
+			total_amount = total_amount + inv.total_amount
+			dic[str(f"{date:%b}")] = total_amount
+		elif month_buffer == str(f"{date:%b}"):
+			total_amount = total_amount + inv.total_amount
+			dic[str(f"{date:%b}")] = total_amount
+		else:
+			total_amount = inv.total_amount
+			dic[str(f"{date:%b}")] = total_amount
+			month_buffer = str(f"{date:%b}")
+
+	return dic
+
+
+def half_year_users():
+	dic = {}
+	dic1 = {}
+	months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+	today = timezone.now()
+	six_months = dt.timedelta(days=93)
+	date = today - six_months
+	index1 = date.month - 1
+	#Months in the Same Year
+	if today.month > date.month:
+		data_months = months[index1:today.month]
+		for mnt in data_months:
+			dic.setdefault(str(mnt), 0)
+			dic1.setdefault(str(mnt), 0)
+	else: 
+		#Months in different Year
+		data_months = months[index1:] + months[:today.month]
+		for mnt in data_months:
+			dic.setdefault(str(mnt), 0)
+			dic1.setdefault(str(mnt), 0)
+
+	doctors = Doctor.objects.filter(user__date_joined__gt=timezone.datetime(date.year, date.month, 1, 0, 0 ,0, 
+		tzinfo=timezone.get_current_timezone())).order_by('user')
+	patients = Patient.objects.filter(user__date_joined__gt=timezone.datetime(date.year, date.month, 1, 0, 0 ,0, 
+		tzinfo=timezone.get_current_timezone())).order_by('user')
+	month_buffer = None
+	total = 0
+	for doc in doctors:
+		date = doc.user.date_joined
+		dic.setdefault(str(f"{date:%b}"), total)
+		if month_buffer == None:
+			month_buffer = str(f"{date:%b}")
+			total = total + 1
+			dic[str(f"{date:%b}")] = total
+		elif month_buffer == str(f"{date:%b}"):
+			total = total + 1
+			dic[str(f"{date:%b}")] = total
+		else:
+			total_amount = 1
+			dic[str(f"{date:%b}")] = total
+			month_buffer = str(f"{date:%b}")
+
+	total = 0
+	for pat in patients:
+		date = pat.user.date_joined
+		dic1.setdefault(str(f"{date:%b}"), total)
+		if month_buffer == None:
+			month_buffer = str(f"{date:%b}")
+			total = total + 1
+			dic1[str(f"{date:%b}")] = total
+		elif month_buffer == str(f"{date:%b}"):
+			total = total + 1
+			dic1[str(f"{date:%b}")] = total
+		else:
+			total = 1
+			dic1[str(f"{date:%b}")] = total
+			month_buffer = str(f"{date:%b}")
+
+	data = {}
+	for k, v in dic.items():
+		data.setdefault(k , [v, dic1[k]]) 
+
+	return data

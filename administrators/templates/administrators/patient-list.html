@@ -91,8 +91,13 @@
 									<td>{{ patient.d_o_b|timesince }}</td>
 									<td>{{patient.street_lane}}, {{patient.town}}, {{patient.county}}, {{patient.country}}</td>
 									<td>{{patient.phone_no}}</td>
+								{% if patient.last_appointment != None %}
 									<td>20 Oct 2019</td>
 									<td class="text-right">$100.00</td>
+								{% else %}
+									<td>None</td>
+									<td class="text-right">None</td>
+								{% endif %}
 								</tr>
 							{% endfor %}
 							</tbody>
