@@ -127,9 +127,15 @@
 									<div class="col-6">
 										<a href="{% url 'doctor-profile' doctor.full_name|slugify doctor.id %}" class="btn view-btn">View Profile</a>
 									</div>
+								{% if doctor.id != profile.id %}
 									<div class="col-6">
 										<a href="{% url 'booking' doctor.full_name|slugify doctor.id %}" class="btn book-btn">Book Now</a>
 									</div>
+								{% else %}
+									<div class="col-6">
+										<a href="{% url 'doctor-profile-settings' %}" class="btn book-btn">Edit Profile</a>
+									</div>
+								{% endif %}
 								</div>
 							</div>
 						</div>

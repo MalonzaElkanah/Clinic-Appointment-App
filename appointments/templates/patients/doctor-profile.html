@@ -71,6 +71,7 @@
 									<li><i class="far fa-money-bill-alt"></i> kSh {{doctor.pricing}} per hour </li>
 								</ul>
 							</div>
+						{% if user.groups.get.name == 'patients_group' %}
 							<div class="doctor-action">
 								<a href="{% url 'favourite-doctor' doctor.full_name|slugify doctor.id %}" class="btn btn-white fav-btn">
 									<i class="far fa-bookmark"></i>
@@ -85,9 +86,16 @@
 									<i class="fas fa-video"></i>
 								</a>
 							</div>
+						{% endif %}
+						{% if doctor.id != profile.id %}
 							<div class="clinic-booking">
 								<a class="apt-btn" href="{% url 'booking' doctor.full_name|slugify doctor.id %}">Book Appointment</a>
 							</div>
+						{% else %}
+							<div class="clinic-booking">
+								<a class="apt-btn" href="{% url 'doctor-profile-settings' %}">Edit Profile</a>
+							</div>
+						{% endif %}
 						</div>
 					</div>
 				</div>

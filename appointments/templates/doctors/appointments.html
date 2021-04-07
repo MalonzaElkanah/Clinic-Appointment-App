@@ -144,7 +144,15 @@
 									</div>
 									<div class="col-md-6">
 										<div class="text-right">
+										{% if appointment.status == 'ACCEPTTED' %}
+											<button type="button" class="btn bg-info-light btn-sm" id="topup_status">Acceptted</button>
+										{% elif appointment.status == 'WAIT' %}
+											<button type="button" class="btn bg-warning-light btn-sm" id="topup_status">pending</button>
+										{% elif appointment.status == 'CANCELLED' %}
+											<button type="button" class="btn bg-danger-light btn-sm" id="topup_status">Cancelled</button>
+										{% elif appointment.status == 'COMPLETED' %}
 											<button type="button" class="btn bg-success-light btn-sm" id="topup_status">Completed</button>
+										{% endif %}
 										</div>
 									</div>
 								</div>

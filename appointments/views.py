@@ -11,6 +11,7 @@ from .models import DoctorSchedule, SocialMedia, Appointment, Invoice, Bill, Rev
 from .models import Patient, Prescription, MedicalRecord, Favourite
 
 import datetime as dt
+from easy_pdf.rendering import render_to_pdf_response
 # Create your views here.
 
 def doctor_register(request):
@@ -217,8 +218,13 @@ def doctor_dashboard(request):
 	appointments = Appointment.objects.filter(doctor=profile.id)
 	upcoming_appointments = appointments.filter(booking_date__gte=dt.date.today())
 	today_appointments = appointments.filter(status='ACCEPTTED', booking_date__date=dt.date.today())
+	my_patients = []
+	for appointment in appointments:
+		if appointment.patient not in my_patients:
+			my_patients += [appointment.patient]
 	return render(request, 'doctors/doctor-dashboard.html', {"profile": profile, "appointments": appointments,
-		"upcoming_appointments": upcoming_appointments, "today_appointments": today_appointments})
+		"upcoming_appointments": upcoming_appointments, "today_appointments": today_appointments, 
+		"total_patients": len(my_patients)})
 
 
 @login_required(login_url='/login/')
@@ -393,6 +399,33 @@ def invoice(request, slug, invoice_id):
 	bills = Bill.objects.filter(invoice=invoice.id)
 	return render(request, 'patients/invoice-view.html', {'invoice': invoice, 'bills': bills, 
 		'profile': doctor})
+
+
+@login_required(login_url='/login/')
+def invoice_pdf(request, slug, invoice_id):
+	inv_id = int(invoice_id)
+	invoice = Invoice.objects.get(id=inv_id)
+	group = request.user.groups.get()
+	access = False
+	profile = None
+	try:
+		if group.name=='patients_group':
+			profile = Patient.objects.get(user=request.user.id)
+			if profile.id == invoice.patient.id:
+				access = True
+		elif group.name=='doctors_group':
+			profile = Doctor.objects.get(user=request.user.id)
+			if profile.id == invoice.doctor.id:
+				access = True
+		elif user.is_superuser():
+			access = True
+	except Exception:
+		access = False
+
+	if access:
+		bills = Bill.objects.filter(invoice=invoice.id)
+		return render_to_pdf_response(request, 'cas/invoice-pdf.html', {'invoice': invoice, 
+			'bills': bills, 'request': request})
 
 
 @login_required(login_url='/login/')

@@ -22,6 +22,7 @@ urlpatterns = [
 	path('doctors/timeslot/delete/<slug:slug>/<int:slot_id>/', views.delete_timeslot, name='delete-timeslot'),
 	path('doctors/invoices/', views.invoices, name='invoices'),
 	path('doctors/invoice/<slug:slug>/<int:invoice_id>/', views.invoice, name='invoice'),
+	path('invoice-pdf/<slug:slug>/<int:invoice_id>/', views.invoice_pdf, name='invoice-pdf'),
 	path('doctors/reviews/', views.reviews, name='reviews'),
 	path('doctors/social-media/', views.social_media, name = 'social-media'),
 	path('doctors/change-password/', views.doctor_change_password, name='doctor-change-password'),
