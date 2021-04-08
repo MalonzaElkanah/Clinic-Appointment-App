@@ -48,8 +48,10 @@ urlpatterns = [
  	path('patients/booking-success/', views.booking_success, name='booking-success'),
  	path('patients/invoice-view/<slug:slug>/<int:invoice_id>/', views.invoice_view, name='invoice-view'),
  	path('patients/favourites/', views.favourites, name='favourites'),
- 	path('patients/favourite-doctor/<slug:slug>/<int:doctor_id>/', views.favourite_doctor, name='favourite-doctor'),
+ 	path('patients/favourite-doctor/<slug:slug>/<int:doctor_id>/', views.favourite_doctor, 
+ 		name='favourite-doctor'),
 	path('patients/change-password/', views.change_password, name='change-password'),
-		
+	
+	path('patients/add-review/', views.add_review, name='add-review'),
  	path('patients/chat/', views.chat, name='chat'),
 ]

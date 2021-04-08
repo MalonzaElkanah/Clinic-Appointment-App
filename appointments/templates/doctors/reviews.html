@@ -93,7 +93,7 @@
 						<img class="avatar rounded-circle" alt="User Image" src="{{review.patient.image.url}}">
 						<div class="comment-body">
 							<div class="meta-data">
-								<span class="comment-author">{{review.patient.first_name}} {{review.patient.last_name}}</span>
+								<span class="comment-author">{{review.appointment.patient.first_name}} {{review.appointment.patient.last_name}}</span>
 								<span class="comment-date">Reviewed {{ review.date|timesince }} ago</span>
 								<div class="review-count rating">
 								{% for rate in review.review_rate.value %}

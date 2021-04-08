@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 from appointments.models import Speciality, Doctor, Patient
 from administrators.models import Admin
@@ -86,6 +87,31 @@ def user_login(request):
 def user_logout(request):
 	logout(request)
 	return HttpResponseRedirect('../login/')
+
+
+def search_results(request):
+	if request.method == 'GET':
+		profile = get_profile(request.user)
+		doctors = {}
+		word = request.GET['search']
+		loc = request.GET['location']
+		if word == '' and not loc == '':
+			doctors = Doctor.objects.filter(Q(address_line1__contains=loc) | Q(address_line2__contains=loc) | Q(country__contains=loc) | Q(county__contains=loc) | Q(town__contains=loc) | Q(clinic__contains=loc) | Q(clinic_address__contains=loc))
+		elif not word == '' and loc == '':
+			doctors = Doctor.objects.filter(Q(first_name__contains=word) | Q(second_name__contains=word) | Q(services__contains=word) | Q(specialization__contains=word) | Q(clinic__contains=word))
+		elif not word == '' and not loc == '':
+			query = Doctor.objects.filter(Q(address_line1__contains=loc) | Q(address_line2__contains=loc) | Q(country__contains=loc) | Q(county__contains=loc) | Q(town__contains=loc) | Q(clinic__contains=loc) | Q(clinic_address__contains=loc))
+			doctors = query.filter(Q(first_name__contains=word) | Q(second_name__contains=word) | Q(services__contains=word) | Q(specialization__contains=word) | Q(clinic__contains=word))
+		elif word == '' and loc == '':
+			doctors == {}
+		else:
+			query = Doctor.objects.filter(Q(address_line1__contains=loc) | Q(address_line2__contains=loc) | Q(country__contains=loc) | Q(county__contains=loc) | Q(town__contains=loc) | Q(clinic__contains=loc) | Q(clinic_address__contains=loc))
+			doctors = query.filter(Q(first_name__contains=word) | Q(second_name__contains=word) | Q(services__contains=word) | Q(specialization__contains=word) | Q(clinic__contains=word))
+		
+		specialities = Speciality.objects.all()
+		return render(request, 'cas/search.html', {'doctors': doctors, 'keyword': word, 'location': loc, 
+			'profile': profile, 'specialities': specialities})
+
 
 
 def privacy_policy(request):

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import datetime as dt
 #from administrators.models import Appointment, Invoice, Bill, Review
 
 # Doctors models here.
@@ -51,7 +52,7 @@ class Doctor(models.Model):
 		return revenue
 	
 	def review(self):
-		reviews = Review.objects.filter(doctor=self.id)
+		reviews = Review.objects.filter(appointment__doctor=self.id)
 		avg_review = 0
 		if reviews.count() > 0:
 			sum_review = 0
@@ -67,8 +68,45 @@ class Doctor(models.Model):
 		return count
 
 	def total_reviews(self):
-		reviews = Review.objects.filter(doctor=self.id)
+		reviews = Review.objects.filter(appointment__doctor=self.id)
 		return reviews.count()
+
+	def availability(self):
+		today = dt.date.today()
+		duration = dt.timedelta(days=2)
+		date = today + duration
+		slot = 'unavailable'
+		for x in range(1,8):
+			day = str(f"{date:%A}").lower()
+			schedule = DoctorSchedule.objects.get(doctor=self.id, day=day) # doctor, day, interval
+			time_slots = TimeSlot.objects.filter(schedule=schedule.id) # schedule, start_time, end_time
+			if time_slots.count() == 0:
+				duration = dt.timedelta(days=1)
+				date = date + duration
+			else:
+				appointments = Appointment.objects.filter(doctor=self.id, booking_date__date__gte=date)
+				if appointments.count()==0:
+					slot = "Available on "+str(f"{date:%a, %d %b}")
+					break
+				else:
+					unavailable_time = []
+					for appointment in appointments:
+						unavailable_time += [appointment.booking_date.time]
+					for slot in time_slots:
+						if slot.start_time not in unavailable_time:
+							slot = "Available on "+str(f"{date:%a, %d %b}")
+							break
+					if slot != 'unavailable':
+						break
+					else:
+						duration = dt.timedelta(days=1)
+						date = date + duration
+
+		return slot
+
+	def latest_degree(self):
+		education = Education.objects.filter(doctor=self.id).order_by('y_o_c').reverse()[0]
+		return education.degree
 
 	def service_list(self):
 		services = self.services
@@ -77,6 +115,26 @@ class Doctor(models.Model):
 	def specialization_list(self):
 		specialization = self.specialization
 		return specialization.split(',')
+
+	def thumbs(self):
+		reviews = Review.objects.filter(appointment__doctor=self.id)
+		if reviews.count()>0:
+			recommends = reviews.filter(recommend=True)
+			if recommends.count()>0:
+				percentage = recommends.count() / reviews.count() * 100
+				return percentage
+			else:
+				return 0
+		else:
+			return 100
+
+	def my_patient_id(self):
+		appointments = Appointment.objects.filter(doctor=self.id)
+		patients = []
+		for appointment in appointments:
+			if appointment.patient.id not in patients:
+				patients += [appointment.patient.id]
+		return patients
 
 
 class Education(models.Model):
@@ -183,7 +241,7 @@ class Patient(models.Model):
 		return self.first_name +' '+self.second_name 
 
 	def last_appointment(self):
-		appointments = Appointment.objects.filter(patient=self.id, status='COMPLETED').order_by('booking_date')
+		appointments = Appointment.objects.filter(patient=self.id).order_by('booking_date')
 		if appointments.count()>0:
 			index = appointments.count() - 1
 			return appointments[index]
@@ -262,13 +320,12 @@ class Bill(models.Model):
 	# invoice, appointment, description, quantity, vat, amount, paid 
 
 class Review(models.Model):
-	doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+	appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, blank=True)
 	date = models.DateTimeField('Review Date', auto_now_add=True)
 	rate = models.IntegerField('Rate')
-	title = models.CharField('Review Title', max_length=50, blank=True)
+	recommend = models.BooleanField('Recommend', default=False)
 	text = models.CharField('Review Title', max_length=150, blank=True)
-	# doctor, patient, review_date, rate, review_title, review_text
+	# appointment, date, rate, recommend, text
 
 	def review_rate(self):
 		count = {}
@@ -280,7 +337,7 @@ class Review(models.Model):
 		return count
 
 	def total_reviews(self):
-		query = Review.objects.filter(doctor=self.doctor)
+		query = Review.objects.filter(doctor=self.appointment.doctor.id)
 		return len(query)
 
 	def replies(self):
@@ -288,14 +345,14 @@ class Review(models.Model):
 		return replies
 
 	def patient_liked(self):
-		liked = LikedReview.objects.filter(user=self.patient.user.id)
+		liked = LikedReview.objects.filter(user=self.appointment.patient.user.id)
 		if liked.count()>0:
 			return liked[0].recommend
 		else:
 			return None
 
 	def doctor_liked(self):
-		liked = LikedReview.objects.filter(user=self.doctor.user.id)
+		liked = LikedReview.objects.filter(user=self.appointment.doctor.user.id)
 		if liked.count()>0:
 			return liked[0].recommend
 		else:

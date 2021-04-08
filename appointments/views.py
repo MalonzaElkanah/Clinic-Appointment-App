@@ -740,9 +740,11 @@ def doctor_profile(request, slug, doctor_id):
 	awd = Award.objects.filter(doctor=doctor_id)
 	mbr = Membership.objects.filter(doctor=doctor_id)
 	reg = Registration.objects.filter(doctor=doctor_id)
+	reviews = Review.objects.filter(appointment__doctor=doctor_id)
 	profile = get_profile(request.user)
 	return render(request, 'patients/doctor-profile.html', {"doctor": doctor, "education": edu, 
-		"experience": exp, "award": awd, "membership": mbr, "registration": reg, "profile": profile})
+		"experience": exp, "award": awd, "membership": mbr, "registration": reg, "profile": profile, 
+		"reviews": reviews})
 
 
 def booking(request, slug, doctor_id):
@@ -884,6 +886,25 @@ def favourite_doctor(request, slug, doctor_id):
 		return HttpResponseRedirect('../../favourites/')
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+def add_review(request):
+	patient = Patient.objects.get(user=request.user.id)
+	if request.is_ajax():
+		rate = int(request.POST['rating'])
+		recommend = bool(request.POST['recommend'])
+		text = request.POST['text']
+		patient = Patient.objects.get(user=request.user.id)
+		appointment = patient.last_appointment()
+		review = Review(appointment = appointment, rate=rate, recommend=recommend, text=text)
+		review.save()
+		redirect = '../../doctor-profile/'+appointment.doctor.full_name()+'/'+str(appointment.doctor.id)+'/'
+		return JsonResponse({"success": "Doctor Reviewed.", "redirect": redirect}, status=200)
+	else:
+		return HttpResponseRedirect('../../doctor-profile/'+appointment.doctor.full_name()+'/'+str(appointment.doctor.id)+'/')
+
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
 def change_password(request):
 	patient = Patient.objects.get(user=request.user.id)
 	if request.is_ajax():

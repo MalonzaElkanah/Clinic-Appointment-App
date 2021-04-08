@@ -28,6 +28,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
+    path('search-results/', views.search_results, name='search-results'),
+
     path('privacy-policy/', views.privacy_policy, name='privacy-policy'),
     path('term-condition/', views.term_condition, name='term-condition'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

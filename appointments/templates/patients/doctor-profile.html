@@ -21,19 +21,17 @@
 							</div>
 							<div class="doc-info-cont">
 								<h4 class="doc-name">{{doctor.full_name}}</h4>
-								<p class="doc-speciality">BDS, MDS - Oral & Maxillofacial Surgery</p>
+								<p class="doc-speciality">{{doctor.latest_degree}}</p>
 								<p class="doc-department"><img src="{{doctor.speciality.image.url}}" class="img-fluid" alt="S">{{doctor.speciality.name}}</p>
 								<div class="rating">
-									<i class="fas fa-star filled"></i>
-									<i class="fas fa-star filled"></i>
-									<i class="fas fa-star filled"></i>
-									<i class="fas fa-star filled"></i>
-									<i class="fas fa-star"></i>
-									<span class="d-inline-block average-rating">(35)</span>
+								{% for x, filled in doctor.review.items %}	
+									<i class="fas fa-star {{filled}}"></i>
+								{% endfor %}
+									<span class="d-inline-block average-rating">({{doctor.total_reviews}})</span>
 								</div>
 								<div class="clinic-details">
 									<p class="doc-location"><i class="fas fa-map-marker-alt"></i> {{doctor.county}}, {{doctor.country}} - <a href="javascript:void(0);">Get Directions</a></p>
-									<ul class="clinic-gallery">
+									<!-- ul class="clinic-gallery">
 										<li>
 											<a href="{% static 'cas/img/features/feature-01.jpg' %}" data-fancybox="gallery">
 												<img src="{% static 'cas/img/features/feature-01.jpg' %}" alt="Feature">
@@ -54,21 +52,22 @@
 												<img src="{% static 'cas/img/features/feature-04.jpg' %}" alt="Feature">
 											</a>
 										</li>
-									</ul>
+									</ul-->
 								</div>
 								<div class="clinic-services">
-									<span>Dental Fillings</span>
-									<span>Teeth Whitneing</span>
+								{% for x in doctor.service_list %}
+									<span>{{x}}</span>
+								{% endfor %}
 								</div>
 							</div>
 						</div>
 						<div class="doc-info-right">
 							<div class="clini-infos">
 								<ul>
-									<li><i class="far fa-thumbs-up"></i> 99%</li>
-									<li><i class="far fa-comment"></i> 35 Feedback</li>
+									<li><i class="far fa-thumbs-up"></i> {{doctor.thumbs}}%</li>
+									<li><i class="far fa-comment"></i> {{doctor.total_reviews}} Feedback</li>
 									<li><i class="fas fa-map-marker-alt"></i> {{doctor.county}}, {{doctor.country}}</li>
-									<li><i class="far fa-money-bill-alt"></i> kSh {{doctor.pricing}} per hour </li>
+									<li><i class="far fa-money-bill-alt"></i> kSh {{doctor.pricing}} per session </li>
 								</ul>
 							</div>
 						{% if user.groups.get.name == 'patients_group' %}
@@ -76,7 +75,7 @@
 								<a href="{% url 'favourite-doctor' doctor.full_name|slugify doctor.id %}" class="btn btn-white fav-btn">
 									<i class="far fa-bookmark"></i>
 								</a>
-								<a href="chat.html" class="btn btn-white msg-btn">
+								<a href="{% url 'chat' %}" class="btn btn-white msg-btn">
 									<i class="far fa-comment-alt"></i>
 								</a>
 								<a href="javascript:void(0)" class="btn btn-white call-btn" data-toggle="modal" data-target="#voice_call">
@@ -86,14 +85,21 @@
 									<i class="fas fa-video"></i>
 								</a>
 							</div>
-						{% endif %}
-						{% if doctor.id != profile.id %}
 							<div class="clinic-booking">
 								<a class="apt-btn" href="{% url 'booking' doctor.full_name|slugify doctor.id %}">Book Appointment</a>
 							</div>
-						{% else %}
+						{% elif user.groups.get.name == 'doctors_group' %}
+
+							{% if doctor.id == profile.id %}
 							<div class="clinic-booking">
 								<a class="apt-btn" href="{% url 'doctor-profile-settings' %}">Edit Profile</a>
+							</div>
+							{% endif %}
+						{% elif user.is_superuser %}
+
+						{% else %}
+							<div class="clinic-booking">
+								<a class="apt-btn" href="{% url 'booking' doctor.full_name|slugify doctor.id %}">Book Appointment</a>
 							</div>
 						{% endif %}
 						</div>
@@ -248,6 +254,7 @@
 									<div class="col-md-6">
 										<div class="clinic-content">
 											<h4 class="clinic-name"><a href="#">{{doctor.clinic}}</a></h4>
+											<!--
 											<p class="doc-speciality">MDS - Periodontology and Oral Implantology, BDS</p>
 											<div class="rating">
 												<i class="fas fa-star filled"></i>
@@ -257,9 +264,10 @@
 												<i class="fas fa-star"></i>
 												<span class="d-inline-block average-rating">(4)</span>
 											</div>
+											-->
 											<div class="clinic-details mb-0">
 												<h5 class="clinic-direction"> <i class="fas fa-map-marker-alt"></i> {{doctor.clinic_address}} <br><a href="javascript:void(0);">Get Directions</a></h5>
-												<ul>
+												<!-- ul>
 													<li>
 														<a href="{% static 'cas/img/features/feature-01.jpg' %}" data-fancybox="gallery2">
 															<img src="{% static 'cas/img/features/feature-01.jpg' %}" alt="Feature Image">
@@ -280,14 +288,14 @@
 															<img src="{% static 'cas/img/features/feature-04.jpg' %}" alt="Feature Image">
 														</a>
 													</li>
-												</ul>
+												</ul -->
 											</div>
 										</div>
 									</div>
 									<!-- /Clinic Content -->
 									
 									<!-- Clinic Timing -->
-									<div class="col-md-4">
+									<!-- div class="col-md-4">
 										<div class="clinic-timing">
 											<div>
 												<p class="timings-days">
@@ -307,14 +315,14 @@
 											</p>
 											</div>
 										</div>
-									</div>
+									</div -->
 									<!-- /Clinic Timing -->
 									
-									<div class="col-md-2">
+									<!-- div class="col-md-2">
 										<div class="consult-price">
 											$250
 										</div>
-									</div>
+									</div -->
 								</div>
 							</div>
 							<!-- /Location List -->
@@ -327,56 +335,75 @@
 							<!-- Review Listing -->
 							<div class="widget review-listing">
 								<ul class="comments-list">
-								
+								{% for review in reviews %}
 									<!-- Comment List -->
 									<li>
 										<div class="comment">
-											<img class="avatar avatar-sm rounded-circle" alt="User Image" src="{% static 'cas/img/patients/patient.jpg' %}">
+											<img class="avatar avatar-sm rounded-circle" alt="User Image" src="{{review.appointment.patient.image.url}}">
 											<div class="comment-body">
 												<div class="meta-data">
-													<span class="comment-author">Richard Wilson</span>
-													<span class="comment-date">Reviewed 2 Days ago</span>
+													<span class="comment-author">{{review.appointment.patient}}</span>
+													<span class="comment-date">Reviewed {{ review.date|timesince }} ago</span>
 													<div class="review-count rating">
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star"></i>
+													{% for rate in review.review_rate.value %}
+														<i class="fas fa-star {{rate}}"></i>
+													{% endfor %}
 													</div>
 												</div>
-												<p class="recommended"><i class="far fa-thumbs-up"></i> I recommend the doctor</p>
+												{% if review.recommend %}
+													<p class="recommended">
+														<i class="far fa-thumbs-up"></i> I recommend the doctor
+													</p>
+												{% elif review.recommend == False %}
+													<p class="recommended" style="color: red;">
+														<i class="far fa-thumbs-down"></i> I do not recommend the doctor
+													</p>
+												{% endif %}
 												<p class="comment-content">
-													Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-													sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-													Ut enim ad minim veniam, quis nostrud exercitation.
-													Curabitur non nulla sit amet nisl tempus
+													{{review.text}}
 												</p>
 												<div class="comment-reply">
 													<a class="comment-btn" href="#">
 														<i class="fas fa-reply"></i> Reply
 													</a>
-												   <p class="recommend-btn">
-													<span>Recommend?</span>
-													<a href="#" class="like-btn">
-														<i class="far fa-thumbs-up"></i> Yes
-													</a>
-													<a href="#" class="dislike-btn">
-														<i class="far fa-thumbs-down"></i> No
-													</a>
-												</p>
+												   	<p class="recommend-btn">
+													{% if review.doctor_liked == True %}
+														<a href="#" class="like-btn" style="color: green;">
+															<i class="far fa-thumbs-up"></i> Yes
+														</a>
+														<a href="#" class="dislike-btn">
+															<i class="far fa-thumbs-down"></i> No
+														</a>
+													{% elif review.doctor_liked == False %}
+														<a href="#" class="like-btn">
+															<i class="far fa-thumbs-up"></i> Yes
+														</a>
+														<a href="#" class="dislike-btn" style="color: red;">
+															<i class="far fa-thumbs-down"></i> No
+														</a>
+													{% else %}
+														<a href="#" class="like-btn">
+															<i class="far fa-thumbs-up"></i> Yes
+														</a>
+														<a href="#" class="dislike-btn">
+															<i class="far fa-thumbs-down"></i> No
+														</a>
+													{% endif %}
+													</p>
 												</div>
 											</div>
 										</div>
 										
 										<!-- Comment Reply -->
 										<ul class="comments-reply">
+										{% for reply in review.replies %}
 											<li>
 												<div class="comment">
-													<img class="avatar avatar-sm rounded-circle" alt="User Image" src="{% static 'cas/img/patients/patient1.jpg' %}">
+													<img class="avatar avatar-sm rounded-circle" alt="User Image" src="{{reply.get_user.image.url}}">
 													<div class="comment-body">
 														<div class="meta-data">
-															<span class="comment-author">Charlene Reed</span>
-															<span class="comment-date">Reviewed 3 Days ago</span>
+															<span class="comment-author">{{reply.get_user.title}} {{reply.get_user.first_name}} {{reply.get_user.second_name}}</span>
+															<span class="comment-date">Reviewed {{reply.date|timesince}} ago</span>
 															<div class="review-count rating">
 																<i class="fas fa-star filled"></i>
 																<i class="fas fa-star filled"></i>
@@ -386,10 +413,7 @@
 															</div>
 														</div>
 														<p class="comment-content">
-															Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-															sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-															Ut enim ad minim veniam.
-															Curabitur non nulla sit amet nisl tempus
+															{{reply.text}}
 														</p>
 														<div class="comment-reply">
 															<a class="comment-btn" href="#">
@@ -408,124 +432,96 @@
 													</div>
 												</div>
 											</li>
+										{% endfor %}
 										</ul>
 										<!-- /Comment Reply -->
 										
 									</li>
 									<!-- /Comment List -->
-									
-									<!-- Comment List -->
-									<li>
-										<div class="comment">
-											<img class="avatar avatar-sm rounded-circle" alt="User Image" src="{% static 'cas/img/patients/patient2.jpg' %}">
-											<div class="comment-body">
-												<div class="meta-data">
-													<span class="comment-author">Travis Trimble</span>
-													<span class="comment-date">Reviewed 4 Days ago</span>
-													<div class="review-count rating">
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star filled"></i>
-														<i class="fas fa-star"></i>
-													</div>
-												</div>
-												<p class="comment-content">
-													Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-													sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-													Ut enim ad minim veniam, quis nostrud exercitation.
-													Curabitur non nulla sit amet nisl tempus
-												</p>
-												<div class="comment-reply">
-													<a class="comment-btn" href="#">
-														<i class="fas fa-reply"></i> Reply
-													</a>
-													<p class="recommend-btn">
-														<span>Recommend?</span>
-														<a href="#" class="like-btn">
-															<i class="far fa-thumbs-up"></i> Yes
-														</a>
-														<a href="#" class="dislike-btn">
-															<i class="far fa-thumbs-down"></i> No
-														</a>
-													</p>
-												</div>
-											</div>
-										</div>
-									</li>
-									<!-- /Comment List -->
-									
+								{% endfor %}
 								</ul>
-								
+								{% if reviews.count > 0 %}
 								<!-- Show All -->
 								<div class="all-feedback text-center">
 									<a href="#" class="btn btn-primary btn-sm">
-										Show all feedback <strong>(167)</strong>
+										Show all feedback <strong>({{doctor.total_reviews}})</strong>
 									</a>
 								</div>
 								<!-- /Show All -->
+								{% else %}
+								<div class="all-feedback text-center">
+									<a href="#" class="btn btn-primary btn-sm">
+										No reviews yet for {{doctor.full_name}}<strong>(0)</strong>
+									</a>
+								</div>
+								{% endif %}
 								
 							</div>
 							<!-- /Review Listing -->
-						
+						{% if user.groups.get.name == 'patients_group' %}
 							<!-- Write Review -->
 							<div class="write-review">
-								<h4>Write a review for <strong>Dr. Darren Elder</strong></h4>
+							{% if profile.id in doctor.my_patient_id %}
+								<h4>Write a review for <strong>{{doctor.full_name}}</strong></h4>
 								
 								<!-- Write Review Form -->
-								<form>
+								<form class="add-form" action="{% url 'add-review' %}" method="POST">
+									{% csrf_token %}
 									<div class="form-group">
 										<label>Review</label>
 										<div class="star-rating">
-											<input id="star-5" type="radio" name="rating" value="star-5">
+											<input id="star-5" type="radio" name="rating" value="5" required>
 											<label for="star-5" title="5 stars">
 												<i class="active fa fa-star"></i>
 											</label>
-											<input id="star-4" type="radio" name="rating" value="star-4">
+											<input id="star-4" type="radio" name="rating" value="4" required>
 											<label for="star-4" title="4 stars">
 												<i class="active fa fa-star"></i>
 											</label>
-											<input id="star-3" type="radio" name="rating" value="star-3">
+											<input id="star-3" type="radio" name="rating" value="3" required>
 											<label for="star-3" title="3 stars">
 												<i class="active fa fa-star"></i>
 											</label>
-											<input id="star-2" type="radio" name="rating" value="star-2">
+											<input id="star-2" type="radio" name="rating" value="2" required>
 											<label for="star-2" title="2 stars">
 												<i class="active fa fa-star"></i>
 											</label>
-											<input id="star-1" type="radio" name="rating" value="star-1">
+											<input id="star-1" type="radio" name="rating" value="1" required>
 											<label for="star-1" title="1 star">
 												<i class="active fa fa-star"></i>
 											</label>
 										</div>
 									</div>
 									<div class="form-group">
-										<label>Title of your review</label>
-										<input class="form-control" type="text" placeholder="If you could say it in one sentence, what would you say?">
+										<label>Reccmmend?</label>
+										<div>
+											<input id="recommend-true" type="radio" name="recommend" value="True">
+											<label for="recommend-true" title="5 stars" required>
+												<i class="far fa-thumbs-up"></i>
+											</label>
+											<input id="recommend-false" type="radio" name="recommend" value="False">
+											<label for="recommend-false" title="4 stars" required>
+												<i class="far fa-thumbs-down"></i>
+											</label>
+										</div>
 									</div>
 									<div class="form-group">
 										<label>Your review</label>
-										<textarea id="review_desc" maxlength="100" class="form-control"></textarea>
+										<textarea id="review_desc" maxlength="100" class="form-control" name="text" required></textarea>
 									  
 									  <div class="d-flex justify-content-between mt-3"><small class="text-muted"><span id="chars">100</span> characters remaining</small></div>
-									</div>
-									<hr>
-									<div class="form-group">
-										<div class="terms-accept">
-											<div class="custom-checkbox">
-											   <input type="checkbox" id="terms_accept">
-											   <label for="terms_accept">I have read and accept <a href="#">Terms &amp; Conditions</a></label>
-											</div>
-										</div>
 									</div>
 									<div class="submit-section">
 										<button type="submit" class="btn btn-primary submit-btn">Add Review</button>
 									</div>
 								</form>
 								<!-- /Write Review Form -->
-								
+							{% else %}
+								<h4>You Can't Write a review for <strong>Dr. Darren Elder</strong></h4>
+							{% endif %}
 							</div>
 							<!-- /Write Review -->
+						{% endif %}
 				
 						</div>
 						<!-- /Reviews Content -->
