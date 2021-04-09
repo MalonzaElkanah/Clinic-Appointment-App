@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User, Group, Permission
@@ -7,7 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import DoctorForm, EducationForm, ExperienceForm, AwardForm, MembershipForm, RegistrationForm
 from .forms import SocialMediaForm, PrescriptionForm, PatientForm
 from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration, TimeSlot
-from .models import DoctorSchedule, SocialMedia, Appointment, Invoice, Bill, Review
+from .models import DoctorSchedule, SocialMedia, Appointment, Invoice, Bill, Review, LikedReview, Reply
 from .models import Patient, Prescription, MedicalRecord, Favourite
 
 import datetime as dt
@@ -433,9 +434,66 @@ def invoice_pdf(request, slug, invoice_id):
 @user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def reviews(request):
 	doctor = Doctor.objects.get(user=request.user.id)
-	reviews = Review.objects.filter(doctor=doctor.id)
+	reviews = Review.objects.filter(appointment__doctor=doctor.id)
 	return render(request, 'doctors/reviews.html', {'profile': doctor, 'reviews': reviews})
 
+
+@login_required(login_url='/login/')
+def like_review(request, review_id):
+	if request.is_ajax():
+		liked = LikedReview.objects.filter(user=request.user.id, review=review_id)
+		review = Review.objects.get(id=review_id)
+		if liked.count() == 0:
+			like = LikedReview(review=review, user=request.user, recommend=True)
+			like.save()
+			redirect = '../../../doctor-profile/doctor-name/'+str(review.appointment.doctor.id)+'/'
+			return JsonResponse({"success": "Review Liked.", "redirect": redirect}, status=200)
+		else:
+			liked = LikedReview.objects.get(user=request.user.id, review=review_id)
+			if not liked.recommend:
+				liked.recommend = True
+				liked.save()
+				redirect = '../../../doctor-profile/doctor-name/'+str(review.appointment.doctor.id)+'/'
+				return JsonResponse({"success": "Review Liked.", "redirect": redirect}, status=200)
+			else:
+				return JsonResponse({"error": "Review Liked."}, status=200)
+	else:
+		return HttpResponseRedirect('../../../doctor-profile/doctor-name/'+str(review.appointment.doctor.id)+'/')
+
+
+
+@login_required(login_url='/login/')
+def dislike_review(request, review_id):
+	if request.is_ajax():
+		liked = LikedReview.objects.filter(user=request.user.id, review=review_id)
+		review = Review.objects.get(id=review_id)
+		if liked.count() == 0:
+			like = LikedReview(review=review, user=request.user, recommend=False)
+			like.save()
+			redirect = '../../../doctor-profile/doctor-name/'+str(review.appointment.doctor.id)+'/'
+			return JsonResponse({"success": "Review Disliked.", "redirect": redirect}, status=200)
+		else:
+			liked = LikedReview.objects.get(user=request.user.id, review=review_id)
+			if liked.recommend:
+				liked.recommend = False
+				liked.save()
+				redirect = '../../../doctor-profile/doctor-name/'+str(review.appointment.doctor.id)+'/'
+				return JsonResponse({"success": "Review Disliked.", "redirect": redirect}, status=200)
+			else:
+				return JsonResponse({"error": "Review Disliked."}, status=200)
+	else:
+		return HttpResponseRedirect('../../../doctor-profile/doctor-name/'+str(review.appointment.doctor.id)+'/')
+
+
+@login_required(login_url='/login/')
+def reply_review(request):
+	if request.is_ajax():
+		review = Review.objects.get(id=int(request.POST['review']))
+		reply = Reply(review=review, user=request.user, text=request.POST['text'])
+		reply.save()
+		return JsonResponse({"success": "Posted.", "redirect": request.POST['next']}, status=200)
+	else:
+		return redirect(request.path_info)
 
 @login_required(login_url='/login/')
 @user_passes_test(check_doctor, login_url='/login/')
@@ -898,10 +956,10 @@ def add_review(request):
 		appointment = patient.last_appointment()
 		review = Review(appointment = appointment, rate=rate, recommend=recommend, text=text)
 		review.save()
-		redirect = '../../doctor-profile/'+appointment.doctor.full_name()+'/'+str(appointment.doctor.id)+'/'
+		redirect = '../../doctor-profile/doctor-name/'+str(appointment.doctor.id)+'/'
 		return JsonResponse({"success": "Doctor Reviewed.", "redirect": redirect}, status=200)
 	else:
-		return HttpResponseRedirect('../../doctor-profile/'+appointment.doctor.full_name()+'/'+str(appointment.doctor.id)+'/')
+		return HttpResponseRedirect('../../doctor-profile/doctor-name/'+str(appointment.doctor.id)+'/')
 
 @login_required(login_url='/login/')
 @user_passes_test(check_patient, login_url='/login/')

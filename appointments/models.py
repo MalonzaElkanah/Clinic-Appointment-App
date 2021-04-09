@@ -345,18 +345,26 @@ class Review(models.Model):
 		return replies
 
 	def patient_liked(self):
-		liked = LikedReview.objects.filter(user=self.appointment.patient.user.id)
-		if liked.count()>0:
+		likes = LikedReview.objects.filter(user=self.appointment.patient.user.id, review=self.id)
+		if likes.count()>0:
 			return liked[0].recommend
 		else:
 			return None
 
 	def doctor_liked(self):
-		liked = LikedReview.objects.filter(user=self.appointment.doctor.user.id)
+		liked = LikedReview.objects.filter(user=self.appointment.doctor.user.id, review=self.id)
 		if liked.count()>0:
 			return liked[0].recommend
 		else:
 			return None
+
+	def total_likes(self):
+		likes = LikedReview.objects.filter(review=self.id, recommend=True)
+		return likes.count()
+
+	def total_dislikes(self):
+		dislikes = LikedReview.objects.filter(review=self.id, recommend=False)
+		return dislikes.count()
 
 
 class Reply(models.Model):
@@ -364,6 +372,7 @@ class Reply(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	date = models.DateTimeField('Review Date', auto_now_add=True)
 	text = models.CharField('Review Title', max_length=150)
+	#review, user, text
 
 	def get_user(self):
 		usr = self.user
@@ -387,6 +396,7 @@ class LikedReview(models.Model):
 	review = models.ForeignKey(Review, on_delete=models.CASCADE)
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	recommend = models.BooleanField('Recommend', default=False)
+	# review, user, recommend
 
 
 class LikedReply(models.Model):

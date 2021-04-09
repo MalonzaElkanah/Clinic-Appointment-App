@@ -90,22 +90,22 @@
 				<!-- Comment List -->
 				<li>
 					<div class="comment">
-						<img class="avatar rounded-circle" alt="User Image" src="{{review.patient.image.url}}">
+						<img class="avatar rounded-circle" alt="User Image" src="{{review.appointment.patient.image.url}}">
 						<div class="comment-body">
 							<div class="meta-data">
-								<span class="comment-author">{{review.appointment.patient.first_name}} {{review.appointment.patient.last_name}}</span>
+								<span class="comment-author">{{review.appointment.patient.first_name}} {{review.appointment.patient.second_name}}</span>
 								<span class="comment-date">Reviewed {{ review.date|timesince }} ago</span>
 								<div class="review-count rating">
-								{% for rate in review.review_rate.value %}
+								{% for rate in review.review_rate.values %}
 									<i class="fas fa-star {{rate}}"></i>
 								{% endfor %}
 								</div>
 							</div>
-							{% if review.patient_liked == True %}
+							{% if review.recommend %}
 								<p class="recommended">
 									<i class="far fa-thumbs-up"></i> I recommend the doctor
 								</p>
-							{% elif review.patient_liked == False %}
+							{% elif not review.recommend %}
 								<p class="recommended" style="color: red;">
 									<i class="far fa-thumbs-down"></i> I do not recommend the doctor
 								</p>
@@ -114,31 +114,31 @@
 								{{review.text}}
 							</p>
 							<div class="comment-reply">
-								<a class="comment-btn" href="#">
+								<a class="comment-btn" href="#" data-toggle="modal" data-target="#add_reply_{{review.id}}">
 									<i class="fas fa-reply"></i> Reply
 								</a>
 								<p class="recommend-btn">
 									<span>Recommend?</span>
-									{% if review.doctor_liked == True %}
-										<a href="#" class="like-btn" style="color: green;">
-											<i class="far fa-thumbs-up"></i> Yes
+									{% if review.doctor_liked == None %}
+										<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link">
+											<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
 										</a>
-										<a href="#" class="dislike-btn">
-											<i class="far fa-thumbs-down"></i> No
+										<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link">
+											<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
 										</a>
-									{% elif review.doctor_liked == False %}
-										<a href="#" class="like-btn">
-											<i class="far fa-thumbs-up"></i> Yes
+									{% elif review.doctor_liked %}
+										<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link" style="color: green;">
+											<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
 										</a>
-										<a href="#" class="dislike-btn" style="color: red;">
-											<i class="far fa-thumbs-down"></i> No
+										<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link">
+											<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
 										</a>
-									{% else %}
-										<a href="#" class="like-btn">
-											<i class="far fa-thumbs-up"></i> Yes
+									{% elif not review.doctor_liked %}
+										<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link">
+											<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
 										</a>
-										<a href="#" class="dislike-btn">
-											<i class="far fa-thumbs-down"></i> No
+										<a href="{% url 'like-review' review.id %}" class="dislike-btn ajax-link" style="color: red;">
+											<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
 										</a>
 									{% endif %}
 								</p>
@@ -161,11 +161,6 @@
 									<p class="comment-content">
 										{{reply.text}}
 									</p>
-									<div class="comment-reply">
-										<a class="comment-btn" href="#">
-											<i class="fas fa-reply"></i> Reply
-										</a>
-									</div>
 								</div>
 							</div>
 						</li>
@@ -183,4 +178,41 @@
 			
 		</div>
 	</div>
-{% endblock %}					
+{% endblock %}	
+
+{% block modal %}	
+	{% for review in reviews %}
+	<!-- Add Review Modal -->
+	<div class="modal fade custom-modal" id="add_reply_{{review.id}}">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">Reply</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form class="add-form" method="POST" action="{% url 'reply-review' %}">					
+					{% csrf_token %}
+					<div class="modal-body">
+						<input type="text" name="review" value="{{review.id}}" style="display: none;">
+						<input type="text" name="next" value="{{request.path_info}}" style="display: none;">
+						<div class="form-group">
+							<label>Reply</label>
+							<textarea id="review_desc" maxlength="100" class="form-control" name="text" required></textarea>
+							<div class="d-flex justify-content-between mt-3"><small class="text-muted"><span id="chars">100</span> characters remaining</small></div>
+						</div>
+						<div class="submit-section text-center">
+							<button type="submit" class="btn btn-primary submit-btn">Post</button>
+							<button type="button" class="btn btn-secondary submit-btn" data-dismiss="modal">Cancel</button>							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Review Modal -->
+	{% endfor %}
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'cas/js/ajax.js' %}"></script>
+{% endblock %}

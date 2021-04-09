@@ -345,7 +345,7 @@
 													<span class="comment-author">{{review.appointment.patient}}</span>
 													<span class="comment-date">Reviewed {{ review.date|timesince }} ago</span>
 													<div class="review-count rating">
-													{% for rate in review.review_rate.value %}
+													{% for rate in review.review_rate.values %}
 														<i class="fas fa-star {{rate}}"></i>
 													{% endfor %}
 													</div>
@@ -362,35 +362,70 @@
 												<p class="comment-content">
 													{{review.text}}
 												</p>
+											
+											
 												<div class="comment-reply">
-													<a class="comment-btn" href="#">
+													<a class="comment-btn" href="#" data-toggle="modal" data-target="#add_reply_{{review.id}}">
 														<i class="fas fa-reply"></i> Reply
 													</a>
 												   	<p class="recommend-btn">
-													{% if review.doctor_liked == True %}
-														<a href="#" class="like-btn" style="color: green;">
-															<i class="far fa-thumbs-up"></i> Yes
+												{% if user.groups.get.name == 'patients_group' %}
+													{% if review.patient_liked == None %}
+														<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link">
+															<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
 														</a>
-														<a href="#" class="dislike-btn">
-															<i class="far fa-thumbs-down"></i> No
+														<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link">
+															<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
 														</a>
-													{% elif review.doctor_liked == False %}
-														<a href="#" class="like-btn">
-															<i class="far fa-thumbs-up"></i> Yes
+													{% elif review.patient_liked %}
+														<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link" style="color: green;">
+															<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
 														</a>
-														<a href="#" class="dislike-btn" style="color: red;">
-															<i class="far fa-thumbs-down"></i> No
+														<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link">
+															<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
 														</a>
-													{% else %}
-														<a href="#" class="like-btn">
-															<i class="far fa-thumbs-up"></i> Yes
+													{% elif not review.patient_liked %}
+														<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link">
+															<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
 														</a>
-														<a href="#" class="dislike-btn">
-															<i class="far fa-thumbs-down"></i> No
+														<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link" style="color: red;">
+															<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
 														</a>
 													{% endif %}
+												{% elif user.groups.get.name == 'doctors_group' %}
+													{% if review.doctor_liked == None %}
+														<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link">
+															<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
+														</a>
+														<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link">
+															<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
+														</a>
+													{% elif review.doctor_liked %}
+														<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link" style="color: green;">
+															<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
+														</a>
+														<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link">
+															<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
+														</a>
+													{% elif not review.doctor_liked %}
+														<a href="{% url 'like-review' review.id %}" class="like-btn ajax-link">
+															<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
+														</a>
+														<a href="{% url 'dislike-review' review.id %}" class="dislike-btn ajax-link" style="color: red;">
+															<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
+														</a>
+													{% endif %}
+												{% else %}
+													<a href="javascript:void(0);" class="like-btn">
+														<i class="far fa-thumbs-up"></i> Yes({{review.total_likes}})
+													</a>
+													<a href="javascript:void(0);" class="dislike-btn">
+														<i class="far fa-thumbs-down"></i> No({{review.total_dislikes}})
+													</a>
+												{% endif %}
 													</p>
 												</div>
+											
 											</div>
 										</div>
 										
@@ -404,31 +439,10 @@
 														<div class="meta-data">
 															<span class="comment-author">{{reply.get_user.title}} {{reply.get_user.first_name}} {{reply.get_user.second_name}}</span>
 															<span class="comment-date">Reviewed {{reply.date|timesince}} ago</span>
-															<div class="review-count rating">
-																<i class="fas fa-star filled"></i>
-																<i class="fas fa-star filled"></i>
-																<i class="fas fa-star filled"></i>
-																<i class="fas fa-star filled"></i>
-																<i class="fas fa-star"></i>
-															</div>
 														</div>
 														<p class="comment-content">
 															{{reply.text}}
 														</p>
-														<div class="comment-reply">
-															<a class="comment-btn" href="#">
-																<i class="fas fa-reply"></i> Reply
-															</a>
-															<p class="recommend-btn">
-																<span>Recommend?</span>
-																<a href="#" class="like-btn">
-																	<i class="far fa-thumbs-up"></i> Yes
-																</a>
-																<a href="#" class="dislike-btn">
-																	<i class="far fa-thumbs-down"></i> No
-																</a>
-															</p>
-														</div>
 													</div>
 												</div>
 											</li>
@@ -493,7 +507,7 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label>Reccmmend?</label>
+										<label>Recommend?</label>
 										<div>
 											<input id="recommend-true" type="radio" name="recommend" value="True">
 											<label for="recommend-true" title="5 stars" required>
@@ -603,7 +617,40 @@
 	</div>		
 	<!-- /Page Content -->
 
-			{% endblock %}
+{% endblock %}
+
+{% block modal %}	
+	{% for review in reviews %}
+	<!-- Add Review Modal -->
+	<div class="modal fade custom-modal" id="add_reply_{{review.id}}">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">Reply</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<form class="add-form" method="POST" action="{% url 'reply-review' %}">					
+					{% csrf_token %}
+					<div class="modal-body">
+						<input type="text" name="review" value="{{review.id}}" style="display: none;">
+						<input type="text" name="next" value="{{request.path_info}}" style="display: none;">
+						<div class="form-group">
+							<label>Reply</label>
+							<textarea id="review_desc" maxlength="100" class="form-control" name="text" required></textarea>
+							<div class="d-flex justify-content-between mt-3"><small class="text-muted"><span id="chars">100</span> characters remaining</small></div>
+						</div>
+						<div class="submit-section text-center">
+							<button type="submit" class="btn btn-primary submit-btn">Post</button>
+							<button type="button" class="btn btn-secondary submit-btn" data-dismiss="modal">Cancel</button>							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Review Modal -->
+	{% endfor %}
+{% endblock %}
 
 {% block javascript %}
 		
