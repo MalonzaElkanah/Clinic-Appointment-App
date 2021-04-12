@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 import datetime as dt
 #from administrators.models import Appointment, Invoice, Bill, Review
@@ -103,6 +104,23 @@ class Doctor(models.Model):
 						date = date + duration
 
 		return slot
+
+	def today_time_slots(self):
+		now = timezone.now()
+		day = str(f"{now:%A}").lower()
+		schedule = DoctorSchedule.objects.get(doctor=self.id, day=day)
+		time_slots = TimeSlot.objects.filter(schedule=schedule.id)
+		return time_slots
+
+	def open_now(self):
+		now = timezone.now()
+		day = str(f"{now:%A}").lower()
+		schedule = DoctorSchedule.objects.get(doctor=self.id, day=day)
+		time_slots = TimeSlot.objects.filter(schedule=schedule.id)
+		for slot in time_slots:
+			if now.time() > slot.start_time and now.time() < slot.end_time:
+				return True
+		return False
 
 	def latest_degree(self):
 		education = Education.objects.filter(doctor=self.id).order_by('y_o_c').reverse()[0]
@@ -270,6 +288,7 @@ class MedicalRecord(models.Model):
 	description = models.CharField('Description', max_length=500, blank=True)
 	attachment = models.FileField('Attachment', upload_to='File/Patient/MedicalRecords/', blank=True)
 	date_added = models.DateTimeField('Added Date', auto_now_add=True)
+	# patient, doctor, date_recorded, description, attachment
 
 
 class Favourite(models.Model):
@@ -307,6 +326,10 @@ class Invoice(models.Model):
 	total_amount = models.FloatField('Total Amount', default=0.00)
 	date_paid = models.DateTimeField('Paid On', auto_now_add=True)
 	# patient, doctor, total_amount, date_paid
+
+	def bills(self):
+		bills = Bill.objects.filter(invoice=self.id)
+		return bills
 
 	
 class Bill(models.Model):

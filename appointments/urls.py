@@ -35,9 +35,14 @@ urlpatterns = [
 		name='add-prescription'),
 	path('doctors/edit-prescription/<int:patient_id>/<slug:slug>/<int:prescription_id>/', 
 		views.edit_prescription, name='edit-prescription'),
+	path('doctors/add-medical-record/<slug:slug>/<int:patient_id>/', views.add_medical_record, 
+		name='add-medical-record'),
+	path('doctors/edit-medical-record/<int:patient_id>/<slug:slug>/<int:mr_id>/', 
+		views.edit_medical_record, name='edit-medical-record'),
 	path('doctors/add-billing/<slug:slug>/<int:patient_id>/<int:appointment_id>/', views.add_billing,  
 		name='add-billing'),
-	path('doctors/edit-billing/<slug:slug>/<int:patient_id>/', views.edit_billing, name='edit-billing'),
+	path('doctors/edit-billing/<int:patient_id>/<slug:slug>/<int:inv_id>/', views.edit_billing, 
+		name='edit-billing'),
 	path('doctors/chat-doctor/', views.chat_doctor, name='chat-doctor'),
 
 	# Patient URLS

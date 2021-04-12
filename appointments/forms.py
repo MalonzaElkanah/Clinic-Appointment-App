@@ -2,7 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from .models import Doctor, Education, Experience, Award, Membership, Registration, SocialMedia
-from .models import Patient, Prescription
+from .models import Patient, Prescription, MedicalRecord
 
 # Doctors Forms
 
@@ -47,6 +47,8 @@ class SocialMediaForm(ModelForm):
 			'youtube_url')
 
 
+# Patients Forms
+
 class PrescriptionForm(ModelForm):
 
 	class Meta:
@@ -54,10 +56,14 @@ class PrescriptionForm(ModelForm):
 		fields = ( 'patient', 'doctor', 'name', 'quantity', 'days', 'morning', 'afternoon', 'evening', 'night')
 
 
-# Patients Forms
-
 class PatientForm(ModelForm):
 	class Meta:
 		model = Patient
 		fields = ('user', 'image', 'first_name', 'second_name', 'd_o_b', 'gender', 'blood_group', 'phone_no', 
 			'email', 'street_lane', 'country', 'county', 'town')
+
+
+class MedicalRecordForm(ModelForm):
+	class Meta:
+		model = MedicalRecord
+		fields = ('patient', 'doctor', 'date_recorded', 'description', 'attachment')

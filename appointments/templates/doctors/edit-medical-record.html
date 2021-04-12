@@ -1,6 +1,6 @@
 {% extends "cas/base.html" %}
 
-{% block title %} {{patient}} Add Prescription{% endblock %}
+{% block title %} Edit {{patient}} Prescription{% endblock %}
 
 {% load static %}
 
@@ -14,10 +14,10 @@
 					<nav aria-label="breadcrumb" class="page-breadcrumb">
 						<ol class="breadcrumb">
 							<li class="breadcrumb-item"><a href="{% url 'doctor-dashboard' %}">Home</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Edit Billing</li>
+							<li class="breadcrumb-item active" aria-current="page">Edit Medical Record</li>
 						</ol>
 					</nav>
-					<h2 class="breadcrumb-title">Edit Billing</h2>
+					<h2 class="breadcrumb-title">Edit Medical Record</h2>
 				</div>
 			</div>
 		</div>
@@ -65,7 +65,7 @@
 				<div class="col-md-7 col-lg-8 col-xl-9">
 					<div class="card">
 						<div class="card-header">
-							<h4 class="card-title mb-0">Edit Billing</h4>
+							<h4 class="card-title mb-0">Edit Prescription</h4>
 						</div>
 						<div class="card-body">
 							<div class="row">
@@ -84,72 +84,32 @@
 								</div>
 							</div>
 							
-							<!-- Add Item -->
-							<div class="add-more-item text-right">
-								<a href="#"><i class="fa fa-plus-circle"></i> Add Item</a>
-							</div>
-							<!-- /Add Item -->
-							
-							<!-- Billing Item -->
-							<div class="card card-table">
-								<div class="card-body">
-									<div class="table-responsive">
-										<table class="table table-hover table-center">
-											<thead>
-												<tr>													
-													<th>Title</th>					
-													<th>Amount</th>		
-													<th style="width:80px;"></th>
-												</tr>
-											</thead>
-											<tbody>
-											{% for bill in invoice.bills %}
-												<tr>								
-													<td>	
-														<input type="text" class="form-control" value="{{bill.description}}">
-													</td>
-													<td>
-														<input type="text" class="form-control" value="{{bill.amount}}">
-													</td>							
-													<td>
-														<a href="#" class="btn bg-danger-light trash"><i class="far fa-trash-alt"></i></a>															
-													</td>
-												</tr>
-											{% endfor %}
-											</tbody>
-										</table>
-									</div>
+							<form enctype="multipart/form-data" method="post" action="{% url 'edit-medical-record' patient.id patient|slugify record.id %}">
+								{% csrf_token %}
+								<input type="text" name="patient" value="{{record.patient.id}}" style="display: none;">
+								<input type="text" name="doctor" value="{{record.doctor.id}}" style="display: none;">
+								<div class="form-group">
+									<label>Date</label>
+									<input type="text" class="form-control datetimepicker" name="date_recorded" value="{{record.date_recorded|date:"Y-m-d"}}">
 								</div>
-							</div>
-							<!-- /Billing Item -->
-							
-							<!-- Signature -->
-							<div class="row">
-								<div class="col-md-12 text-right">
-									<div class="signature-wrap">
-										<div class="signature">
-											Click here to sign
-										</div>
-										<div class="sign-name">
-											<p class="mb-0">( Dr. Darren Elder )</p>
-											<span class="text-muted">Signature</span>
-										</div>
-									</div>
+								<div class="form-group">
+									<label>Description ( Optional )</label>
+									<textarea class="form-control" name="description">{{record.description}}</textarea>
 								</div>
-							</div>
-							<!-- /Signature -->
-							
-							<!-- Submit Section -->
-							<div class="row">
-								<div class="col-md-12">
-									<div class="submit-section">
-										<button type="submit" class="btn btn-primary submit-btn">Save</button>
-										<button type="reset" class="btn btn-secondary submit-btn">Clear</button>
-									</div>
+								<div class="form-group">
+									<label>Upload File</label> 
+									{% for field in form %}
+										{% if field.name == 'attachment' %}
+											{{field}}
+										{% endif %}
+									{% endfor %}
+								</div>	
+								<div class="submit-section text-center">
+									<button type="submit" class="btn btn-primary submit-btn">Submit</button>
+									<button type="button" class="btn btn-secondary submit-btn" data-dismiss="modal">Cancel</button>							
 								</div>
-							</div>
-							<!-- /Submit Section -->
-							
+							</form>
+								
 						</div>
 					</div>
 				</div>
@@ -159,4 +119,5 @@
 
 	</div>		
 	<!-- /Page Content -->
-{% endblock %}
+{% endblock %}   
+			

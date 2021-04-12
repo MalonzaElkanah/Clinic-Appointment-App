@@ -4,9 +4,10 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils import timezone
 
 from .forms import DoctorForm, EducationForm, ExperienceForm, AwardForm, MembershipForm, RegistrationForm
-from .forms import SocialMediaForm, PrescriptionForm, PatientForm
+from .forms import SocialMediaForm, PrescriptionForm, PatientForm, MedicalRecordForm
 from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration, TimeSlot
 from .models import DoctorSchedule, SocialMedia, Appointment, Invoice, Bill, Review, LikedReview, Reply
 from .models import Patient, Prescription, MedicalRecord, Favourite
@@ -274,10 +275,15 @@ def appointment_complete(request, slug, appointment_id):
 	doctor = Doctor.objects.get(user=request.user.id)
 	appointment = Appointment.objects.get(id=appointment_id)
 	if appointment.doctor.id == doctor.id:
-		appointment.status = 'COMPLETED'
-		appointment.save()
-		return JsonResponse({"success": "Appointment COMPLETED.", "redirect": "../../../../doctors/"}, 
-			status=200)
+		now = timezone.now()
+		if now >= appointment.booking_date:
+			appointment.status = 'COMPLETED'
+			appointment.save()
+			p = appointment.patient
+			url = "../../../../doctors/patient-profile/"+p.first_name+"-"+p.second_name+"/"+str(p.id)+"/"
+			return JsonResponse({"success": "Appointment COMPLETED.", "redirect": url}, status=200)
+		else:
+			return JsonResponse({"error": "Error: Its not Appointment Time Yet."}, status=200)
 	else:
 		return JsonResponse({"error": "Error Updating Appointment"}, status=200) 
 
@@ -609,7 +615,7 @@ def add_prescription(request, slug, patient_id):
 				form.save()
 			#except Exception:
 			#	pass
-		return HttpResponseRedirect('../../../patient_profile/'+slug+'/'+str(patient_id)+'/')
+		return HttpResponseRedirect('../../../patient-profile/'+slug+'/'+str(patient_id)+'/')
 	else:
 		return render(request, 'doctors/add-prescription.html', {'profile': doctor, 'patient': patient})
 
@@ -629,8 +635,46 @@ def edit_prescription(request, patient_id, slug, prescription_id):
 			else:
 				return HttpResponse(form.errors)
 			prescription = Prescription.objects.get(id=prescription_id)
+			return HttpResponseRedirect('../../../../patient-profile/'+patient.first_name+'-'+patient.second_name+'/'+str(patient.id)+'/')
 	return render(request, 'doctors/edit-prescription.html', {'profile': doctor, 'patient': patient,
 		'prescription': prescription})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def add_medical_record(request, slug, patient_id):
+	if request.method == 'POST':
+		doctor = Doctor.objects.get(user=request.user.id)
+		# patient, doctor, date_recorded, description, attachment
+		if doctor.id == int(request.POST['doctor']) and patient_id == int(request.POST['doctor']):
+			form = MedicalRecordForm(request.POST, request.FILES)
+			if form.is_valid():
+				form.save()
+			else:
+				return HttpResponse(form.errors)
+	
+	return HttpResponseRedirect('../../../patient_profile/'+slug+'/'+str(patient_id)+'/')
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def edit_medical_record(request, patient_id, slug, mr_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	patient = Patient.objects.get(id=patient_id)
+	mr = MedicalRecord.objects.get(id=mr_id)
+	if request.method == 'POST':
+		if patient_id == mr.patient.id and doctor.id == mr.doctor.id:
+			form = MedicalRecordForm(request.POST, request.FILES, instance=mr)
+			if form.is_valid():
+				form.save()
+				return HttpResponseRedirect('../../../../patient-profile/'+slug+'/'+str(patient_id)+'/')
+			else:
+				return HttpResponse(form.errors)
+	form = MedicalRecordForm(instance=mr)
+	return render(request, 'doctors/edit-medical-record.html', {'profile': doctor, 'patient': patient,
+		'record': mr, 'form': form})
 
 
 @login_required(login_url='/login/')
@@ -659,11 +703,17 @@ def add_billing(request, slug, patient_id, appointment_id):
 	else:
 		return render(request, 'doctors/add-billing.html', {'profile': doctor, 'patient': patient})
 
-def doctor_profile(request):
-	return render(request, 'doctors/doctor-profile.html')
 
-def edit_billing(request):
-	return render(request, 'doctors/edit-billing.html')
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def edit_billing(request, patient_id, slug, inv_id):
+	doctor = Doctor.objects.get(user=request.user.id)
+	patient = Patient.objects.get(id=patient_id)
+	invoice = Invoice.objects.get(id=inv_id)
+	return render(request, 'doctors/edit-billing.html', {'profile': doctor, 'patient': patient, 
+		'invoice': invoice})
+
 
 def chat_doctor(request):
 	return render(request, 'doctors/chat-doctor.html')
@@ -799,10 +849,11 @@ def doctor_profile(request, slug, doctor_id):
 	mbr = Membership.objects.filter(doctor=doctor_id)
 	reg = Registration.objects.filter(doctor=doctor_id)
 	reviews = Review.objects.filter(appointment__doctor=doctor_id)
+	schedule = DoctorSchedule.objects.filter(doctor=doctor_id)
 	profile = get_profile(request.user)
 	return render(request, 'patients/doctor-profile.html', {"doctor": doctor, "education": edu, 
 		"experience": exp, "award": awd, "membership": mbr, "registration": reg, "profile": profile, 
-		"reviews": reviews})
+		"reviews": reviews, "schedule": schedule})
 
 
 def booking(request, slug, doctor_id):

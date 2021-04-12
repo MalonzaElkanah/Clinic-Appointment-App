@@ -550,54 +550,33 @@
 										<div class="widget-content">
 											<div class="listing-hours">
 												<div class="listing-day current">
-													<div class="day">Today <span>5 Nov 2019</span></div>
+													<div class="day">Today <span>{% now "DATE_FORMAT" %}</span></div>
 													<div class="time-items">
-														<span class="open-status"><span class="badge bg-success-light">Open Now</span></span>
-														<span class="time">07:00 AM - 09:00 PM</span>
+														<span class="open-status">
+														{% if doctor.open_now %}
+															<span class="badge bg-success-light">Open Now</span></span>
+														{% else %}
+															<span class="badge bg-danger-light">Closed Now</span></span>
+														{% endif %}
+													{% for slot in doctor.today_time_slots %}
+														<span class="time">{{slot.start_time|time:"h:i A"}} - {{slot.end_time|time:"h:i A"}}</span>
+													{% endfor %}
 													</div>
 												</div>
+											{% for schdl in schedule %}
 												<div class="listing-day">
-													<div class="day">Monday</div>
+													<div class="day">{{schdl.day}}</div>
 													<div class="time-items">
-														<span class="time">07:00 AM - 09:00 PM</span>
-													</div>
-												</div>
-												<div class="listing-day">
-													<div class="day">Tuesday</div>
-													<div class="time-items">
-														<span class="time">07:00 AM - 09:00 PM</span>
-													</div>
-												</div>
-												<div class="listing-day">
-													<div class="day">Wednesday</div>
-													<div class="time-items">
-														<span class="time">07:00 AM - 09:00 PM</span>
-													</div>
-												</div>
-												<div class="listing-day">
-													<div class="day">Thursday</div>
-													<div class="time-items">
-														<span class="time">07:00 AM - 09:00 PM</span>
-													</div>
-												</div>
-												<div class="listing-day">
-													<div class="day">Friday</div>
-													<div class="time-items">
-														<span class="time">07:00 AM - 09:00 PM</span>
-													</div>
-												</div>
-												<div class="listing-day">
-													<div class="day">Saturday</div>
-													<div class="time-items">
-														<span class="time">07:00 AM - 09:00 PM</span>
-													</div>
-												</div>
-												<div class="listing-day closed">
-													<div class="day">Sunday</div>
-													<div class="time-items">
+												{% if schdl.timeslots.count > 0 %}
+													{% for slot in schdl.timeslots %}
+														<span class="time">{{slot.start_time|time:"h:i A"}} - {{slot.end_time|time:"h:i A"}}</span>
+													{% endfor %}
+												{% else %}
 														<span class="time"><span class="badge bg-danger-light">Closed</span></span>
+												{% endif %}
 													</div>
 												</div>
+											{% endfor %}
 											</div>
 										</div>
 									</div>

@@ -127,7 +127,7 @@
 								<div class="dash-widget-info">
 									<h6>Appoinments</h6>
 									<h3>{{appointments.count}}</h3>
-									<p class="text-muted">06, Apr 2019</p>
+									<p class="text-muted">{% now "DATE_FORMAT" %}</p>
 								</div>
 							</div>
 						</div>
@@ -249,6 +249,10 @@
 														</a>
 														<a href="{% url 'appointment-cancel' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-danger-light ajax-link">
 															<i class="fas fa-times"></i> Cancel
+														</a>
+													{% elif appointment.status == 'ACCEPTTED' %}
+														<a href="{% url 'appointment-complete' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-primary-light ajax-link">
+															<i class="fas fa-check-double"></i> Complete
 														</a>
 													{% endif %}
 													</div>

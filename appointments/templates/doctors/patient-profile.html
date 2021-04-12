@@ -5,7 +5,7 @@
 {% load static %}
 {% block css %}
 	<!-- Datetimepicker CSS -->
-	<link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
+	<link rel="stylesheet" href="{% static 'cas/css/bootstrap-datetimepicker.min.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
 				<div class="col-md-12 col-12">
 					<nav aria-label="breadcrumb" class="page-breadcrumb">
 						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="index-2.html">Home</a></li>
+							<li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
 							<li class="breadcrumb-item active" aria-current="page">Patient Profile</li>
 						</ol>
 					</nav>
@@ -146,10 +146,10 @@
 														<td><span class="badge badge-pill bg-warning-light">Pending</span></td>
 														<td class="text-right">
 															<div class="table-action">
-																<a href="edit-prescription.html" class="btn btn-sm bg-success-light">
-																	<i class="far fa-edit"></i> Edit
+																<a href="{% url 'appointment-accept' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-success-light ajax-link">
+																	<i class="fas fa-check"></i> Accept
 																</a>
-																<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+																<a href="{% url 'appointment-cancel' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-danger-light ajax-link">
 																	<i class="far fa-trash-alt"></i> Cancel
 																</a>
 															</div>
@@ -158,8 +158,8 @@
 														<td><span class="badge badge-pill bg-success-light">Confirm</span></td>
 														<td class="text-right">
 															<div class="table-action">
-																<a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-																	<i class="far fa-edit"></i> Edit
+																<a href="{% url 'appointment-complete' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-primary-light ajax-link">
+																	<i class="fas fa-check-double"></i> Complete
 																</a>
 															</div>
 														</td>
@@ -167,8 +167,8 @@
 														<td><span class="badge badge-pill bg-danger-light">Cancelled</span></td>
 														<td class="text-right">
 															<div class="table-action">
-																<a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-																	<i class="far fa-edit"></i> Edit
+																<a href="{% url 'appointment-accept' appointment.purpose|slugify appointment.id %}" class="btn btn-sm bg-success-light ajax-link">
+																	<i class="fas fa-check"></i> Accept
 																</a>
 															</div>
 														</td>
@@ -176,7 +176,7 @@
 														<td><span class="badge badge-pill bg-info-light">Completed</span></td>
 														<td class="text-right">
 															<div class="table-action">
-																<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+																<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
 																	<i class="far fa-clock"></i> Reschedule
 																</a>
 															</div>
@@ -273,7 +273,7 @@
 												{% for record in records %}
 													<tr>
 														<td><a href="javascript:void(0);">#MR-000{{record.id}}</a></td>
-														<td>{{record.date_recorded.date}}</td>
+														<td>{{record.date_recorded}}</td>
 														<td>{{record.description}}</td>
 														<td><a href="{{record.attachment.url}}">{{record.attachment}}</a></td>
 														<td>
@@ -292,8 +292,8 @@
 																<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
 																	<i class="far fa-eye"></i> View
 																</a>
-															{% if prescription.doctor.id == profile.id %}
-																<a href="edit-prescription.html" class="btn btn-sm bg-success-light" data-toggle="modal" data-target="#add_medical_records">
+															{% if record.doctor.id == profile.id %}
+																<a href="{% url 'edit-medical-record' record.patient.id record.patient|slugify record.id %}" class="btn btn-sm bg-success-light">
 																	<i class="fas fa-edit"></i> Edit
 																</a>
 																<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
@@ -347,13 +347,13 @@
 																	<td>{{invoice.date_paid.date}}</td>
 																	<td class="text-right">
 																		<div class="table-action">
-																			<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+																			<a href="{% url 'invoice-pdf' invoice.patient|slugify invoice.id %}" class="btn btn-sm bg-primary-light">
 																				<i class="fas fa-print"></i> Print
 																			</a>
-																			<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+																			<a href="{% url 'invoice' invoice.patient|slugify invoice.id %}" class="btn btn-sm bg-info-light">
 																				<i class="far fa-eye"></i> View
 																			</a>
-																			<a href="{% url 'edit-billing' patient|slugify patient.id %}" class="btn btn-sm bg-success-light">
+																			<a href="{% url 'edit-billing' patient.id patient|slugify invoice.id %}" class="btn btn-sm bg-success-light">
 																				<i class="fas fa-edit"></i> Edit
 																			</a>
 																			<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
@@ -392,19 +392,22 @@
 					<h3 class="modal-title">Medical Records</h3>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				</div>
-				<form>					
+				<form enctype="multipart/form-data" method="post" action="{% url 'add-medical-record' patient|slugify patient.id %}">					
 					<div class="modal-body">
+						{% csrf_token %}
+						<input type="text" name="patient" value="{{patient.id}}" style="display: none;">
+						<input type="text" name="doctor" value="{{profile.id}}" style="display: none;">
 						<div class="form-group">
 							<label>Date</label>
-							<input type="text" class="form-control datetimepicker" value="31-10-2019">
+							<input type="text" class="form-control datetimepicker" name="date_recorded" placeholder="YYYY-MM-DD" required>
 						</div>
 						<div class="form-group">
-							<label>Description ( Optional )</label>
-							<textarea class="form-control"></textarea>
+							<label>Description ( Name )</label>
+							<textarea class="form-control" name="description" required></textarea>
 						</div>
 						<div class="form-group">
 							<label>Upload File</label> 
-							<input type="file" class="form-control">
+							<input type="file" class="form-control" name="attachment" required>
 						</div>	
 						<div class="submit-section text-center">
 							<button type="submit" class="btn btn-primary submit-btn">Submit</button>
@@ -420,6 +423,9 @@
 
 {% block javascript %}		
 	<!-- Datetimepicker JS -->
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="{% static 'cas/js/moment.min.js' %}"></script>
+	<script src="{% static 'cas/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+	<!-- Custom JS -->
+	<script src="{% static 'cas/js/ajax.js' %}"></script>
  {% endblock %}		
