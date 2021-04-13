@@ -280,6 +280,20 @@ class Prescription(models.Model):
 	night = models.BooleanField('Night', default=False)
 	# patient, doctor, name, quantity, days, morning, afternoon, evening, night
 
+	def valid(self):
+		duration = dt.timedelta(days=self.days)
+		end_date = self.date + duration
+		now = timezone.now()
+		if now<end_date:
+			return True
+		else:
+			return False
+
+	def end_date(self):
+		duration = dt.timedelta(days=self.days)
+		end_date = self.date + duration
+		return end_date
+
 
 class MedicalRecord(models.Model):
 	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)

@@ -641,6 +641,43 @@ def edit_prescription(request, patient_id, slug, prescription_id):
 
 
 @login_required(login_url='/login/')
+def prescription_pdf(request, slug, prescription_id):
+	prescription = Prescription.objects.get(id=prescription_id)
+	group = request.user.groups.get()
+	access = False
+	profile = None
+	try:
+		if group.name=='patients_group':
+			profile = Patient.objects.get(user=request.user.id)
+			if profile.id == prescription.patient.id:
+				access = True
+		elif group.name=='doctors_group':
+			profile = Doctor.objects.get(user=request.user.id)
+			if profile.id == prescription.doctor.id:
+				access = True
+		elif user.is_superuser():
+			access = True
+	except Exception:
+		access = False
+
+	if access:
+		return render_to_pdf_response(request, 'doctors/prescription-pdf.html', 
+			{'prescription': prescription})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def delete_prescription(request, slug, prescription_id):
+	prescription = Prescription.objects.get(id=prescription_id)
+	doctor = Doctor.objects.get(user=request.user.id)
+	if doctor.id == prescription.doctor.id:
+		prescription.delete()
+		redirect = '../../../patient-profile/'+prescription.patient.first_name+'-'+prescription.patient.second_name+'/'+str(prescription.patient.id)+'/'
+		return JsonResponse({"success": "Prescription Removed.", "redirect": redirect}, status=200)
+
+
+@login_required(login_url='/login/')
 @user_passes_test(check_doctor, login_url='/login/')
 @user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def add_medical_record(request, slug, patient_id):
@@ -654,7 +691,7 @@ def add_medical_record(request, slug, patient_id):
 			else:
 				return HttpResponse(form.errors)
 	
-	return HttpResponseRedirect('../../../patient_profile/'+slug+'/'+str(patient_id)+'/')
+	return HttpResponseRedirect('../../../patient-profile/'+slug+'/'+str(patient_id)+'/')
 
 
 @login_required(login_url='/login/')
@@ -675,6 +712,18 @@ def edit_medical_record(request, patient_id, slug, mr_id):
 	form = MedicalRecordForm(instance=mr)
 	return render(request, 'doctors/edit-medical-record.html', {'profile': doctor, 'patient': patient,
 		'record': mr, 'form': form})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
+def delete_medical_record(request, slug, mr_id):
+	mr = MedicalRecord.objects.get(id=mr_id)
+	doctor = Doctor.objects.get(user=request.user.id)
+	if doctor.id == mr.doctor.id:
+		mr.delete()
+		redirect = '../../../patient-profile/'+mr.patient.first_name+'-'+mr.patient.second_name+'/'+str(mr.patient.id)+'/'
+		return JsonResponse({"success": "Medical Record Removed.", "redirect": redirect}, status=200)
 
 
 @login_required(login_url='/login/')
@@ -715,8 +764,12 @@ def edit_billing(request, patient_id, slug, inv_id):
 		'invoice': invoice})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_doctor, login_url='/login/')
+@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def chat_doctor(request):
-	return render(request, 'doctors/chat-doctor.html')
+	doctor = Doctor.objects.get(user=request.user.id)
+	return render(request, 'doctors/chat-doctor.html', {'profile': doctor})
 
 
 def new_schedule(doctor):
@@ -840,7 +893,6 @@ def get_profile(user):
 		return None
 
 
-
 def doctor_profile(request, slug, doctor_id):
 	doctor = Doctor.objects.get(id=doctor_id)
 	edu = Education.objects.filter(doctor=doctor_id) 
@@ -893,6 +945,9 @@ def booking(request, slug, doctor_id):
 		"booking_dates": booking_dates, "profile": profile})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def checkout(request):
 	if request.method == 'POST':
 		doctor_id = int(request.POST['doctor'])
@@ -918,6 +973,10 @@ def checkout(request):
 	else:
 		pass
 
+
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def booking_success(request):
 	if request.method == 'POST':
 		doctor_id = int(request.POST['doctor'])
@@ -955,6 +1014,9 @@ def booking_success(request):
 		pass
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def invoice_view(request, slug, invoice_id):
 	inv_id = int(invoice_id)
 	invoice = Invoice.objects.get(id=inv_id)
@@ -964,16 +1026,21 @@ def invoice_view(request, slug, invoice_id):
 		'profile': profile})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def favourites(request):
 	profile = Patient.objects.get(user = request.user.id)
 	favourites = Favourite.objects.filter(patient = profile.id)
 	return render(request, 'patients/favourites.html', {'profile': profile, 'favourites': favourites})
 
 
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
 def favourite_doctor(request, slug, doctor_id):
 	patient = Patient.objects.get(user=request.user.id)
 	favourites = Favourite.objects.filter(doctor=doctor_id, patient=patient.id)
-	
 	if request.is_ajax():
 		if not favourites.count()==0:
 			favourite = favourites[0]
@@ -1012,6 +1079,7 @@ def add_review(request):
 	else:
 		return HttpResponseRedirect('../../doctor-profile/doctor-name/'+str(appointment.doctor.id)+'/')
 
+
 @login_required(login_url='/login/')
 @user_passes_test(check_patient, login_url='/login/')
 def change_password(request):
@@ -1036,7 +1104,11 @@ def change_password(request):
 		return render(request, 'patients/change-password.html', {'profile': patient})
 
 
-def chat(request):
-	return render(request, 'patients/chat.html')
 
+@login_required(login_url='/login/')
+@user_passes_test(check_patient, login_url='/login/')
+@user_passes_test(check_settings, login_url='/patients/profile-settings/')
+def chat(request):
+	patient = Patient.objects.get(user=request.user.id)
+	return render(request, 'patients/chat.html', {'profile': patient})
 

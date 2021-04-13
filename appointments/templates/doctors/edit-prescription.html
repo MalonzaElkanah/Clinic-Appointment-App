@@ -136,7 +136,7 @@
 														</div>
 													</td>
 													<td>
-														<a href="#" class="btn bg-danger-light trash"><i class="far fa-trash-alt"></i></a>
+														<a href="{% url 'delete-prescription' patient.id  prescription.name|slugify prescription.id %}" class="btn bg-danger-light trash"><i class="far fa-trash-alt"></i></a>
 													</td>
 												</tr>
 											</tbody>

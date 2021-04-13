@@ -224,17 +224,17 @@
 														</td>
 														<td class="text-right">
 															<div class="table-action">
-																<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+																<a href="{% url 'prescription-pdf' prescription.name|slugify prescription.id  %}" class="btn btn-sm bg-primary-light">
 																	<i class="fas fa-print"></i> Print
 																</a>
-																<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+																<a href="javascript:void(0);" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#presc{{prescription.id}}_details">
 																	<i class="far fa-eye"></i> View
 																</a>
 															{% if prescription.doctor.id == profile.id %}
 																<a href="{% url 'edit-prescription' patient.id  prescription.name|slugify prescription.id %}" class="btn btn-sm bg-success-light">
 																	<i class="fas fa-edit"></i> Edit
 																</a>
-																<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+																<a href="{% url 'delete-prescription' prescription.name|slugify prescription.id %}" class="btn btn-sm bg-danger-light ajax-link">
 																	<i class="far fa-trash-alt"></i> Delete
 																</a>
 															{% endif %}
@@ -286,17 +286,17 @@
 														</td>
 														<td class="text-right">
 															<div class="table-action">
-																<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+																<a href="{{record.attachment.url}}" class="btn btn-sm bg-primary-light">
 																	<i class="fas fa-print"></i> Print
 																</a>
-																<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+																<a href="{{record.attachment.url}}" class="btn btn-sm bg-info-light">
 																	<i class="far fa-eye"></i> View
 																</a>
 															{% if record.doctor.id == profile.id %}
 																<a href="{% url 'edit-medical-record' record.patient.id record.patient|slugify record.id %}" class="btn btn-sm bg-success-light">
 																	<i class="fas fa-edit"></i> Edit
 																</a>
-																<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
+																<a href="{% url 'delete-medical-record' record.patient|slugify record.id %}" class="btn btn-sm bg-danger-light ajax-link">
 																	<i class="far fa-trash-alt"></i> Delete
 																</a>
 															{% endif %}
@@ -352,12 +352,6 @@
 																			</a>
 																			<a href="{% url 'invoice' invoice.patient|slugify invoice.id %}" class="btn btn-sm bg-info-light">
 																				<i class="far fa-eye"></i> View
-																			</a>
-																			<a href="{% url 'edit-billing' patient.id patient|slugify invoice.id %}" class="btn btn-sm bg-success-light">
-																				<i class="fas fa-edit"></i> Edit
-																			</a>
-																			<a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-																				<i class="far fa-trash-alt"></i> Delete
 																			</a>
 																		</div>
 																	</td>
@@ -419,6 +413,94 @@
 		</div>
 	</div>
 	<!-- /Add Medical Records Modal -->
+	{% for prescription in prescriptions %}
+	<!-- Appointment Details Modal -->
+	<div class="modal fade custom-modal" id="presc{{prescription.id}}_details">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Prescription Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="info-details">
+						<li>
+							<div class="details-header">
+								<div class="row">
+									<div class="col-md-6">
+										<span class="title">#PRESC000{{prescription.id}}</span>
+										<span class="text">{{prescription.date}}</span>
+									</div>
+									<div class="col-md-6">
+										<div class="text-right">
+										{% if prescription.valid %}
+											<button type="button" class="btn bg-success-light btn-sm" id="topup_status">Valid</button>
+										{% else %}
+											<button type="button" class="btn bg-danger-light btn-sm" id="topup_status">invalid</button>
+										{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<span class="title">Name:</span>
+							<span class="text">{{prescription.name}}</span>
+						</li>
+						<li>
+							<span class="title">Doctor:</span>
+							<span class="text">{{prescription.doctor.full_name}}</span>
+						</li>
+						<li>
+							<span class="title">Patient:</span>
+							<span class="text">{{prescription.patient}}</span>
+						</li>						
+						<li>
+							<span class="title">Start Date:</span>
+							<span class="text">{{prescription.date}}</span>
+						</li>
+						<li>
+							<span class="title">End Date:</span>
+							<span class="text">{{prescription.end_date}}</span>
+						</li>
+						<li>
+							<span class="title">Quantity:</span>
+							<span class="text">{{prescription.quantity}} per Period</span>
+						</li>
+						<li>
+							<span class="title">Period:</span>
+							<span class="text">
+							{% if prescription.morning %}
+								morning, 
+							{% endif %}
+							{% if prescription.afternoon %}
+								afternoon, 
+							{% endif %}
+							{% if prescription.evening %}
+								evening, 
+							{% endif %}
+							{% if prescription.night %}
+								night,
+							{% endif %}</span>
+
+						</li>
+						<li>
+							<span class="title">Status:</span>
+							{% if prescription.valid %}
+							<span class="text">Valid</span>
+							{% else %}
+							<span class="text">invalid</span>
+							{% endif %}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Appointment Details Modal -->
+	{% endfor %}
 {% endblock %}	  
 
 {% block javascript %}		

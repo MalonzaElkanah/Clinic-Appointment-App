@@ -110,18 +110,16 @@
 											<td>{{appointment.follow_up_date}}</td>
 											{% if appointment.status == 'WAIT' %}
 												<td><span class="badge badge-pill bg-warning-light">Pending</span></td>
-											{% elif appointment.status == '' %}
+											{% elif appointment.status == 'ACCEPTTED' %}
 												<td><span class="badge badge-pill bg-success-light">Confirm</span></td>
-											{% elif appointment.status == '' %}
+											{% elif appointment.status == 'CANCELLED' %}
 												<td><span class="badge badge-pill bg-danger-light">Cancelled</span></td>
-											{% elif appointment.status == '' %}
+											{% elif appointment.status == 'COMPLETED' %}
+												<td><span class="badge badge-pill bg-info-light">Completed</span></td>
 											{% endif %}
 											<td class="text-right">
 												<div class="table-action">
-													<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
-														<i class="fas fa-print"></i> Print
-													</a>
-													<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+													<a href="javascript:void(0);" class="btn btn-sm bg-info-light"  data-toggle="modal" data-target="#appt{{appointment.id}}_details">
 														<i class="far fa-eye"></i> View
 													</a>
 												</div>
@@ -165,10 +163,10 @@
 											</td>
 											<td class="text-right">
 												<div class="table-action">
-													<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+													<a href="{% url 'prescription-pdf' prescription.name|slugify prescription.id  %}" class="btn btn-sm bg-primary-light">
 														<i class="fas fa-print"></i> Print
 													</a>
-													<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+													<a href="javascript:void(0);" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#presc{{prescription.id}}_details">
 														<i class="far fa-eye"></i> View
 													</a>
 												</div>
@@ -205,7 +203,7 @@
 											<td><a href="javascript:void(0);">#MR-000{{medical_record.id}}</a></td>
 											<td>{{medical_record.date_recorded.date}}</td>
 											<td>{{medical_record.description}}</td>
-											<td><a href="#">{{medical_record.description.attachment}}</a></td>
+											<td><a href="{{medical_record.attachment.url}}">{{medical_record.attachment}}</a></td>
 											<td>
 												<h2 class="table-avatar">
 													<a href="{% url 'doctor-profile' medical_record.doctor.full_name|slugify medical_record.doctor.id %}" class="avatar avatar-sm mr-2">
@@ -216,10 +214,10 @@
 											</td>
 											<td class="text-right">
 												<div class="table-action">
-													<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
+													<a href="{{medical_record.attachment.url}}" class="btn btn-sm bg-info-light">
 														<i class="far fa-eye"></i> View
 													</a>
-													<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+													<a href="{{medical_record.attachment.url}}" class="btn btn-sm bg-primary-light">
 														<i class="fas fa-print"></i> Print
 													</a>
 												</div>
@@ -271,7 +269,7 @@
 													<a href="{% url 'invoice-view' invoice.date_paid|slugify invoice.id %}" class="btn btn-sm bg-info-light">
 														<i class="far fa-eye"></i> View
 													</a>
-													<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+													<a href="{% url 'invoice-pdf' invoice.patient|slugify invoice.id %}" class="btn btn-sm bg-primary-light">
 														<i class="fas fa-print"></i> Print
 													</a>
 												</div>
@@ -293,6 +291,154 @@
 	</div>
 </div>
 {% endblock %}
+
+{% block modal %}
+{% for appointment in appointments %}
+	<!-- Appointment Details Modal -->
+	<div class="modal fade custom-modal" id="appt{{appointment.id}}_details">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Appointment Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="info-details">
+						<li>
+							<div class="details-header">
+								<div class="row">
+									<div class="col-md-6">
+										<span class="title">#APT000{{appointment.id}}</span>
+										<span class="text">{{appointment.booking_date}}</span>
+									</div>
+									<div class="col-md-6">
+										<div class="text-right">
+										{% if appointment.status == 'ACCEPTTED' %}
+											<button type="button" class="btn bg-info-light btn-sm" id="topup_status">Acceptted</button>
+										{% elif appointment.status == 'WAIT' %}
+											<button type="button" class="btn bg-warning-light btn-sm" id="topup_status">pending</button>
+										{% elif appointment.status == 'CANCELLED' %}
+											<button type="button" class="btn bg-danger-light btn-sm" id="topup_status">Cancelled</button>
+										{% elif appointment.status == 'COMPLETED' %}
+											<button type="button" class="btn bg-success-light btn-sm" id="topup_status">Completed</button>
+										{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<span class="title">Status:</span>
+							<span class="text">{{appointment.status}}</span>
+						</li>
+						<li>
+							<span class="title">Confirm Date:</span>
+							<span class="text">{{appointment.date.date}}</span>
+						</li>
+						<li>
+							<span class="title">Paid Amount</span>
+							<span class="text">kSh {{appointment.amount}}</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Appointment Details Modal -->
+	{% endfor %}
+
+	{% for prescription in prescriptions %}
+	<!-- Appointment Details Modal -->
+	<div class="modal fade custom-modal" id="presc{{prescription.id}}_details">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Prescription Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<ul class="info-details">
+						<li>
+							<div class="details-header">
+								<div class="row">
+									<div class="col-md-6">
+										<span class="title">#PRESC000{{prescription.id}}</span>
+										<span class="text">{{prescription.date}}</span>
+									</div>
+									<div class="col-md-6">
+										<div class="text-right">
+										{% if prescription.valid %}
+											<button type="button" class="btn bg-success-light btn-sm" id="topup_status">Valid</button>
+										{% else %}
+											<button type="button" class="btn bg-danger-light btn-sm" id="topup_status">invalid</button>
+										{% endif %}
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+						<li>
+							<span class="title">Name:</span>
+							<span class="text">{{prescription.name}}</span>
+						</li>
+						<li>
+							<span class="title">Doctor:</span>
+							<span class="text">{{prescription.doctor.full_name}}</span>
+						</li>
+						<li>
+							<span class="title">Patient:</span>
+							<span class="text">{{prescription.patient}}</span>
+						</li>						
+						<li>
+							<span class="title">Start Date:</span>
+							<span class="text">{{prescription.date}}</span>
+						</li>
+						<li>
+							<span class="title">End Date:</span>
+							<span class="text">{{prescription.end_date}}</span>
+						</li>
+						<li>
+							<span class="title">Quantity:</span>
+							<span class="text">{{prescription.quantity}} per Period</span>
+						</li>
+						<li>
+							<span class="title">Period:</span>
+							<span class="text">
+							{% if prescription.morning %}
+								morning, 
+							{% endif %}
+							{% if prescription.afternoon %}
+								afternoon, 
+							{% endif %}
+							{% if prescription.evening %}
+								evening, 
+							{% endif %}
+							{% if prescription.night %}
+								night,
+							{% endif %}</span>
+
+						</li>
+						<li>
+							<span class="title">Status:</span>
+							{% if prescription.valid %}
+							<span class="text">Valid</span>
+							{% else %}
+							<span class="text">invalid</span>
+							{% endif %}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Appointment Details Modal -->
+	{% endfor %}
+
+{% endblock %}	 
 
 {% block javascript %}
 	<script src="{% static 'cas/js/ajax.js' %}"></script>

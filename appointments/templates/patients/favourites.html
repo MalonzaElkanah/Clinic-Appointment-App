@@ -68,21 +68,19 @@
 							<a href="{% url 'doctor-profile' favourite.doctor.full_name|slugify favourite.doctor.id %}">{{favourite.doctor.first_name}} {{favourite.doctor.second_name}}</a> 
 							<i class="fas fa-check-circle verified"></i>
 						</h3>
-						<p class="speciality">MDS - Periodontology and Oral Implantology, BDS</p>
+						<p class="speciality">{{favourite.doctor.latest_degree}}</p>
 						<div class="rating">
-							<i class="fas fa-star filled"></i>
-							<i class="fas fa-star filled"></i>
-							<i class="fas fa-star filled"></i>
-							<i class="fas fa-star filled"></i>
-							<i class="fas fa-star filled"></i>
-							<span class="d-inline-block average-rating">(17)</span>
+						{% for x, filled in favourite.doctor.review.items %}	
+							<i class="fas fa-star {{filled}}"></i>
+						{% endfor %}
+							<span class="d-inline-block average-rating">({{favourite.doctor.total_reviews}})</span>
 						</div>
 						<ul class="available-info">
 							<li>
 								<i class="fas fa-map-marker-alt"></i> {{favourite.doctor.county}}, {{favourite.doctor.country}}
 							</li>
 							<li>
-								<i class="far fa-clock"></i> Available on Fri, 22 Mar
+								<i class="far fa-clock"></i> {{favourite.doctor.availability}}
 							</li>
 							<li>
 								<i class="far fa-money-bill-alt"></i> kSh {{favourite.doctor.pricing}} <i class="fas fa-info-circle" data-toggle="tooltip" title="Lorem Ipsum"></i>
