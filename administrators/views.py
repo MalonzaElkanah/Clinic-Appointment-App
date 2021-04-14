@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from .models import AppSetting, Admin
 from .forms import AdminForm, SpecialityForm, AppSettingForm
-from appointments.models import Doctor,  Patient, Speciality, Appointment, Invoice, Review
+from appointments.models import Doctor,  Patient, Speciality, Appointment, Invoice, Review, Reply
 
 import datetime as dt
 # Create your views here.
@@ -154,6 +154,26 @@ def reviews(request):
 	profile = Admin.objects.get(user=request.user.id)
 	reviews = Review.objects.all()
 	return render(request, 'administrators/reviews.html', {'profile': profile, 'reviews': reviews})
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def delete_review(request):
+	if request.method == 'POST':
+		review = Review.objects.get(id=int(request.POST['review']))
+		speciality.delete()
+	return HttpResponseRedirect('../../administrators/reviews/')
+
+
+@login_required(login_url='/login/')
+@user_passes_test(check_admin, login_url='/login/')
+@user_passes_test(check_settings, login_url='/administrators/profile/')
+def delete_reply(request):
+	if request.method == 'POST':
+		reply = Reply.objects.get(id=int(request.POST['reply']))
+		reply.delete()
+	return HttpResponseRedirect('../../administrators/reviews/')
 
 
 @login_required(login_url='/login/')

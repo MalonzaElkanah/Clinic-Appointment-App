@@ -11,6 +11,7 @@ from .forms import SocialMediaForm, PrescriptionForm, PatientForm, MedicalRecord
 from .models import Doctor, Speciality, Education, Experience, Award, Membership, Registration, TimeSlot
 from .models import DoctorSchedule, SocialMedia, Appointment, Invoice, Bill, Review, LikedReview, Reply
 from .models import Patient, Prescription, MedicalRecord, Favourite
+from administrators.models import AppSetting, Admin
 
 import datetime as dt
 from easy_pdf.rendering import render_to_pdf_response
@@ -397,15 +398,33 @@ def invoices(request):
 
 
 @login_required(login_url='/login/')
-@user_passes_test(check_doctor, login_url='/login/')
-@user_passes_test(check_settings, login_url='/doctors/profile-settings/')
 def invoice(request, slug, invoice_id):
-	doctor = Doctor.objects.get(user=request.user.id)
 	inv_id = int(invoice_id)
 	invoice = Invoice.objects.get(id=inv_id)
-	bills = Bill.objects.filter(invoice=invoice.id)
-	return render(request, 'patients/invoice-view.html', {'invoice': invoice, 'bills': bills, 
-		'profile': doctor})
+	access = False
+	profile = None
+	try:
+		group = request.user.groups.get()
+		if group.name=='patients_group':
+			profile = Patient.objects.get(user=request.user.id)
+			if profile.id == invoice.patient.id:
+				access = True
+		elif group.name=='doctors_group':
+			profile = Doctor.objects.get(user=request.user.id)
+			if profile.id == invoice.doctor.id:
+				access = True
+		elif request.user.is_superuser:
+			access = True
+	except Exception:
+		if request.user.is_superuser:
+			profile = Admin.objects.get(user=request.user.id)
+			access = True
+		else:
+			access = False
+	if access:
+		bills = Bill.objects.filter(invoice=invoice.id)
+		return render(request, 'patients/invoice-view.html', {'invoice': invoice, 'bills': bills, 
+			'profile': profile})
 
 
 @login_required(login_url='/login/')
@@ -875,20 +894,22 @@ def profile_settings(request):
 
 def get_profile(user):
 	if user.is_authenticated:
-		group = user.groups.get()
+		profile = None
 		try:
-			profile = None
+			group = user.groups.get()
 			if group.name=='patients_group':
 				profile = Patient.objects.get(user=user.id)
 			elif group.name=='doctors_group':
 				profile = Doctor.objects.get(user=user.id)
-			elif user.is_superuser():
+			elif user.is_superuser:
 				profile = Admin.objects.get(user=user.id)
 			else:
 				return profile
 			return profile
 		except Exception:
-			return None
+			if user.is_superuser:
+				profile = Admin.objects.get(user=user.id)
+			return profile
 	else:
 		return None
 

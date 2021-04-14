@@ -82,15 +82,15 @@
 								<tr>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.doctor.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{appointment.doctor.full_name}}</a>
+											<a href="{% url 'doctor-profile' appointment.doctor.full_name|slugify appointment.doctor.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.doctor.image.url}}" alt="User Image"></a>
+											<a href="{% url 'doctor-profile' appointment.doctor.full_name|slugify appointment.doctor.id %}">{{appointment.doctor.full_name}}</a>
 										</h2>
 									</td>
 									<td>{{appointment.doctor.speciality.name}}</td>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{appointment.patient}}</a>
+											<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
+											<a href="#">{{appointment.patient}}</a>
 										</h2>
 									</td>
 									<td>{{appointment.booking_date.date}} <span class="text-primary d-block">{{appointment.booking_date.time}}</span></td>

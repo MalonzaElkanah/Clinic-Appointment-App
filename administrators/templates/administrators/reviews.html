@@ -83,38 +83,80 @@
 								<tr>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{review.patient.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{review.patient}} </a>
+											<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{review.appointment.patient.image.url}}" alt="User Image"></a>
+											<a href="#">{{review.appointment.patient}} </a>
 										</h2>
 									</td>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{review.doctor.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{review.doctor.full_name}}</a>
+											<a href="{% url 'doctor-profile' review.appointment.doctor.full_name|slugify review.appointment.doctor.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{review.appointment.doctor.image.url}}" alt="User Image"></a>
+											<a href="{% url 'doctor-profile' review.appointment.doctor.full_name|slugify review.appointment.doctor.id %}">{{review.appointment.doctor.full_name}}</a>
 										</h2>
 									</td>
 									
 									<td>
+									{% for x, rate in review.review_rate.items %}
+										{% if rate == 'filled' %}
 										<i class="fe fe-star text-warning"></i>
-										<i class="fe fe-star text-warning"></i>
-										<i class="fe fe-star text-warning"></i>
-										<i class="fe fe-star text-warning"></i>
+										{% else %}
 										<i class="fe fe-star-o text-secondary"></i>
+										{% endif %}
+									{% endfor %}
 									</td>
 									
 									<td>
 										{{review.text}}
 									</td>
-										<td>{{review.date.date}} <br><small>{{review.date.date}}</small></td>
+										<td>{{review.date.date}} <br><small>{{review.date.time}}</small></td>
 									<td class="text-right">
 										<div class="actions">
-											<a class="btn btn-sm bg-danger-light" data-toggle="modal" href="#delete_modal">
+											<a class="btn btn-sm bg-danger-light" data-toggle="modal" href="#delete-review{{review.id}}_modal">
 												<i class="fe fe-trash"></i> Delete
 											</a>
 											
 										</div>
 									</td>
 								</tr>
+								{% for reply in review.replies %}
+									<tr>
+
+										<td>
+											{% if reply.get_group == 'patients_group' %}
+											<h2 class="table-avatar">
+												<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{reply.get_user.image.url}}" alt="User Image"></a>
+												<a href="#">{{reply.get_user.first_name}} {{reply.get_user.second_name}}</a>
+											</h2>
+											{% else %}
+											(reply)
+											{% endif %}
+										</td>
+										<td>
+											{% if reply.get_group == 'doctors_group' %}
+											<h2 class="table-avatar">
+												<a href="{% url 'doctor-profile' reply.get_user.full_name|slugify reply.get_user.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{reply.get_user.image.url}}" alt="User Image"></a>
+												<a href="{% url 'doctor-profile' reply.get_user.full_name|slugify reply.get_user.id %}">{{reply.get_user.full_name}}</a>
+											</h2>
+											{% else %}
+											(reply)
+											{% endif %}
+										</td>
+										
+										<td class="text-center">-</td>
+										
+										<td>
+											{{reply.text}}
+										</td>
+											<td>{{reply.date.date}} <br><small>{{reply.date.time}}</small></td>
+										<td class="text-right">
+											<div class="actions">
+												<a class="btn btn-sm bg-danger-light" data-toggle="modal" href="#delete-reply{{reply.id}}_modal">
+													<i class="fe fe-trash"></i> Delete
+												</a>
+												
+											</div>
+										</td>
+									</tr>
+								{% endfor %}
 							{% endfor %}
 							</tbody>
 						</table>
@@ -126,28 +168,51 @@
 {% endblock %}					
 				
 {% block modal %}
+	{% for review in reviews %}
 	<!-- Delete Modal -->
-	<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+	<div class="modal fade" id="delete-review{{review.id}}_modal" aria-hidden="true" role="dialog">
 		<div class="modal-dialog modal-dialog-centered" role="document" >
 			<div class="modal-content">
-			<!--	<div class="modal-header">
-					<h5 class="modal-title">Delete</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>-->
 				<div class="modal-body">
-					<div class="form-content p-2">
-						<h4 class="modal-title">Delete</h4>
-						<p class="mb-4">Are you sure want to delete?</p>
-						<button type="button" class="btn btn-primary">Save </button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
+					<form method="post" action="{% url 'delete-review' %}">
+						<input type="text" name="review" value="{{review.id}}" style="display: none;">
+						{% csrf_token %}
+						<div class="form-content p-2">
+							<h4 class="modal-title">Delete</h4>
+							<p class="mb-4">Are you sure want to delete?</p>
+							<button type="submit" class="btn btn-danger">Delete </button>
+							<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- /Delete Modal -->
+	
+		{% for reply in review.replies %}
+		<!-- Delete Modal -->
+		<div class="modal fade" id="delete-reply{{reply.id}}_modal" aria-hidden="true" role="dialog">
+			<div class="modal-dialog modal-dialog-centered" role="document" >
+				<div class="modal-content">
+					<div class="modal-body">
+						<form method="post" action="{% url 'delete-reply' %}">
+							<input type="text" name="reply" value="{{reply.id}}" style="display: none;">
+							{% csrf_token %}
+							<div class="form-content p-2">
+								<h4 class="modal-title">Delete</h4>
+								<p class="mb-4">Are you sure want to delete?</p>
+								<button type="submit" class="btn btn-danger">Delete </button>
+								<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Delete Modal -->
+		{% endfor %}
+	{% endfor %}
 {% endblock %}
 
 {% block javascript %} 

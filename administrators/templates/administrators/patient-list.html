@@ -84,16 +84,16 @@
 									<td>#PT00{{patient.id}}</td>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{patient.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{patient}} </a>
+											<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{patient.image.url}}" alt="User Image"></a>
+											<a href="#">{{patient}} </a>
 										</h2>
 									</td>
 									<td>{{ patient.d_o_b|timesince }}</td>
 									<td>{{patient.street_lane}}, {{patient.town}}, {{patient.county}}, {{patient.country}}</td>
 									<td>{{patient.phone_no}}</td>
 								{% if patient.last_appointment != None %}
-									<td>20 Oct 2019</td>
-									<td class="text-right">$100.00</td>
+									<td>{{patient.last_appointment.booking_date}}</td>
+									<td class="text-right">Ksh {{patient.last_appointment.amount}}</td>
 								{% else %}
 									<td>None</td>
 									<td class="text-right">None</td>

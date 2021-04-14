@@ -13,20 +13,22 @@ from administrators.models import Admin
 
 def get_profile(user):
 	if user.is_authenticated:
-		group = user.groups.get()
+		profile = None
 		try:
-			profile = None
+			group = user.groups.get()
 			if group.name=='patients_group':
 				profile = Patient.objects.get(user=user.id)
 			elif group.name=='doctors_group':
 				profile = Doctor.objects.get(user=user.id)
-			elif user.is_superuser():
+			elif user.is_superuser:
 				profile = Admin.objects.get(user=user.id)
 			else:
 				return profile
 			return profile
 		except Exception:
-			return None
+			if user.is_superuser:
+				profile = Admin.objects.get(user=user.id)
+			return profile
 	else:
 		return None
 

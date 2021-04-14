@@ -79,12 +79,12 @@
 							<tbody>
 							{% for invoice in invoices %}
 								<tr>
-									<td><a href="invoice.html">#IN000{{invoice.id}}</td>
+									<td><a href="{% url 'invoice' invoice.patient|slugify invoice.id %}">#IN000{{invoice.id}}</td>
 									<td>#PT00{{invoice.patient.id}}</td>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{invoice.patient.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{invoice.patient}}</a>
+											<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{invoice.patient.image.url}}" alt="User Image"></a>
+											<a href="#">{{invoice.patient}}</a>
 										</h2>
 									</td>
 									<td>kSh {{invoice.total_amount}}</td>
@@ -94,11 +94,8 @@
 									</td>
 									<td class="text-right">
 										<div class="actions">
-											<a data-toggle="modal" href="#edit_invoice_report{{invoice.id}}" class="btn btn-sm bg-success-light mr-2">
-												<i class="fe fe-pencil"></i> Edit
-											</a>
-											<a class="btn btn-sm bg-danger-light" data-toggle="modal" href="#delete_modal{{invoice.id}}">
-												<i class="fe fe-trash"></i> Delete
+											<a href="{% url 'invoice' invoice.patient|slugify invoice.id %}" class="btn btn-sm bg-info-light">
+												<i class="fe fe-eye"></i> View
 											</a>
 										</div>
 									</td>
@@ -111,91 +108,6 @@
 			</div>
 		</div>			
 	</div>
-{% endblock %}
-{% block modal %}
-	{% for invoice in invoices %}
-	<!-- Edit Details Modal -->
-	<div class="modal fade" id="edit_invoice_report{{invoice.id}}" aria-hidden="true" role="dialog">
-		<div class="modal-dialog modal-dialog-centered" role="document" >
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Edit Invoice Report</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form>
-						<div class="row form-row">
-							<div class="col-12 col-sm-6">
-								<div class="form-group">
-									<label>Invoice Number</label>
-									<input type="text" class="form-control" value="#INV-0001">
-								</div>
-							</div>
-							<div class="col-12 col-sm-6">
-								<div class="form-group">
-									<label>Patient ID</label>
-									<input type="text" class="form-control" value="	#PT002">
-								</div>
-							</div>
-							<div class="col-12 col-sm-6">
-								<div class="form-group">
-									<label>Patient Name</label>
-									<input type="text" class="form-control" value="R Amer">
-								</div>
-							</div>
-							<div class="col-12 col-sm-6">
-								<div class="form-group">
-									<label>Patient Image</label>
-									<input type="file"  class="form-control">
-								</div>
-							</div>
-							<div class="col-12 col-sm-6">
-								<div class="form-group">
-									<label>Total Amount</label>
-									<input type="text"  class="form-control" value="$200.00">
-								</div>
-							</div>
-							<div class="col-12 col-sm-6">
-								<div class="form-group">
-									<label>Created Date</label>
-									<input type="text"  class="form-control" value="29th Oct 2019">
-								</div>
-							</div>
-							
-						</div>
-						<button type="submit" class="btn btn-primary btn-block">Save Changes</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /Edit Details Modal -->
-
-	<!-- Delete Modal -->
-	<div class="modal fade" id="delete_modal{{invoice.id}}" aria-hidden="true" role="dialog">
-		<div class="modal-dialog modal-dialog-centered" role="document" >
-			<div class="modal-content">
-			<!--	<div class="modal-header">
-					<h5 class="modal-title">Delete</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>-->
-				<div class="modal-body">
-					<div class="form-content p-2">
-						<h4 class="modal-title">Delete</h4>
-						<p class="mb-4">Are you sure want to delete?</p>
-						<button type="button" class="btn btn-primary">Save </button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /Delete Modal -->
-	{% endfor %}
 {% endblock %}
 
 {% block javascript %} 

@@ -83,15 +83,15 @@
 								<tr>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{doctor.image.url}}" alt="User Image"></a>
-											<a href="profile.html">{{doctor.full_name}}</a>
+											<a href="{% url 'doctor-profile' doctor.full_name|slugify doctor.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{doctor.image.url}}" alt="User Image"></a>
+											<a href="{% url 'doctor-profile' doctor.full_name|slugify doctor.id %}">{{doctor.full_name}}</a>
 										</h2>
 									</td>
 									<td>{{doctor.speciality.name}}</td>
 									
 									<td>{{doctor.user.date_joined.date}} <br><small>{{doctor.user.date_joined.time}}</small></td>
 									
-									<td>$3100.00</td>
+									<td>Ksh {{doctor.total_revenue}}</td>
 									
 									<td>
 										<div class="status-toggle">

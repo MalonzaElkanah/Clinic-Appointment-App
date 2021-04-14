@@ -199,14 +199,14 @@
 								<tr>
 									<td>
 										<h2 class="table-avatar">
-											<a href="{% url 'profile' %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{doctor.image.url}}" alt="User Image"></a>
-											<a href="{% url 'profile' %}">{{doctor.full_name}}</a>
+											<a href="{% url 'doctor-profile' doctor.full_name|slugify doctor.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{doctor.image.url}}" alt="User Image"></a>
+											<a href="{% url 'doctor-profile' doctor.full_name|slugify doctor.id %}">{{doctor.full_name}}</a>
 										</h2>
 									</td>
 									<td>{{doctor.speciality.name}}</td>
 									<td>Ksh {{doctor.total_revenue}}</td>
 									<td>
-									{% for rate in doctor.review %}
+									{% for x, rate in doctor.review.items %}
 										{% if rate == 'filled' %}
 										<i class="fe fe-star text-warning"></i>
 										{% else %}
@@ -247,14 +247,14 @@
 								<tr>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{patient.image.url}}" alt="User Image"></a>
-											<a href="{% url 'profile' %}">{{patient}} </a>
+											<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{patient.image.url}}" alt="User Image"></a>
+											<a href="#">{{patient}} </a>
 										</h2>
 									</td>
 									<td>{{patient.phone_no}}</td>
 								{% if patient.last_appointment != None %}
-									<td>20 Oct 2019</td>
-									<td class="text-right">$100.00</td>
+									<td>{{patient.last_appointment.booking_date}}</td>
+									<td class="text-right">Ksh {{patient.last_appointment.amount}}</td>
 								{% else %}
 									<td>None</td>
 									<td class="text-right">None</td>
@@ -296,15 +296,15 @@
 								<tr>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.doctor.image.url}}" alt="User Image"></a>
-											<a href="{% url 'profile' %}">{{appointment.doctor.full_name}}</a>
+											<a href="{% url 'doctor-profile' appointment.doctor.full_name|slugify appointment.doctor.id %}" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.doctor.image.url}}" alt="User Image"></a>
+											<a href="{% url 'doctor-profile' appointment.doctor.full_name|slugify appointment.doctor.id %}">{{appointment.doctor.full_name}}</a>
 										</h2>
 									</td>
 									<td>Dental</td>
 									<td>
 										<h2 class="table-avatar">
-											<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
-											<a href="{% url 'profile' %}">{{appointment.patient}}</a>
+											<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{appointment.patient.image.url}}" alt="User Image"></a>
+											<a href="#">{{appointment.patient}}</a>
 										</h2>
 									</td>
 									<td>{{appointment.booking_date.date}} <span class="text-primary d-block">{{appointment.booking_date.time}}</span></td>
