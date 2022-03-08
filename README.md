@@ -1,6 +1,6 @@
 # Clinic-Appointment-App
-This is a web app build with django backend framework that help users make appointments with doctors. 
-Made for three users: Patients, Doctors and Admins.
+This is a web app built with django backend framework that help users make appointments with doctors. 
+Developed with three users in mind: Patients, Doctors and Admins.
 
 ## Dependencies:
 ### Python 3
